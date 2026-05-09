@@ -1,0 +1,87 @@
+<% content_for :title, "#{@edicao.rotulo} · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicoes_path, label: "Edições" %>
+  <div class="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+    <div class="min-w-0">
+      <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição</p>
+      <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= @edicao.rotulo %></h1>
+      <% if @edicao.link_planilha.present? %>
+        <%= link_to "Abrir planilha", @edicao.link_planilha, target: "_blank", rel: "noopener noreferrer",
+                    class: "mt-3 inline-flex min-h-[44px] items-center text-sm font-medium text-stone-700 underline-offset-4 hover:text-stone-900 hover:underline sm:min-h-0" %>
+      <% end %>
+    </div>
+    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+      <%= link_to "Editar", edit_edicao_path(@edicao),
+                  class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      <%= button_to "Remover", edicao_path(@edicao), method: :delete,
+                    form: {
+                      class: "w-full sm:w-auto",
+                      data: {
+                        turbo_confirm: "Remover esta edição e os registos só dela — vínculos em equipas, cenáculos e casais desta edição? As fichas globais das equipas e dos servos permanecem.",
+                      },
+                    },
+                    class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
+    </div>
+  </div>
+
+  <% if @edicao.ativa? %>
+    <div class="mt-8 rounded-2xl border border-emerald-200/90 bg-emerald-50/80 px-5 py-4 text-sm leading-relaxed text-emerald-950">
+      <p class="font-medium">Esta é a edição em curso.</p>
+      <p class="mt-2 text-emerald-900/95">Os atalhos <span class="font-medium">Edição em curso</span> e <span class="font-medium">Equipes</span> no topo da página levam sempre a esta rodada até mudares para outra.</p>
+    </div>
+  <% else %>
+    <div class="mt-8 flex flex-col gap-3 rounded-2xl border border-stone-200 bg-stone-50/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-stone-700">Assim os links <span class="font-medium">Edição em curso</span> e <span class="font-medium">Equipes</span> do topo passam a usar esta rodada.</p>
+      <%= button_to "Marcar como edição em curso", marcar_em_curso_edicao_path(@edicao), method: :patch,
+                    form: { class: "w-full shrink-0 sm:w-auto", data: { turbo_confirm: "Todos os atalhos passam para #{@edicao.rotulo}. Confirmar?" } },
+                    class: "w-full cursor-pointer rounded-full border border-stone-800 bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto" %>
+    </div>
+  <% end %>
+
+  <dl class="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-3 sm:gap-4">
+    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
+      <dt class="text-xs uppercase tracking-wide text-stone-500">Equipas com membros nesta edição</dt>
+      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <span class="font-display text-2xl text-stone-900"><%= @edicao.equipes_com_composicao_count %></span>
+        <%= link_to "Gerir todas as equipas", edicao_equipes_path(@edicao), class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      </dd>
+    </div>
+    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
+      <dt class="text-xs uppercase tracking-wide text-stone-500">Casais</dt>
+      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <span class="font-display text-2xl text-stone-900"><%= @edicao.casais.count %></span>
+        <%= link_to "Ver lista de casais", edicao_casais_path(@edicao),
+                    class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      </dd>
+    </div>
+    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
+      <dt class="text-xs uppercase tracking-wide text-stone-500">Cenáculos</dt>
+      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <span class="font-display text-2xl text-stone-900"><%= @edicao.cenaculos.count %></span>
+        <%= link_to "Gerir cenáculos", edicao_cenaculos_path(@edicao),
+                    class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      </dd>
+    </div>
+  </dl>
+
+  <section class="mt-10 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm" aria-labelledby="importar-casais-csv-titulo">
+    <h2 id="importar-casais-csv-titulo" class="text-sm font-semibold text-stone-900"><%= t("edicoes.importar_csv.titulo") %></h2>
+    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-stone-600"><%= t("edicoes.importar_csv.descricao") %></p>
+    <p class="mt-2 text-xs text-stone-500"><%= t("edicoes.importar_csv.dica_google") %></p>
+    <%= form_with url: importar_casais_csv_edicao_path(@edicao),
+                  method: :post,
+                  multipart: true,
+                  class: "mt-5 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end" do %>
+      <div class="flex min-w-0 flex-1 flex-col gap-1">
+        <%= label_tag :casais_csv, t("edicoes.importar_csv.arquivo_label"),
+                      class: "text-xs font-medium uppercase tracking-wide text-stone-500" %>
+        <%= file_field_tag :casais_csv, accept: "text/csv,.csv",
+                           class: "block w-full min-h-[44px] cursor-pointer text-sm text-stone-700 file:mr-3 file:inline-flex file:cursor-pointer file:rounded-full file:border file:border-stone-300 file:bg-white file:px-4 file:py-2 file:text-sm file:font-medium file:text-stone-800 hover:file:bg-stone-50" %>
+      </div>
+      <%= submit_tag t("edicoes.importar_csv.submit"),
+                     class: "inline-flex min-h-[44px] w-full shrink-0 cursor-pointer items-center justify-center rounded-full border border-stone-800 bg-stone-900 px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto" %>
+    <% end %>
+  </section>
+
+</div>

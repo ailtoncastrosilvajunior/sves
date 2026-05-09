@@ -1,0 +1,40 @@
+<%= form_with model: @edicao, class: "mt-8 max-w-xl space-y-6 sm:mt-10" do |f| %>
+  <% if @edicao.errors.any? %>
+    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+      <p class="font-medium">Corrige os campos:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% @edicao.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :ano, "Ano", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.number_field :ano,
+                       class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                       autocomplete: "off" %>
+  </div>
+
+  <div>
+    <%= f.label :numero_edicao, "Número da edição", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.number_field :numero_edicao,
+                       class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                       autocomplete: "off" %>
+  </div>
+
+  <div>
+    <%= f.label :link_planilha, "Link da planilha (Google Sheets)", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.url_field :link_planilha,
+                    placeholder: "https://docs.google.com/...",
+                    class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+  </div>
+
+  <div class="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
+    <%= f.submit (@edicao.new_record? ? "Criar edição" : "Guardar"),
+                 class: "min-h-[44px] w-full cursor-pointer rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto sm:min-h-0" %>
+    <%= link_to "Cancelar", (@edicao.new_record? ? edicoes_path : edicao_path(@edicao)),
+                class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2.5 text-center text-sm font-medium text-stone-800 hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+  </div>
+<% end %>

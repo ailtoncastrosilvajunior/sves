@@ -1,0 +1,126 @@
+<%= form_with model: [@edicao, @cenaculo], class: "mt-8 max-w-xl space-y-6 sm:mt-10" do |f| %>
+  <% if @cenaculo.errors.any? %>
+    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+      <p class="font-medium">Corrige os campos:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% @cenaculo.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :nome, "Nome do cenáculo", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.text_field :nome,
+                     class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                     autofocus: true,
+                     autocomplete: "off",
+                     placeholder: "Ex.: Cenáculo Azul · Grupo Esperança" %>
+    <p class="mt-1 text-xs text-stone-500">O mesmo nome pode repetir‑se entre edições, mas dentro desta edição tem de ser único.</p>
+  </div>
+
+  <% cor_raw = (@cenaculo.cor || "").to_s.strip %>
+  <% cor_visual_inicial =
+       if cor_raw.blank?
+         "#cccccc"
+       elsif cor_raw.match?(Cenaculo::HEX_COR) && cor_raw.length == 7
+         "##{cor_raw.delete_prefix('#').downcase}"
+       elsif cor_raw.match?(Cenaculo::HEX_COR) && cor_raw.length == 4
+         h = cor_raw.delete_prefix("#")
+         "##{h[0]}#{h[0]}#{h[1]}#{h[1]}#{h[2]}#{h[2]}".downcase
+       else
+         "#cccccc"
+       end %>
+
+  <div data-controller="cenaculo-cor" class="space-y-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 px-4 py-5 sm:px-5">
+    <%= f.label :cor, "Cor de referência (opcional)", class: "block text-sm font-medium text-stone-700" %>
+    <p class="text-xs leading-relaxed text-stone-600">
+      Escolha pela paleta ou pelo quadradinho (<span class="font-medium">seletor do sistema operativo</span>). O código
+      <code class="rounded bg-white px-1 ring-1 ring-stone-200">#hex</code> é preenchido em segundo plano ao guardar —
+      use <span class="font-medium">Limpar cor</span> se não quiser nenhuma.
+    </p>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <%= tag.input type: "color",
+                    value: cor_visual_inicial,
+                    aria: { label: "Abrir seleção de cor no sistema operativo (mostra todas as tonalidades)" },
+                    id: dom_id(@cenaculo, :cor_visual),
+                    data: {
+                      cenaculo_cor_target: "picker",
+                      action: "input->cenaculo-cor#pickerChanged",
+                    },
+                    class: "h-12 w-[4.75rem] shrink-0 cursor-pointer overflow-hidden rounded-xl border border-stone-300 bg-white shadow-inner focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-700" %>
+      <button type="button"
+              data-action="click->cenaculo-cor#limparCor"
+              class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm transition hover:bg-stone-100">
+        Limpar cor
+      </button>
+    </div>
+
+    <div>
+      <p id="cenaculo-paleta-legenda" class="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500">
+        Paleta rápida
+      </p>
+      <div role="group" aria-labelledby="cenaculo-paleta-legenda" class="flex flex-wrap gap-2">
+        <% [
+             ["Verde escuro", "#1b4332"],
+             ["Verde bosque", "#2d6a4f"],
+             ["Verde médio", "#40916c"],
+             ["Água-mar", "#2a9d8f"],
+             ["Azul petrol.", "#264653"],
+             ["Ameixa", "#6d597a"],
+             ["Ouro suave", "#e9c46a"],
+             ["Laranja", "#f4a261"],
+             ["Terracota", "#e76f51"],
+             ["Azul grafite", "#355070"],
+             ["Rosa pó", "#b56576"],
+             ["Cinzento", "#6c757d"],
+             ["Carvão", "#343a40"],
+             ["Quase preto", "#212529"],
+           ].each do |rotulo, hexa| %>
+          <button type="button"
+                  title="<%= "#{rotulo} (#{hexa})".gsub('"', "'") %>"
+                  data-action="click->cenaculo-cor#choose"
+                  data-cenaculo-cor-hex-param="<%= hexa %>"
+                  aria-label="<%= rotulo %>, <%= hexa %>"
+                  style="background-color: <%= hexa %>"
+                  class="h-11 w-11 shrink-0 cursor-pointer rounded-xl border border-stone-400/60 shadow-inner transition hover:scale-105 hover:ring-2 hover:ring-stone-500 hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"></button>
+        <% end %>
+      </div>
+    </div>
+
+    <%= f.hidden_field :cor,
+                       id: dom_id(@cenaculo, :cor_hex),
+                       autocomplete: "off",
+                       data: { cenaculo_cor_target: "hex" } %>
+  </div>
+
+  <div>
+    <%= f.label :imagem, "Imagem opcional", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.file_field :imagem,
+                     accept: "image/*",
+                     class: "mt-2 block w-full cursor-pointer text-sm text-stone-700 file:mr-3 file:inline-flex file:cursor-pointer file:rounded-full file:border file:border-stone-300 file:bg-white file:px-4 file:py-2 file:text-sm file:font-medium file:text-stone-800 hover:file:bg-stone-50" %>
+    <% if @cenaculo.persisted? && @cenaculo.imagem.attached? %>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <%= image_tag @cenaculo.imagem.variant(resize_to_limit: [200, 200]),
+                      class: "h-28 w-auto max-w-[12rem] rounded-lg object-cover ring-1 ring-stone-200",
+                      alt: "Pré-visualização" %>
+        <div class="flex items-center gap-2 text-sm text-stone-700">
+          <%= hidden_field_tag "cenaculo[remove_imagem]", "0", id: nil %>
+          <%= check_box_tag "cenaculo[remove_imagem]", "1", false, id: "cenaculo_remove_imagem",
+                            class: "h-4 w-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500/30" %>
+          <%= label_tag "cenaculo_remove_imagem", "Remover imagem atual", class: "cursor-pointer" %>
+        </div>
+      </div>
+    <% end %>
+    <p class="mt-1 text-xs text-stone-500">Aparecerá na página do cenáculo (redimensionada automaticamente).</p>
+  </div>
+
+  <div class="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
+    <%= f.submit (@cenaculo.new_record? ? "Criar cenáculo" : "Guardar"),
+                 class: "min-h-[44px] w-full cursor-pointer rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto sm:min-h-0" %>
+    <%= link_to "Cancelar", (@cenaculo.new_record? ? edicao_cenaculos_path(@edicao) : edicao_cenaculo_path(@edicao, @cenaculo)),
+                class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2.5 text-center text-sm font-medium text-stone-800 hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+  </div>
+<% end %>

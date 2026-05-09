@@ -1,0 +1,158 @@
+<% content_for :title, "#{@cenaculo.nome} · #{@edicao.rotulo} · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_cenaculos_path(@edicao), label: "Cenáculos" %>
+  <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+    <div class="min-w-0 flex-1">
+      <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Cenáculo · <%= @edicao.rotulo %></p>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <% if @cenaculo.cor.present? && @cenaculo.cor.match?(Cenaculo::HEX_COR) %>
+          <span class="inline-block h-9 w-9 shrink-0 rounded-lg shadow-inner ring-1 ring-stone-200/70" title="<%= @cenaculo.cor %>" style="<%= "background-color: #{@cenaculo.cor}" %>"></span>
+        <% end %>
+        <h1 class="break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= @cenaculo.nome %></h1>
+      </div>
+      <p class="mt-2 text-sm text-stone-600">
+        Casais e pastores ficam apenas nesta edição: os mesmos cenáculos podem ter outros membros quando mudar o ano ou o número da rodada.
+      </p>
+      <div class="mt-4 flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <%= link_to "Editar ficha", edit_edicao_cenaculo_path(@edicao, @cenaculo),
+                    class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+        <%= button_to "Remover cenáculo", edicao_cenaculo_path(@edicao, @cenaculo), method: :delete,
+                      form: {
+                        class: "w-full sm:w-auto",
+                        data: {
+                          turbo_confirm: "Remove este cenáculo, todos os casais agrupados e os pastores ligados apenas a ele nesta edição?"
+                        },
+                      },
+                      class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
+      </div>
+    </div>
+    <% if @cenaculo.imagem.attached? %>
+      <div class="shrink-0 lg:max-w-[18rem]">
+        <%= image_tag @cenaculo.imagem.variant(resize_to_limit: [480, 480]),
+                      class: "w-full rounded-2xl border border-stone-200/80 bg-stone-100 object-cover shadow-sm",
+                      alt: "Imagem do cenáculo #{@cenaculo.nome}" %>
+      </div>
+    <% end %>
+  </div>
+
+  <section class="mt-14" aria-labelledby="cen-grupo-membros">
+    <h2 id="cen-grupo-membros" class="font-display text-lg text-stone-900">Casais no grupo</h2>
+
+    <% if @cenaculo_casais.any? %>
+      <ul class="mt-6 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/95 shadow-sm">
+        <% @cenaculo_casais.each do |vinculo| %>
+          <% c = vinculo.casal %>
+          <li class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div class="min-w-0">
+              <p class="font-medium text-stone-900">
+                <span><%= c.nome_completo_ele.presence || "—" %></span>
+                <span class="text-stone-400"> e </span>
+                <span><%= c.nome_completo_ela.presence || "—" %></span>
+              </p>
+              <% if c.apelido_ele.present? || c.apelido_ela.present? %>
+                <p class="mt-1.5 text-sm font-medium text-teal-900">
+                  <% if c.apelido_ele.present? %>
+                    <span class="text-teal-700/80">Ele ·</span> <%= c.apelido_ele %>
+                  <% end %>
+                  <% if c.apelido_ele.present? && c.apelido_ela.present? %>
+                    <span class="mx-1 text-teal-500/55">·</span>
+                  <% end %>
+                  <% if c.apelido_ela.present? %>
+                    <span class="text-teal-700/80">Ela ·</span> <%= c.apelido_ela %>
+                  <% end %>
+                </p>
+              <% end %>
+            </div>
+            <%= button_to "Retirar do grupo",
+                          [@edicao, @cenaculo, vinculo],
+                          method: :delete,
+                          form: {
+                            data: {
+                              turbo_confirm: "Retirar este casal apenas deste cenáculo? Continuam registados na edição.",
+                            },
+                          },
+                          class: "w-full shrink-0 cursor-pointer rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 sm:w-auto" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
+        Ainda não há casais neste cenáculo.
+      </p>
+    <% end %>
+
+    <% if @casais_para_adicionar.any? %>
+      <%= render "cenaculos/selecionar_casais_distribuicao" %>
+    <% else %>
+      <% if @edicao.casais.none? %>
+        <p class="mt-6 rounded-xl border border-stone-200/80 bg-amber-50/70 px-4 py-3 text-sm text-amber-950">
+          Nenhum casal nesta edição ainda —
+          <%= link_to "importe o CSV ou abra a edição para carregar respostas", edicao_path(@edicao),
+                      class: "font-medium underline underline-offset-2 hover:text-stone-900" %>.
+        </p>
+      <% else %>
+        <p class="mt-6 rounded-xl border border-stone-200/80 bg-amber-50/70 px-4 py-3 text-sm text-amber-950">
+          Não há casais «livres» nesta edição — todos já estão atribuídos a algum cenáculo. Para integrar mais alguém neste grupo, retire esse casal primeiro do cenáculo onde já está (ou acrescente inscrições importando o CSV).
+        </p>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="mt-14" aria-labelledby="cen-grupo-pastores">
+    <h2 id="cen-grupo-pastores" class="font-display text-lg text-stone-900">Pastores</h2>
+
+    <% if @cenaculo_servos_lista.any? %>
+      <ul class="mt-6 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/95 shadow-sm">
+        <% @cenaculo_servos_lista.each do |vinculo| %>
+          <li class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div class="min-w-0">
+              <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+                          class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
+            </div>
+            <%= button_to "Retirar",
+                          [@edicao, @cenaculo, vinculo],
+                          method: :delete,
+                          form: {
+                            data: {
+                              turbo_confirm: "Retirar #{vinculo.servo.nome} como pastor deste cenáculo?",
+                            },
+                          },
+                          class: "w-full shrink-0 cursor-pointer rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 sm:w-auto" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
+        Ainda não há pastores atribuídos.
+      </p>
+    <% end %>
+
+    <% if @servos_para_adicionar.any? %>
+      <%= form_with model: [@edicao, @cenaculo, CenaculoServo.new],
+                    class: "mt-8 flex flex-col gap-4 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm sm:flex-row sm:flex-wrap sm:items-end" do |f| %>
+        <div class="min-w-0 flex-1">
+          <%= f.label :servo_id, "Adicionar servo como pastor deste cenáculo", class: "text-sm font-medium text-stone-700" %>
+          <%= f.collection_select :servo_id,
+                                  @servos_para_adicionar,
+                                  :id,
+                                  :nome,
+                                  { prompt: "Escolha o servo..." },
+                                  class: "mt-2 block min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/30 sm:min-h-10" %>
+        </div>
+        <%= f.submit "Adicionar pastor",
+                     class: "inline-flex min-h-[44px] w-full shrink-0 cursor-pointer items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto" %>
+      <% end %>
+    <% else %>
+      <% if !Servo.exists? %>
+        <p class="mt-6 rounded-xl border border-stone-200/80 bg-amber-50/70 px-4 py-3 text-sm text-amber-950">
+          <%= link_to "Cadastre servos na base voluntários", servos_path, class: "font-medium underline underline-offset-2 hover:text-stone-900" %> antes de designar pastores.
+        </p>
+      <% else %>
+        <p class="mt-6 text-sm text-stone-500">
+          Os servos disponíveis já estão todos neste cenáculo.
+        </p>
+      <% end %>
+    <% end %>
+  </section>
+</div>

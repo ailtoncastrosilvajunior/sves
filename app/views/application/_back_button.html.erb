@@ -1,0 +1,6 @@
+<%# locals: href (obrigatório), label ("Voltar" por defeito) %>
+<%= link_to local_assigns.fetch(:href),
+            class: "mb-6 inline-flex min-h-[44px] w-fit max-w-full shrink-0 items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 shadow-sm transition hover:border-stone-400 hover:bg-stone-50 sm:mb-8 sm:min-h-0 sm:py-2" do %>
+  <span class="text-stone-400" aria-hidden="true">←</span>
+  <span><%= local_assigns.fetch(:label, "Voltar") %></span>
+<% end %>

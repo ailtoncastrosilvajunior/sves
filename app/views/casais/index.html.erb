@@ -1,0 +1,71 @@
+<% content_for :title, "Casais · #{@edicao.rotulo} · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_path(@edicao), label: "Ficha da edição" %>
+  <div class="min-w-0">
+    <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>
+    <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Casais inscritos</h1>
+    <p class="mt-2 text-sm text-stone-600">
+      <% if @casais.size == 1 %>
+        <%= t("casais_views.index.resumo_um", count: @casais.size) %>
+      <% else %>
+        <%= t("casais_views.index.resumo_varios", count: @casais.size) %>
+      <% end %>
+      Dados vindos do CSV/Google Forms ficam atualizados a cada nova importação.
+    </p>
+  </div>
+
+  <% if @casais.any? %>
+    <div class="mt-10 overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
+      <div class="divide-y divide-stone-200/80">
+        <% @casais.each do |casal| %>
+          <div class="flex flex-col gap-2 border-l-[3px] border-transparent px-5 py-4 transition-colors duration-200 ease-out hover:border-teal-700/45 hover:bg-teal-50/35 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+            <div class="min-w-0">
+              <p class="font-medium text-stone-900">
+                <span><%= casal.nome_completo_ele.presence || "—" %></span>
+                <span class="text-stone-400"> e </span>
+                <span><%= casal.nome_completo_ela.presence || "—" %></span>
+              </p>
+              <% tem_apelido = casal.apelido_ele.present? || casal.apelido_ela.present? %>
+              <% if tem_apelido %>
+                <p class="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5 text-sm">
+                  <% if casal.apelido_ele.present? %>
+                    <span><span class="text-teal-600/85">Ele ·</span> <span class="font-medium tracking-tight text-teal-900"><%= casal.apelido_ele.strip %></span></span>
+                  <% end %>
+                  <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
+                    <span class="text-teal-500/55" aria-hidden="true">·</span>
+                  <% end %>
+                  <% if casal.apelido_ela.present? %>
+                    <span><span class="text-teal-600/85">Ela ·</span> <span class="font-medium tracking-tight text-teal-900"><%= casal.apelido_ela.strip %></span></span>
+                  <% end %>
+                </p>
+              <% end %>
+              <% if casal.telefones_contato.present? %>
+                <p class="mt-1 text-sm text-stone-600 break-words"><%= casal.telefones_contato %></p>
+              <% end %>
+              <% if casal.email_contato.present? %>
+                <%= mail_to casal.email_contato, casal.email_contato,
+                            class: "mt-1 inline-block text-sm text-stone-700 underline underline-offset-2 hover:text-stone-900" %>
+              <% end %>
+              <p class="mt-2 text-xs text-stone-500">
+                Fonte: <%= t("casais_views.fontes.#{casal.fonte_importacao}", default: casal.fonte_importacao.to_s.titleize) %>
+              </p>
+            </div>
+            <div class="shrink-0 text-right">
+              <% if casal.inscrito_em.present? %>
+                <p class="text-xs font-medium uppercase tracking-wide text-stone-500">Inscrito em</p>
+                <time class="mt-0.5 block text-sm text-stone-800" datetime="<%= casal.inscrito_em&.iso8601 %>">
+                  <%= l(casal.inscrito_em, format: :short) %>
+                </time>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
+      Ainda não há casais nesta edição — importe o CSV na ficha da edição ou aguarde a sincronização com a planilha.
+    </p>
+  <% end %>
+</div>

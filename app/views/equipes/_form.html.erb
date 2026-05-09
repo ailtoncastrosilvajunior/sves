@@ -1,0 +1,29 @@
+<%= form_with model: [@edicao, @equipe], class: "mt-8 max-w-xl space-y-6 sm:mt-10" do |f| %>
+  <% if @equipe.errors.any? %>
+    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+      <p class="font-medium">Corrige os campos:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% @equipe.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :nome, "Nome da equipe", class: "block text-sm font-medium text-stone-700" %>
+    <%= f.text_field :nome,
+                     class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                     autofocus: true,
+                     autocomplete: "off",
+                     placeholder: "Ex.: Acolhida, Sala, Vigília..." %>
+    <p class="mt-1 text-xs text-stone-500">O nome da equipa é único para todo o sistema (as equipas não pertencem a uma edição).</p>
+  </div>
+
+  <div class="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
+    <%= f.submit (@equipe.new_record? ? "Criar equipe" : "Guardar"),
+                 class: "min-h-[44px] w-full cursor-pointer rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto sm:min-h-0" %>
+    <%= link_to "Cancelar", (@equipe.new_record? ? edicao_equipes_path(@edicao) : edicao_equipe_path(@edicao, @equipe)),
+                class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2.5 text-center text-sm font-medium text-stone-800 hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+  </div>
+<% end %>

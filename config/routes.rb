@@ -1,0 +1,34 @@
+Rails.application.routes.draw do
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  get "up" => "rails/health#show", as: :rails_health_check
+
+  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
+  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+  root "inicio#index"
+  resource :session, only: %i[new create destroy]
+  get "equipes", to: "contexto#equipes", as: :equipes_em_curso
+  resources :edicoes do
+    member do
+      patch :marcar_em_curso
+      post :importar_casais_csv
+    end
+    resources :equipes do
+      resources :vinculos, controller: :equipes_servos, only: %i[create destroy] do
+        collection do
+          post :lote
+        end
+      end
+    end
+    resources :casais, only: %i[index]
+    resources :cenaculos do
+      resources :cenaculo_casais, path: "membros_casais", only: %i[create destroy]
+      resources :cenaculo_servos, path: "pastores", only: %i[create destroy]
+    end
+  end
+  resources :servos
+end

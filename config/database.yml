@@ -1,0 +1,109 @@
+<%# URL só quando não vazia (evita erro de URL vazia). %>
+<% db_url = ENV["DATABASE_URL"].to_s.strip %>
+<% sslmode = ENV.fetch("DATABASE_SSLMODE", "").strip %>
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= Integer(ENV.fetch("RAILS_MAX_THREADS", "5")) %>
+
+development:
+  <<: *default
+  <% if db_url != "" %>
+  url: <%= db_url %>
+  <% else %>
+  database: <%= ENV.fetch("DATABASE_NAME") { "sves_development" } %>
+  username: <%= ENV.fetch("DATABASE_USERNAME") { ENV["USER"] } %>
+  password: <%= ENV["DATABASE_PASSWORD"].presence %>
+  host: <%= ENV.fetch("DATABASE_HOST") { "127.0.0.1" } %>
+  port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+  <% if sslmode != "" %>
+  sslmode: <%= sslmode %>
+  <% end %>
+  <% end %>
+
+test:
+  <<: *default
+  <% if db_url != "" %>
+  url: <%= db_url %>
+  <% else %>
+  database: <%= ENV.fetch("DATABASE_TEST_NAME") { "sves_test" } %>
+  username: <%= ENV.fetch("DATABASE_USERNAME") { ENV["USER"] } %>
+  password: <%= ENV["DATABASE_PASSWORD"].presence %>
+  host: <%= ENV.fetch("DATABASE_HOST") { "127.0.0.1" } %>
+  port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+  <% if sslmode != "" %>
+  sslmode: <%= sslmode %>
+  <% end %>
+  <% end %>
+
+<%# Produção: DATABASE_URL (um URL) ou campos discretos / nomes opcionais por serviço Solid. %>
+production:
+  primary:
+    <<: *default
+    <% if db_url != "" %>
+    url: <%= db_url %>
+    <% else %>
+    database: <%= ENV.fetch("DATABASE_NAME") { raise ArgumentError, "defina DATABASE_URL ou DATABASE_NAME" } %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { raise ArgumentError, "defina DATABASE_USERNAME" } %>
+    password: <%= ENV["DATABASE_PASSWORD"].presence %>
+    host: <%= ENV.fetch("DATABASE_HOST") { raise ArgumentError, "defina DATABASE_HOST" } %>
+    port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+    <% if sslmode != "" %>
+    sslmode: <%= sslmode %>
+    <% end %>
+    <% end %>
+
+  <% primary_db = ENV["DATABASE_NAME"].to_s.strip %>
+  <% if db_url == "" && primary_db == "" %>
+  <%   raise ArgumentError, "defina DATABASE_URL ou DATABASE_NAME em produção" %>
+  <% end %>
+
+  cache:
+    <<: *default
+    migrations_paths: db/cache_migrate
+    <% if db_url != "" %>
+    url: <%= db_url %>
+    <% else %>
+    database: <%= ENV["DATABASE_CACHE_NAME"].presence || primary_db %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { raise ArgumentError, "defina DATABASE_USERNAME" } %>
+    password: <%= ENV["DATABASE_PASSWORD"].presence %>
+    host: <%= ENV.fetch("DATABASE_HOST") { raise ArgumentError, "defina DATABASE_HOST" } %>
+    port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+    <% if sslmode != "" %>
+    sslmode: <%= sslmode %>
+    <% end %>
+    <% end %>
+
+  queue:
+    <<: *default
+    migrations_paths: db/queue_migrate
+    pool: <%= Integer(ENV.fetch("SOLID_QUEUE_POOL", "5")) %>
+    <% if db_url != "" %>
+    url: <%= db_url %>
+    <% else %>
+    database: <%= ENV["DATABASE_QUEUE_NAME"].presence || primary_db %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { raise ArgumentError, "defina DATABASE_USERNAME" } %>
+    password: <%= ENV["DATABASE_PASSWORD"].presence %>
+    host: <%= ENV.fetch("DATABASE_HOST") { raise ArgumentError, "defina DATABASE_HOST" } %>
+    port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+    <% if sslmode != "" %>
+    sslmode: <%= sslmode %>
+    <% end %>
+    <% end %>
+
+  cable:
+    <<: *default
+    migrations_paths: db/cable_migrate
+    <% if db_url != "" %>
+    url: <%= db_url %>
+    <% else %>
+    database: <%= ENV["DATABASE_CABLE_NAME"].presence || primary_db %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { raise ArgumentError, "defina DATABASE_USERNAME" } %>
+    password: <%= ENV["DATABASE_PASSWORD"].presence %>
+    host: <%= ENV.fetch("DATABASE_HOST") { raise ArgumentError, "defina DATABASE_HOST" } %>
+    port: <%= Integer(ENV.fetch("DATABASE_PORT", "5432")) %>
+    <% if sslmode != "" %>
+    sslmode: <%= sslmode %>
+    <% end %>
+    <% end %>

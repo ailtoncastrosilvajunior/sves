@@ -1,0 +1,36 @@
+<% content_for :title, "Equipes · #{@edicao.rotulo} · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_path(@edicao), label: "Ficha da edição" %>
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>
+      <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Equipes</h1>
+      <p class="mt-2 text-sm text-stone-600">As equipas são partilhadas entre edições. Aqui vê todas e, entre parêntesis, quantos membros cada uma tem na composição para <%= @edicao.rotulo %>.</p>
+    </div>
+    <%= link_to "Nova equipe", new_edicao_equipe_path(@edicao),
+                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+  </div>
+
+  <% if @equipes.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+      <% @equipes.each do |equipe| %>
+        <li>
+          <%= link_to edicao_equipe_path(@edicao, equipe),
+                      class: "flex min-h-[48px] flex-wrap items-center justify-between gap-3 px-5 py-3 transition hover:bg-stone-50/90 active:bg-stone-100/90 sm:min-h-0 sm:py-4" do %>
+            <div class="min-w-0">
+              <% n = @membro_count_por_equipe[equipe.id].to_i %>
+              <span class="font-medium text-stone-900"><%= equipe.nome %></span>
+              <span class="mt-1 block text-xs text-stone-500"><%= n %> <%= n == 1 ? "servo" : "servos" %> nesta edição</span>
+            </div>
+            <span class="shrink-0 text-xs text-stone-500">Ver equipe →</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
+      Ainda não há equipas registadas no sistema — crie a primeira aqui ao lado.
+    </p>
+  <% end %>
+</div>

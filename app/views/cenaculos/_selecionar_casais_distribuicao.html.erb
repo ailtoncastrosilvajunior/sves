@@ -1,0 +1,233 @@
+<%# Painel elaborado para escolha heterogênea de casais ainda disponíveis na edição. %>
+<%# locals esperados implicitamente em show: @edicao, @cenaculo, @casais_para_adicionar %>
+<div data-controller="distribuicao-casais"
+     class="mt-8 rounded-2xl border border-teal-200/60 bg-gradient-to-b from-teal-50/40 to-white px-4 py-5 shadow-sm ring-1 ring-teal-100/70 sm:px-6">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+    <div class="min-w-0">
+      <p class="text-sm font-semibold text-teal-950">Painel de distribuição · casais disponíveis</p>
+      <p class="mt-2 max-w-prose text-sm leading-relaxed text-stone-700">
+        Critérios de balanceamento externos (idade, primeiro SVES, região, etc.) ficam pela coordenação.
+        Lista apenas casais da edição que <span class="font-medium text-teal-950">ainda não estão em nenhum cenáculo</span>:
+        assim evita sobrecargas e duplicidade na mesma rodada (para mudar de grupo há de o retirar do cenáculo anterior primeiro).
+      </p>
+      <p class="mt-2 text-xs text-teal-900/85">
+        Dica: na pesquisa pode combinar várias palavras (nomes completos ou de tratamento,
+        cidade no endereço, trechos da união ou dos movimentos, «abc», forma de entrada no SVES, etc.).
+      </p>
+    </div>
+    <div class="shrink-0 text-sm">
+      <%= link_to "Lista resumida de casais · edição",
+                  edicao_casais_path(@edicao),
+                  class: "font-medium text-stone-800 underline underline-offset-4 hover:text-stone-950" %>
+    </div>
+  </div>
+
+  <% contagem_disp = @casais_para_adicionar.size %>
+  <p class="mt-6 text-xs font-semibold uppercase tracking-wide text-stone-500">
+    <% if contagem_disp == 1 %>
+      1 casal disponível na lista seguinte para integrar cenáculos
+    <% else %>
+      <%= "#{contagem_disp} casais disponíveis na lista seguinte para integrar cenáculos" %>
+    <% end %>
+  </p>
+
+  <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <div class="min-w-0 flex-1">
+      <%= label_tag dom_id(@cenaculo, :filtro_cas_distribuicao),
+                    "Filtrar candidatos",
+                    class: "sr-only" %>
+      <%= text_field_tag :filtro_distribuicao,
+                         "",
+                         id: dom_id(@cenaculo, :filtro_cas_distribuicao),
+                         autocomplete: "off",
+                         placeholder: "Ex.: zona sul · primeira vez · música · com filhos abc…",
+                         data: {
+                           distribuicao_casais_target: "campoBusca",
+                           action: "input->distribuicao-casais#atualizarFiltragem",
+                         },
+                         class: "min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 shadow-inner outline-none ring-stone-400/30 placeholder:text-stone-400 focus:border-teal-600/60 focus:ring-2 focus:ring-teal-500/20 sm:min-h-10" %>
+    </div>
+    <%= button_tag "Limpar filtro",
+                   type: "button",
+                   data: { action: "click->distribuicao-casais#limparCampoBusca" },
+                   class: "inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2 text-sm font-medium text-stone-800 shadow-sm transition hover:bg-stone-50 sm:min-h-10" %>
+  </div>
+
+  <p data-distribuicao-casais-target="semResultados"
+     class="mt-4 hidden rounded-xl border border-amber-200/90 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950"
+     role="status">
+    Nenhum casal coincide com estas palavras — alargue ou limpe o filtro.
+  </p>
+
+  <p role="status" aria-live="polite"
+     data-distribuicao-casais-target="resultadoFiltragem"
+     class="mt-3 hidden rounded-lg bg-teal-100/70 px-3 py-2 text-sm font-medium text-teal-950"></p>
+
+  <div class="mt-5 max-h-[min(70vh,44rem)] overflow-y-auto rounded-2xl border border-stone-200/70 bg-white/90 pr-2 shadow-inner">
+    <ul class="space-y-5 p-4 sm:p-5">
+      <% @casais_para_adicionar.each do |casal| %>
+        <%= tag.li class: "rounded-2xl border border-stone-200 bg-white px-5 py-4 shadow-sm transition hover:border-teal-300/55 hover:bg-teal-50/25",
+                     data: {
+                       distribuicao_casais_target: "cartao",
+                       busca: texto_busca_distribuicao_casal(casal),
+                     } do %>
+          <div class="flex flex-col gap-5 lg:flex-row lg:justify-between lg:gap-8">
+            <article class="min-w-0 flex-1 space-y-4">
+              <header class="space-y-1">
+                <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h3 class="text-base font-semibold leading-snug text-stone-900">
+                    <%= casal.nome_completo_ele.presence || "—" %>
+                    <span class="font-normal text-stone-400"> e </span>
+                    <%= casal.nome_completo_ela.presence || "—" %>
+                  </h3>
+                </div>
+
+                <% if casal.apelido_ele.present? || casal.apelido_ela.present? %>
+                  <p class="text-sm font-medium leading-relaxed text-teal-900">
+                    <% if casal.apelido_ele.present? %>
+                      <span class="text-teal-700/80">Ele prefere</span> <%= casal.apelido_ele.strip %>
+                    <% end %>
+                    <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
+                      <span class="mx-1 text-teal-500/55">·</span>
+                    <% end %>
+                    <% if casal.apelido_ela.present? %>
+                      <span class="text-teal-700/80">Ela prefere</span> <%= casal.apelido_ela.strip %>
+                    <% end %>
+                  </p>
+                <% end %>
+
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <% if casal.inscrito_em.present? %>
+                    <span class="inline-flex rounded-full bg-stone-100 px-3 py-0.5 text-xs font-medium text-stone-700">
+                      Inscrito <%= l(casal.inscrito_em, format: :short) %>
+                    </span>
+                  <% end %>
+                  <span class="inline-flex rounded-full bg-stone-100 px-3 py-0.5 text-xs font-medium text-stone-700">
+                    Fonte <%= rotulo_fonte_casal(casal) %>
+                  </span>
+                  <% if casal.teve_casamento_anterior.present? %>
+                    <span class="inline-flex rounded-full bg-violet-100/90 px-3 py-0.5 text-xs font-medium text-violet-950">
+                      Casamento anterior <%= resumo_um_linha(casal.teve_casamento_anterior, length: 32) %>
+                    </span>
+                  <% end %>
+                  <% if casal.filhos_abc_jesus.present? || casal.horarios_abc_jesus.present? %>
+                    <span class="inline-flex rounded-full bg-teal-100/90 px-3 py-0.5 text-xs font-semibold text-teal-950">
+                      Espaço infantil ABC Jesus
+                    </span>
+                  <% end %>
+                </div>
+              </header>
+
+              <% if casal.telefones_contato.present? || casal.email_contato.present? %>
+                <div class="rounded-xl border border-stone-100 bg-stone-50/60 px-3 py-3 text-xs text-stone-700 sm:text-sm">
+                  <% if casal.telefones_contato.present? %>
+                    <p class="break-words"><span class="font-medium text-stone-600">Tel.</span> <%= casal.telefones_contato %></p>
+                  <% end %>
+                  <% if casal.email_contato.present? %>
+                    <p class="mt-2 break-all">
+                      <span class="font-medium text-stone-600">Email</span>
+                      <%= mail_to casal.email_contato, casal.email_contato,
+                                  class: "text-stone-900 underline underline-offset-2 hover:text-teal-800" %>
+                    </p>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <dl class="grid gap-x-6 gap-y-2 text-xs sm:grid-cols-2 sm:text-sm">
+                <div>
+                  <dt class="font-medium uppercase tracking-wide text-stone-400">Nascimento (ele)</dt>
+                  <dd class="mt-0.5 font-medium text-stone-900">
+                    <% dn = casal.data_nascimento_ele %>
+                    <% if dn %>
+                      <% idade_ele = idade_para_contexto(dn) %>
+                      <%= l(dn, format: :short) %>
+                      <% if idade_ele %>
+                        <span class="whitespace-nowrap text-stone-500"> (~<%= idade_ele %>)</span>
+                      <% end %>
+                    <% else %>
+                      —
+                    <% end %>
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-medium uppercase tracking-wide text-stone-400">Nascimento (ela)</dt>
+                  <dd class="mt-0.5 font-medium text-stone-900">
+                    <% dn = casal.data_nascimento_ela %>
+                    <% if dn %>
+                      <% idade_ela = idade_para_contexto(dn) %>
+                      <%= l(dn, format: :short) %>
+                      <% if idade_ela %>
+                        <span class="whitespace-nowrap text-stone-500"> (~<%= idade_ela %>)</span>
+                      <% end %>
+                    <% else %>
+                      —
+                    <% end %>
+                  </dd>
+                </div>
+                <% if casal.endereco.present? %>
+                  <div class="sm:col-span-2">
+                    <dt class="font-medium uppercase tracking-wide text-stone-400">Endereço</dt>
+                    <dd class="mt-0.5 whitespace-pre-line leading-relaxed text-stone-800"><%= h(truncate(casal.endereco.squish, length: 420, omission: "…")) %></dd>
+                  </div>
+                <% end %>
+              </dl>
+
+              <% carac_u = casal.caracterizacao_uniao %>
+              <% if carac_u.present? %>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-stone-400">União · visão rápida</p>
+                  <p class="mt-1 border-l-[3px] border-teal-600/55 pl-3 text-sm leading-relaxed text-stone-800"><%= truncate(carac_u.squish, length: 360, omission: "…") %></p>
+                </div>
+              <% end %>
+
+              <% extras_relevantes = casal.igreja_casamento_e_data.present? ||
+                                      casal.movimentos_ele.present? ||
+                                      casal.movimentos_ela.present? ||
+                                      casal.filhos_abc_jesus.present? ||
+                                      casal.horarios_abc_jesus.present? ||
+                                      casal.como_conheceu_seminario.present? %>
+              <% if extras_relevantes %>
+                <details class="group rounded-xl border border-stone-200 bg-stone-50/40 text-sm text-stone-800 open:border-teal-200/70 open:bg-white">
+                  <summary class="cursor-pointer select-none px-4 py-3 font-medium text-stone-900 marker:text-teal-800 group-open:text-teal-950">
+                    Mais contexto da inscrição
+                  </summary>
+                  <div class="border-t border-stone-100 px-4 pb-4 pt-3 text-xs leading-relaxed text-stone-700 sm:text-sm">
+                    <% if casal.igreja_casamento_e_data.present? %>
+                      <p class="mb-3"><span class="font-semibold text-stone-600">Igreja · data:</span><br /><%= h(truncate(casal.igreja_casamento_e_data.to_s.squish, length: 500, omission: "…")) %></p>
+                    <% end %>
+                    <% if casal.movimentos_ele.present? %>
+                      <p class="mb-3"><span class="font-semibold text-stone-600">Movimento (ele):</span><br /><%= truncate(casal.movimentos_ele.squish, length: 480, omission: "…") %></p>
+                    <% end %>
+                    <% if casal.movimentos_ela.present? %>
+                      <p class="mb-3"><span class="font-semibold text-stone-600">Movimento (ela):</span><br /><%= truncate(casal.movimentos_ela.squish, length: 480, omission: "…") %></p>
+                    <% end %>
+                    <% if casal.filhos_abc_jesus.present? %>
+                      <p class="mb-3"><span class="font-semibold text-stone-600">ABC Jesus · crianças:</span><br /><%= truncate(casal.filhos_abc_jesus.squish, length: 420, omission: "…") %></p>
+                    <% end %>
+                    <% if casal.horarios_abc_jesus.present? %>
+                      <p class="mb-3"><span class="font-semibold text-stone-600">ABC Jesus · horários:</span><br /><%= truncate(casal.horarios_abc_jesus.squish, length: 360, omission: "…") %></p>
+                    <% end %>
+                    <% if casal.como_conheceu_seminario.present? %>
+                      <p class=""><span class="font-semibold text-stone-600">Como conheceram o SVES:</span><br /><%= truncate(casal.como_conheceu_seminario.squish, length: 460, omission: "…") %></p>
+                    <% end %>
+                  </div>
+                </details>
+              <% end %>
+            </article>
+
+            <div class="flex shrink-0 flex-col gap-3 border-t border-dashed border-stone-200 pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+              <%= button_to "Adicionar a este cenáculo",
+                            [@edicao, @cenaculo, CenaculoCasal.new],
+                            method: :post,
+                            params: { cenaculo_casal: { casal_id: casal.id } },
+                            class: "inline-flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-full bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-teal-900/15 transition hover:bg-teal-900 sm:min-h-11 lg:w-56 lg:self-start" %>
+              <p class="text-center text-[11px] leading-snug text-stone-400 lg:text-left lg:text-xs lg:leading-relaxed lg:text-stone-500">
+                Nesta edição cada casal entra apenas num cenáculo. Para mudar de grupo, retire-o primeiro do outro cenáculo; então volta a aparecer aqui como disponível.
+              </p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>

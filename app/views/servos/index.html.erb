@@ -1,0 +1,45 @@
+<% content_for :title, "Servos · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: root_path, label: "Início" %>
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <h1 class="font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Servos</h1>
+      <p class="mt-2 text-sm text-stone-600">Base de voluntários cadastrados. Equipas e pastoria em cenáculos são tratados por edição.</p>
+    </div>
+    <%= link_to "Novo servo", new_servo_path,
+                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+  </div>
+
+  <% if @servos.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+      <% @servos.each do |servo| %>
+        <li>
+          <%= link_to servo_path(servo), class: "flex min-h-[48px] flex-wrap items-center justify-between gap-3 px-5 py-3 transition hover:bg-stone-50/90 active:bg-stone-100/90 sm:min-h-0 sm:py-4" do %>
+            <div class="min-w-0 flex-1 space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="block font-medium text-stone-900"><%= servo.nome %></span>
+                <% if servo.user %>
+                  <span class="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-900"><%= t("servos.index_badge_acesso") %></span>
+                <% end %>
+              </div>
+              <% if servo.conjuge %>
+                <span class="block truncate text-xs text-stone-500">Cônjuge: <%= servo.conjuge.nome %></span>
+              <% end %>
+              <% if servo.email.present? || servo.telefone.present? %>
+                <span class="block truncate text-xs text-stone-500">
+                  <%= [servo.email, servo.telefone].compact_blank.join(" · ") %>
+                </span>
+              <% end %>
+            </div>
+            <span class="shrink-0 text-xs text-stone-500">Ver · editar →</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
+      Nenhum servo cadastrado. Inclua coordenadores e participantes antes de montar equipes pela planilha ou por aqui.
+    </p>
+  <% end %>
+</div>

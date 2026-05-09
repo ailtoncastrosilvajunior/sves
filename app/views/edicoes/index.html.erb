@@ -1,0 +1,40 @@
+<% content_for :title, "Edições · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: root_path, label: "Início" %>
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <h1 class="font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Edições</h1>
+      <p class="mt-2 text-sm text-stone-600">Seminário de Vida no Espírito Santo — casais</p>
+    </div>
+    <%= link_to "Nova edição", new_edicao_path,
+                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+  </div>
+
+  <% if @edicoes.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+      <% @edicoes.each do |edicao| %>
+        <li class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <%= link_to edicao_path(edicao), class: "group min-w-0 flex-1" do %>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-medium text-stone-900 group-hover:underline group-hover:decoration-stone-400 group-hover:underline-offset-4"><%= edicao.rotulo %></span>
+              <% if edicao.ativa? %>
+                <span class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-900">Em curso</span>
+              <% end %>
+            </div>
+            <span class="mt-1 block text-xs text-stone-500">Ver detalhes →</span>
+          <% end %>
+          <% unless edicao.ativa? %>
+            <%= button_to "Marcar em curso", marcar_em_curso_edicao_path(edicao), method: :patch,
+                          form: { class: "w-full shrink-0 sm:w-auto", data: { turbo_confirm: "Passar todos os atalhos desta app para esta edição (#{edicao.rotulo})?" } },
+                          class: "w-full cursor-pointer rounded-full border border-amber-200/90 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-950 hover:bg-amber-100/90 sm:w-auto" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
+      Nenhuma edição ainda. Cria a primeira para 2026.1 ou outro ciclo.
+    </p>
+  <% end %>
+</div>

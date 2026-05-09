@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title><%= content_for(:title) || "SVES · Casais" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="application-name" content="SVES Casais">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fafaf9">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen overflow-x-hidden font-sans text-stone-900 antialiased">
+    <div class="flex min-h-screen flex-col">
+      <header class="sticky top-0 z-50 border-b border-stone-200/70 bg-stone-50/90 pb-0 pt-[max(0.25rem,env(safe-area-inset-top))] backdrop-blur-md supports-[backdrop-filter]:bg-stone-50/75 lg:bg-stone-50/85">
+        <div class="mx-auto flex w-full max-w-6xl min-w-0 items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-4 lg:px-8 lg:py-4">
+          <%= link_to root_path, class: "group inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center gap-2 no-underline sm:items-baseline" do %>
+            <span class="font-display text-xl tracking-tight text-stone-900 transition group-hover:text-stone-700 sm:text-xl">SVES</span>
+            <span class="hidden text-sm text-stone-500 lg:inline">Casais · 2026.1</span>
+          <% end %>
+          <div class="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
+            <% if user_signed_in? %>
+              <span class="shrink-0 rounded-full border border-amber-200/80 bg-amber-50/90 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-amber-900/90 lg:hidden" title="Construção ativa">
+                Beta
+              </span>
+              <%# Cabeçalho em telemóvel: nome primeiro, «Sair» como texto-simples %>
+              <div class="flex min-w-0 max-w-[min(100%,14rem)] items-center justify-end gap-2 sm:max-w-xs lg:hidden">
+                <span class="min-w-0 truncate text-sm font-normal text-stone-700" title="<%= current_user.email %>">
+                  <%= navegacao_user_label %>
+                </span>
+                <%= button_to session_path, method: :delete,
+                              form: { class: "m-0 shrink-0 inline" },
+                              class: "shrink-0 rounded-md bg-transparent px-2 py-1.5 text-xs font-normal text-stone-500 underline decoration-stone-300 underline-offset-[3px] transition hover:bg-stone-100/80 hover:text-stone-900 hover:decoration-stone-500" do %>
+                  Sair
+                <% end %>
+              </div>
+              <%# Desktop: ligações + separador fino + identidade + «Sair» neutro %>
+              <nav class="hidden min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-1.5 text-sm font-medium text-stone-600 lg:flex lg:gap-x-4" aria-label="Secções do painel">
+                <% if edicao_em_curso %>
+                  <%= link_to "Edição em curso", edicao_path(edicao_em_curso),
+                              class: "inline-flex max-w-[11rem] truncate rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900 sm:max-w-none",
+                              title: edicao_em_curso.rotulo %>
+                  <%= link_to "Equipes", equipes_em_curso_path,
+                              class: "inline-flex items-center rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900" %>
+                <% end %>
+                <%= link_to "Servos", servos_path,
+                            class: "inline-flex items-center rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900" %>
+                <%= link_to "Edições", edicoes_path,
+                            class: "inline-flex items-center rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900" %>
+                <span class="hidden h-5 w-px shrink-0 self-center bg-stone-200 lg:inline-block" aria-hidden="true"></span>
+                <span class="hidden max-w-[12rem] truncate text-sm font-normal text-stone-800 lg:inline-block" title="<%= current_user.email %>"><%= navegacao_user_label %></span>
+                <span class="hidden shrink-0 items-center lg:inline-flex">
+                  <%= button_to session_path, method: :delete,
+                                form: { class: "m-0 inline" },
+                                class: "-my-px inline-flex shrink-0 items-center rounded-md bg-transparent px-2 py-1 text-xs font-normal text-stone-500 underline decoration-stone-300 underline-offset-[3px] transition hover:bg-stone-100/80 hover:text-stone-900 hover:decoration-stone-500" do %>
+                    Sair
+                  <% end %>
+                </span>
+              </nav>
+            <% else %>
+              <nav class="hidden flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm font-medium text-stone-600 lg:flex" aria-label="Acesso ao painel">
+                <span class="hidden xl:inline text-stone-500">Área restrita</span>
+                <%= link_to "Entrar no painel", new_session_path,
+                            class: "inline-flex min-h-[44px] items-center rounded-full bg-stone-900 px-4 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/10 transition hover:bg-stone-800 lg:min-h-0" %>
+              </nav>
+            <% end %>
+          </div>
+        </div>
+      </header>
+
+      <%# Flash messages (notice / alert) %>
+      <%= render "application/flash" %>
+
+      <%# Padding-bottom evita que o último conteúdo fique por baixo da barra inferior (até lg). %>
+      <main class="min-w-0 flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
+        <%= yield %>
+      </main>
+
+      <footer class="hidden border-t border-stone-200/70 bg-white/40 px-4 pb-[max(2rem,calc(env(safe-area-inset-bottom,0px)+1.25rem))] pt-8 text-center text-xs leading-relaxed text-stone-500 backdrop-blur-sm sm:pb-[max(2.5rem,calc(env(safe-area-inset-bottom,0px)+1.25rem))] sm:pt-10 lg:block">
+        <span class="mx-auto inline-block max-w-prose"><%= t("footer.credito_html") %></span>
+      </footer>
+
+      <%= render "application/mobile_bottom_nav" %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-display: "Instrument Serif", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --color-sves-ink: #1c1917;
+  --color-sves-mist: #fafaf9;
+  --color-sves-accent: #44403c;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-[var(--color-sves-mist)] text-[var(--color-sves-ink)];
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    @media (max-width: 1023px) {
+      body {
+        overscroll-behavior-y: none;
+      }
+    }
+  }
+
+  ::selection {
+    background-color: rgb(120 113 108 / 0.25);
+  }
+}
+
+@layer utilities {
+  .tap-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

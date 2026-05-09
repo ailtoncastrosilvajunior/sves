@@ -1,0 +1,102 @@
+pt-BR:
+  sessions:
+    page_title: "Entrar · SVES"
+    subtitulo_marca: "Coordenação"
+    heading: "Acesso ao painel"
+    subheading: "Use o e‑mail da sua conta SVES e a sua palavra‑passe. O painel só é para a equipa de coordenação e servos com acesso atribuído."
+    email_label: "E-mail"
+    password_label: "Palavra‑passe"
+    submit_entrar: "Entrar"
+    voltar_inicio: "Voltar ao início"
+    require_login_flash: "Inicie sessão para continuar."
+    credentials_invalid: "E-mail ou palavra‑passe incorretos."
+    flash_signed_in: "Sessão iniciada."
+    flash_signed_out: "Sessão terminada."
+  servos:
+    acesso_precisa_email: "é necessário para criar acesso à plataforma"
+    senha_obrigatoria_com_acesso: "é necessária para criar acesso (mínimo 8 caracteres)"
+    sem_conta_para_alterar_senha: "Este servo ainda não tem conta. Marque «Dar acesso à plataforma» e defina uma palavra‑passe."
+    definir_senha_sem_conta: "Não há conta associada a este servo. Marque «Dar acesso à plataforma» ou deixe a palavra‑passe em branco."
+    email_ja_associado_conta: "já está associado a outra conta de acesso"
+    form_acesso_secao_titulo: "Acesso à plataforma (opcional)"
+    form_acesso_explicacao: "Crie uma conta de login apenas para servos que vão usar o painel. O e‑mail deve ser único entre utilizadores SVES."
+    form_dar_acesso: "Dar acesso à plataforma (palavras‑passe abaixo)"
+    form_instruction_password_existing_user: "Para alterar a palavra‑passe use os campos abaixo (mínimo 8 caracteres). Deixe em branco para manter."
+    form_placeholder_senha: "Mínimo 8 caracteres"
+    index_badge_acesso: "com acesso SVES"
+  casais_views:
+    index:
+      resumo_um: "%{count} casal registado nesta edição."
+      resumo_varios: "%{count} casais registados nesta edição."
+    fontes:
+      manual: "Manual"
+      arquivo_csv: "Arquivo CSV"
+      planilha_google: "Planilha Google"
+  time:
+    formats:
+      short: "%d/%m/%Y, %H:%M"
+  date:
+    formats:
+      short: "%d/%m/%Y"
+  edicoes:
+    importar_csv:
+      titulo: "Casais · importar CSV"
+      descricao: "Envie o CSV exportado do formulário de inscrição do Google Forms. Pode repetir sempre que entrarem novas respostas: casais já importados são atualizados, não duplicados."
+      arquivo_label: "Arquivo CSV"
+      submit: "Importar CSV"
+      dica_google: "Depois será possível escolher sincronização recorrente com a planilha Google (mesmas colunas)."
+      alertas:
+        arquivo_obrigatorio: "Selecione um arquivo CSV."
+        arquivo_invalido: "É preciso usar um arquivo com extensão .csv exportado pelo Google Forms ou equivalente."
+        sem_linhas_validas: "Nenhum casal foi importado. Confira se o arquivo tem nomes completos nos campos esperados pelo formulário ou se já importou esse lote antes."
+        csv_malformado: "Não conseguimos ler o CSV — verifique se o arquivo não está corrupto ou vazio."
+        registro_invalido: "Erro ao salvar uma linha: %{mensagem}"
+      notice:
+        sucesso: "Importação concluída: %{criados} casal(is) novos e %{atualizados} atualização(ões)."
+  footer:
+    credito_html: 'Face de Cristo · Seminário de Vida no Espírito Santo para Casais'
+  inicio:
+    marca_face: "Face de Cristo"
+    titulo: "Seminário de Vida no Espírito Santo — Casais · 2026.1"
+    subtitulo: "Organize edições, servos em equipes, casais participantes e cenáculos em um só lugar — com importação a partir da planilha ou CSV quando estiver disponível."
+    banner_alt: "Banner do Seminário de Vida no Espírito Santo para Casais — 15 a 17 de maio, Face de Cristo."
+    cta_primario: "Gerir edições"
+    cta_secundario: "Servos, equipes, casais e cenáculos: em construção"
+    pe: "Pela intercessão de Nossa Senhora do Carmo, São João Paulo II, São Francisco de Assis e Santa Terezinha"
+    evento_inscricoes:
+      secao_titulo: "Inscrições e informações do evento"
+      titulo: "Inscrições — Seminário de Vida no Espírito Santo para Casais"
+      periodo: "15 a 17 de maio de 2026"
+      linha_contexto: "Seminário de Vida no Espírito Santo para Casais · Comunidade Católica Face de Cristo · 15 a 17 de maio."
+      chamada: >
+        Venha viver essa experiência única com o amor de Deus e ter a sua vida e o seu matrimônio transformados.
+      local_titulo: "Local"
+      local_nome: "Comunidade Católica Face de Cristo"
+      local_endereco: "Rua Dr. Edmilson Barros de Oliveira, 191"
+      horarios_titulo: "Horários"
+      horario_sexta: "Sexta-feira (dia 16) · 19h às 21h30"
+      horario_sabado: "Sábado (dia 17) · 8h às 20h"
+      horario_domingo: "Domingo (dia 18) · 8h às 17h30 — Missa durante o evento"
+      valor_titulo: "Valor da inscrição"
+      valor_texto: "R$ 250,00 por casal."
+      valor_nota: "Todas as refeições inclusas no valor da inscrição."
+      pagamento_titulo: "Formas de pagamento"
+      pix_texto: "PIX — Comunidade Face de Cristo · chave (celular):"
+      pix_chave: "85981134457"
+      cartao_texto: "Cartão de crédito — na secretaria da Comunidade."
+      contato_titulo: "Mais informações"
+      instagram_label: "Instagram"
+      instagram_handle: "@comfacedecristo"
+  cards:
+    edicoes:
+      titulo: "Edições"
+      texto: "Ano, número e vínculo com a planilha de referência por rodada."
+    equipes:
+      titulo: "Equipes"
+      texto: "Composição e papel de cada servo em coordenação ou participação."
+    casais:
+      titulo: "Casais"
+      texto: "Participantes por edição, alinhados ao fluxo da inscrição e da planilha."
+    cenaculos:
+      titulo: "Cenáculos"
+      texto: "Reunião dos casais participantes com nome, cor, imagem e pastores nesta edição."

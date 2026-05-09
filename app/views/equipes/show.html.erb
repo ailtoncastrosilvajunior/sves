@@ -1,0 +1,149 @@
+<% content_for :title, "#{@equipe.nome} · #{@edicao.rotulo} · SVES" %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_equipes_path(@edicao), label: "Equipes" %>
+  <div class="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+    <div class="min-w-0">
+      <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Equipe · <%= @edicao.rotulo %></p>
+      <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= @equipe.nome %></h1>
+      <p class="mt-2 text-sm text-stone-600">Membros com papel nesta equipa apenas na edição <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span> (<span class="font-medium text-stone-800">coordenação</span> ou <span class="font-medium text-stone-800">participação</span>). Outras edições são independentes.</p>
+    </div>
+    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+      <%= link_to "Editar", edit_edicao_equipe_path(@edicao, @equipe),
+                  class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      <%= button_to "Remover equipe", edicao_equipe_path(@edicao, @equipe), method: :delete,
+                    form: {
+                      class: "w-full sm:w-auto",
+                      data: {
+                        turbo_confirm: "Remover esta equipa e todos os vínculos servo–equipa em todas as edições?"
+                      }
+                    },
+                    class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
+    </div>
+  </div>
+
+  <section class="mt-12" aria-labelledby="equipe-membros-t">
+    <h2 id="equipe-membros-t" class="font-display text-lg text-stone-900">Membros</h2>
+
+    <% if @vinculos.any? %>
+      <ul class="mt-6 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/90 shadow-sm">
+        <% @vinculos.each do |vinculo| %>
+          <li class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div class="min-w-0">
+              <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+                          class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
+              <span class="mt-1 inline-block rounded-full bg-stone-200/70 px-2.5 py-0.5 text-xs font-medium text-stone-700">
+                <%= vinculo.coordenacao? ? "Coordenação" : "Participação" %>
+              </span>
+            </div>
+            <%= button_to "Retirar", edicao_equipe_vinculo_path(@edicao, @equipe, vinculo), method: :delete,
+                          form: { data: { turbo_confirm: "Retirar #{vinculo.servo.nome} desta equipe?" } },
+                          class: "w-full shrink-0 cursor-pointer rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 sm:w-auto" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
+        Ainda não há servos nesta equipe. Arraste (em ecrã largo) ou seleccione vários na lista em baixo.
+      </p>
+    <% end %>
+  </section>
+
+  <section class="mt-12" aria-labelledby="equipe-add-t">
+    <h2 id="equipe-add-t" class="font-display text-lg text-stone-900">Adicionar servos à equipe</h2>
+
+    <% if @base_voluntarios_vazia %>
+      <p class="mt-6 rounded-2xl border border-stone-200/80 bg-amber-50/80 px-5 py-5 text-sm leading-relaxed text-amber-950">
+        Ainda não há nenhum servo na <%= link_to "base de voluntários", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>.
+        Cadastre pelo menos um perfil antes de arrastar ou largar aqui.
+      </p>
+    <% elsif @servos_disponiveis_para_vinculo.any? %>
+        <%= form_with url: lote_edicao_equipe_vinculos_path(@edicao, @equipe),
+                      method: :post,
+                      id: dom_id(@equipe, :lote_vinculos),
+                      html: {
+                        class: "mt-6 space-y-0 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm sm:px-6",
+                        data: {
+                          controller: "equipe-vinculos-drag",
+                          turbo: true,
+                          equipe_vinculos_drag_target: "form",
+                        },
+                      } do %>
+          <%= hidden_field_tag :servidor_principal_ids, "",
+                               autocomplete: "off",
+                               data: { equipe_vinculos_drag_target: "principals" } %>
+
+          <fieldset class="border-0 p-0">
+            <legend class="text-sm font-medium text-stone-700">Papel ao entrar na equipe</legend>
+            <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:gap-6">
+              <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-stone-800">
+                <%= radio_button_tag :forma, "participante", true %>
+                Participação
+              </label>
+              <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-stone-800">
+                <%= radio_button_tag :forma, "coordenacao", false %>
+                Coordenação
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-stone-500">Arrastar daqui</p>
+              <p class="mt-1 text-sm text-stone-600">Lista com todos os servos da base que ainda não estão nesta equipa para <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span>. <span class="lg:hidden"><span class="font-medium text-stone-800">Telemóvel:</span> toque para seleccionar vários;</span><span class="hidden lg:inline">Em ecrã largo também pode arrastar;</span> cônjuge associado faz o par entrar quando ambos estão na base.</p>
+              <ul data-equipe-vinculos-drag-target="pool"
+                  class="mt-4 max-h-[22rem] space-y-2 overflow-y-auto rounded-xl border border-stone-200/90 bg-stone-50/50 p-3">
+                <% @servos_disponiveis_para_vinculo.each do |s| %>
+                  <% parceiro = s.conjuge || s.parceiro_conjuge %>
+                  <li draggable="true"
+                      role="checkbox"
+                      aria-checked="false"
+                      data-servo-id="<%= s.id %>"
+                      data-action="dragstart->equipe-vinculos-drag#dragstart dragend->equipe-vinculos-drag#dragend click->equipe-vinculos-drag#pick"
+                      class="cursor-grab select-none rounded-xl border border-stone-200/80 bg-white px-4 py-3 shadow-sm active:cursor-grabbing"
+                      aria-label="<%= apresentacao_sves_com_conjuge(s).presence || s.nome %>">
+                    <span class="block text-base font-semibold leading-snug text-stone-900"><%= s.nome %></span>
+                    <% if parceiro %>
+                      <span class="mt-1 block text-xs font-medium leading-snug text-red-950/95"><%= sves_conjuge_linha_secundaria(parceiro) %></span>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <%# Telemóvel / app: sem zona de «largar». Desktop (lg): arrastar até à área tracejada. %>
+              <div class="hidden flex-col gap-2 lg:flex">
+                <p class="text-xs font-semibold uppercase tracking-wide text-stone-500">Largar aqui</p>
+                <div data-equipe-vinculos-drag-target="dropzone"
+                     data-action="dragover->equipe-vinculos-drag#dragover dragleave->equipe-vinculos-drag#dragleave drop->equipe-vinculos-drag#drop"
+                     class="flex min-h-[8.5rem] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50/40 px-4 py-6 text-center transition">
+                  <span class="text-sm font-medium text-stone-800">Largue o servo nesta zona</span>
+                  <span class="mt-2 max-w-[20rem] text-xs leading-relaxed text-stone-600">Ou marque vários na lista e use «Adicionar seleccionados». Cada marcação conta com eventual cônjuge na mesma entrada.</span>
+                </div>
+              </div>
+              <%= button_tag type: "button",
+                             data: {
+                               equipe_vinculos_drag_target: "touchBtn",
+                               action: "click->equipe-vinculos-drag#confirmSelection",
+                             },
+                             disabled: true,
+                             class: "min-h-[44px] w-full rounded-full border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-50" do %>
+                <span data-equipe-vinculos-drag-target="touchBtnLabel">Adicionar seleccionados</span>
+              <% end %>
+              <%= button_tag "Confirmar inclusão",
+                             type: "submit",
+                             data: { behavior: "lote-submit" },
+                             class: "sr-only",
+                             tabindex: "-1",
+                             "aria-hidden": "true" %>
+            </div>
+          </div>
+        <% end %>
+    <% else %>
+      <p class="mt-6 rounded-2xl border border-stone-200/80 bg-stone-50/60 px-5 py-5 text-sm text-stone-600">
+        Nesta edição já não há ninguém de fora por acrescentar: todos os voluntários registados fazem parte desta equipa. Para convidar mais nomes ou retirá-los, use a <%= link_to "lista de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %> ou retire alguém na secção Membros acima e volte aqui.
+      </p>
+    <% end %>
+  </section>
+</div>
