@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t app .
-# docker run -p 80:80 -e RAILS_MASTER_KEY=...
+# docker run -p 8080:8080 -e RAILS_MASTER_KEY=...
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -60,8 +60,10 @@ RUN SECRET_KEY_BASE_DUMMY=1 DATABASE_URL="postgresql://asset_build_placeholder:a
 # Final stage for app image
 FROM base
 
-# Thruster: HTTP listen default 80 (PaaS como DigitalOcean faz readiness em :80). Puma fica em TARGET_PORT (3000).
-ENV TARGET_PORT="3000"
+# Thruster: ouvir na 8080 (porta não privilegiada; uid 1000). No App Platform, defina o HTTP port do serviço para **8080** (ver .env.example).
+# Puma fica atrás do proxy na TARGET_PORT (Thruster repõe PORT no processo Rails).
+ENV HTTP_PORT="8080" \
+    TARGET_PORT="3000"
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
@@ -71,14 +73,6 @@ RUN groupadd --system --gid 1000 rails && \
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
-# uid 1000 não pode fazer bind à 80 sem cap; Thruster (binário Go) com cap_net_bind_service → mesmo serviço na 80 que o probe.
-USER root
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y libcap2-bin && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives && \
-    cd /rails && \
-    THR="$(bundle exec ruby -e "require %q{bundler/setup}; puts Gem.bin_path(%q{thruster}, %q{thrust})")" && \
-    test -x "$THR" && setcap 'cap_net_bind_service=+ep' "$THR"
 USER rails:rails
 
 # Runtime obrigatório para produção: `DATABASE_URL` (BD ligada ao serviço) e chave secreta Rails.
@@ -88,5 +82,5 @@ USER rails:rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+EXPOSE 8080
 CMD ["./bin/thrust", "./bin/rails", "server"]
