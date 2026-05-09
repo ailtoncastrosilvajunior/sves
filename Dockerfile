@@ -69,7 +69,10 @@ USER 1000:1000
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
-# Entrypoint prepares the database.
+# Runtime obrigatório para produção: `DATABASE_URL` (BD ligada ao serviço) e chave secreta Rails.
+# Não há `master.key` na imagem; defina `RAILS_MASTER_KEY` (valor de config/master.key local) OU `SECRET_KEY_BASE`.
+# Ver comentários no `.env.example`.
+# Entrypoint prepara base de dados quando o comando é Puma/Thruster + `rails server`.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
