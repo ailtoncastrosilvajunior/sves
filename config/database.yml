@@ -1,5 +1,10 @@
 <%# URL só quando não vazia (evita erro de URL vazia). %>
 <% db_url = ENV["DATABASE_URL"].to_s.strip %>
+<% secret_key_dummy = ENV["SECRET_KEY_BASE_DUMMY"].to_s.strip %>
+<%# Build da imagem (`SECRET_KEY_BASE_DUMMY=1 assets:precompile`) sem Postgres: URL dummy só para gerar YAML; em runtime use DATABASE_URL real. %>
+<% if db_url.empty? && secret_key_dummy != "" %>
+<%   db_url = "postgresql://asset_build_placeholder:asset_build_placeholder@127.0.0.1/asset_build_placeholder" %>
+<% end %>
 <% sslmode = ENV.fetch("DATABASE_SSLMODE", "").strip %>
 
 default: &default
