@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t app .
-# docker run -p 8080:8080 -e RAILS_MASTER_KEY=...
+# docker run -p 80:80 -e RAILS_MASTER_KEY=...
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -60,12 +60,12 @@ RUN SECRET_KEY_BASE_DUMMY=1 DATABASE_URL="postgresql://asset_build_placeholder:a
 # Final stage for app image
 FROM base
 
-# Thruster: ouvir na 8080 (porta não privilegiada; uid 1000). No App Platform, defina o HTTP port do serviço para **8080** (ver .env.example).
-# Puma fica atrás do proxy na TARGET_PORT (Thruster repõe PORT no processo Rails).
-ENV HTTP_PORT="8080" \
+# Thruster na **porta 80** → alinha com o readiness por defeito do DigitalOcean App Platform (probe :80),
+# sem ter de mudar http_port no painel. Ficheiros em disco continuam com owner `rails`; o processo HTTP corre como root.
+ENV HTTP_PORT="80" \
     TARGET_PORT="3000"
 
-# Run and own only the runtime files as a non-root user for security
+# Utilizador não privilegiado para ownership dos ficheiros da app (o CMD usa root só para bind à 80).
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
 
@@ -73,7 +73,7 @@ RUN groupadd --system --gid 1000 rails && \
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
-USER rails:rails
+USER root
 
 # Runtime obrigatório para produção: `DATABASE_URL` (BD ligada ao serviço) e chave secreta Rails.
 # Não há `master.key` na imagem; defina `RAILS_MASTER_KEY` (valor de config/master.key local) OU `SECRET_KEY_BASE`.
@@ -82,5 +82,6 @@ USER rails:rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 8080
+EXPOSE 80
 CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["sh", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}"]
