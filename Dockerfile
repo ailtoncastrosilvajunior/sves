@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t app .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name app app
+# docker run -p 8080:8080 -e RAILS_MASTER_KEY=... (-- ver HTTP_PORT na secção runtime abaixo)
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -60,6 +60,11 @@ RUN SECRET_KEY_BASE_DUMMY=1 DATABASE_URL="postgresql://asset_build_placeholder:a
 # Final stage for app image
 FROM base
 
+# Thruster faz default HTTP_PORT=80 — portas baixas exigem root; aqui fazemos uid 1000 ligar só em porta alta.
+# PaaS (ex. DigitalOcean): defina porta HTTP/internal e health checks para **8080** (onde o Thruster ouve).
+ENV HTTP_PORT="8080" \
+    TARGET_PORT="3000"
+
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
@@ -76,5 +81,5 @@ COPY --chown=rails:rails --from=build /rails /rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+EXPOSE 8080
 CMD ["./bin/thrust", "./bin/rails", "server"]
