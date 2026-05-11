@@ -1,7 +1,9 @@
 <% content_for :title, "#{@servo.nome} · Servos · SVES" %>
 
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-  <%= render "application/back_button", href: servos_path, label: "Servos" %>
+  <% back_href = pode_gerir_painel? ? servos_path : root_path %>
+  <% back_label = pode_gerir_painel? ? "Servos" : "Início" %>
+  <%= render "application/back_button", href: back_href, label: back_label %>
   <div class="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
     <div class="min-w-0">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Servo</p>
@@ -30,6 +32,18 @@
             <dd class="mt-1"><span class="font-mono text-sm font-medium text-stone-900"><%= @servo.user.email %></span></dd>
           </div>
         <% end %>
+        <% if @servo.origem_cadastro.present? %>
+          <div>
+            <dt class="text-xs uppercase tracking-wide text-stone-500"><%= t("servos.show_origem_label") %></dt>
+            <dd class="mt-1 text-stone-800"><%= t("servos.origem.#{@servo.origem_cadastro}", default: @servo.origem_cadastro) %></dd>
+          </div>
+        <% end %>
+        <% if @servo.papel.present? %>
+          <div>
+            <dt class="text-xs uppercase tracking-wide text-stone-500"><%= t("servos.show_papel_label") %></dt>
+            <dd class="mt-1 text-stone-800"><%= t("servos.papel.#{@servo.papel}", default: @servo.papel) %></dd>
+          </div>
+        <% end %>
         <% if @servo.telefone.present? %>
           <div>
             <dt class="text-xs uppercase tracking-wide text-stone-500">Telefone</dt>
@@ -56,26 +70,42 @@
       </dl>
     </div>
     <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
-      <%= link_to "Editar", edit_servo_path(@servo),
-                  class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
-      <%= button_to "Remover", servo_path(@servo), method: :delete,
-                    form: {
-                      class: "w-full sm:w-auto",
-                      data: {
-                        turbo_confirm: "Remover este servo? Os vínculos com equipas e com pastoria em cenáculos serão apagados."
-                      }
-                    },
-                    class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
+      <% if pode_gerir_painel? %>
+        <% if @servo.user.present? && @servo.participante? && !@servo.user.admin? && ENV["SVES_SEED_SERVO_PASSWORD"].present? %>
+          <%= button_to t("servos.redefinir_senha_submit"), redefinir_senha_participante_servo_path(@servo), method: :post,
+                        form: {
+                          data: {
+                            turbo_confirm: t("servos.redefinir_confirmar"),
+                          },
+                        },
+                        class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-950 shadow-sm hover:bg-amber-100/90 sm:w-auto sm:min-h-0" %>
+        <% end %>
+        <% if @servo.user.blank? && @servo.email.present? && ENV["SVES_SEED_SERVO_PASSWORD"].present? %>
+          <%= button_to t("servos.liberar_acesso_submit"), liberar_acesso_servo_path(@servo), method: :post,
+                        class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-amber-900 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-amber-950 sm:w-auto sm:min-h-0" %>
+        <% end %>
+        <%= link_to "Editar", edit_servo_path(@servo),
+                    class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+        <%= button_to "Remover", servo_path(@servo), method: :delete,
+                      form: {
+                        class: "w-full sm:w-auto",
+                        data: {
+                          turbo_confirm: "Remover este servo? Os vínculos com equipes e com pastoria em cenáculos serão apagados."
+                        }
+                      },
+                      class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
+      <% end %>
     </div>
   </div>
 
+  <% if pode_gerir_painel? %>
   <dl class="mt-10 grid gap-3 sm:grid-cols-3 sm:gap-4">
     <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
       <dt class="text-xs uppercase tracking-wide text-stone-500">Vínculos equipe × edição</dt>
       <dd class="mt-1 font-display text-2xl text-stone-900"><%= @servo.equipe_servos.count %></dd>
     </div>
     <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
-      <dt class="text-xs uppercase tracking-wide text-stone-500">Equipas diferentes em que aparece</dt>
+      <dt class="text-xs uppercase tracking-wide text-stone-500">Equipes diferentes em que aparece</dt>
       <dd class="mt-1 font-display text-2xl text-stone-900"><%= @servo.equipes.distinct.count %></dd>
     </div>
     <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
@@ -85,6 +115,7 @@
   </dl>
 
   <p class="mt-10 text-sm leading-relaxed text-stone-500">
-    Equipas e pastoria nos cenáculos são sempre por edição: um cenáculo agrupa casais participantes com os seus pastores.
+    Equipes e pastoria nos cenáculos são sempre por edição: um cenáculo agrupa casais participantes com os seus pastores.
   </p>
+  <% end %>
 </div>

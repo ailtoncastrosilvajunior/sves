@@ -1,8 +1,11 @@
 class ServosController < ApplicationController
-  before_action :define_servo, only: %i[show edit update destroy]
+  before_action :define_servo, only: %i[show edit update destroy liberar_acesso redefinir_senha_participante]
+  before_action :negar_se_nao_coordenacao!, except: %i[show]
+  before_action :garantir_servo_apenas_proprio_ou_coordenacao!, only: :show
 
   def index
     @servos = Servo.includes(:conjuge, :user).order(:nome)
+    @servos_aguardando_acesso = Servo.aguardando_acesso_ao_painel.includes(:conjuge, :user).order(:nome)
   end
 
   def show
@@ -55,6 +58,64 @@ class ServosController < ApplicationController
     redirect_to servos_url, notice: "Servo removido."
   end
 
+  def liberar_acesso
+    pwd = ENV["SVES_SEED_SERVO_PASSWORD"].presence
+    unless pwd
+      redirect_to @servo, alert: I18n.t("servos.liberar_sem_senha_env")
+      return
+    end
+
+    if @servo.liberar_acesso_senha_padrao!(pwd)
+      redirect_to @servo, notice: I18n.t("servos.liberar_sucesso")
+    else
+      redirect_to @servo, alert: @servo.errors.full_messages.to_sentence.presence || I18n.t("servos.liberar_falhou")
+    end
+  end
+
+  def redefinir_senha_participante
+    pwd = ENV["SVES_SEED_SERVO_PASSWORD"].presence
+    unless pwd
+      redirect_to @servo, alert: I18n.t("servos.liberar_sem_senha_env")
+      return
+    end
+
+    if @servo.coordenacao_redefinir_senha_padrao_participante!(pwd)
+      redirect_to @servo, notice: I18n.t("servos.redefinir_sucesso")
+    else
+      redirect_to @servo, alert: @servo.errors.full_messages.to_sentence.presence || I18n.t("servos.redefinir_falhou")
+    end
+  end
+
+  def liberar_acesso_lote
+    pwd = ENV["SVES_SEED_SERVO_PASSWORD"].presence
+    unless pwd
+      redirect_to servos_path, alert: I18n.t("servos.liberar_sem_senha_env")
+      return
+    end
+
+    ids = Array(params[:servo_ids]).map(&:presence).compact.map(&:to_i).uniq
+    if ids.empty?
+      redirect_to servos_path, alert: I18n.t("servos.liberar_lote_nenhum")
+      return
+    end
+
+    servos = Servo.where(id: ids)
+    ok = 0
+    falhas = []
+
+    servos.each do |servo|
+      if servo.liberar_acesso_senha_padrao!(pwd)
+        ok += 1
+      else
+        falhas << "#{servo.nome}: #{servo.errors.full_messages.to_sentence}"
+      end
+    end
+
+    flash[:notice] = I18n.t("servos.liberar_lote_ok", count: ok) if ok.positive?
+    flash[:alert] = I18n.t("servos.liberar_lote_falhas", detalhes: falhas.join(" · ")) if falhas.any?
+    redirect_to servos_path
+  end
+
   private
 
   def define_servo
@@ -66,7 +127,7 @@ class ServosController < ApplicationController
   end
 
   def servo_campos_basicos
-    servo_raiz_params.permit(:nome, :email, :telefone, :sexo, :conjuge_id)
+    servo_raiz_params.permit(:nome, :email, :telefone, :sexo, :conjuge_id, :papel)
   end
 
   def dar_login_solicitado?
@@ -95,7 +156,8 @@ class ServosController < ApplicationController
     user = User.new(
       email: User.normalize_email(@servo.email),
       password: password,
-      password_confirmation: password_confirmation
+      password_confirmation: password_confirmation,
+      must_change_password: true
     )
 
     sucesso = false

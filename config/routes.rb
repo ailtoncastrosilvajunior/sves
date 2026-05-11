@@ -11,6 +11,10 @@ Rails.application.routes.draw do
 
   root "inicio#index"
   resource :session, only: %i[new create destroy]
+  resource :palavra_passe, only: %i[edit update]
+  resource :alterar_senha, only: %i[edit update], controller: "alterar_senhas"
+  get  "cadastro-servo", to: "publico/cadastro_servos#new", as: :cadastro_servo
+  post "cadastro-servo", to: "publico/cadastro_servos#create"
   get "equipes", to: "contexto#equipes", as: :equipes_em_curso
   resources :edicoes do
     member do
@@ -30,5 +34,23 @@ Rails.application.routes.draw do
       resources :cenaculo_servos, path: "pastores", only: %i[create destroy]
     end
   end
-  resources :servos
+  resources :servos do
+    member do
+      post :liberar_acesso
+      post :redefinir_senha_participante
+    end
+    collection do
+      post :liberar_acesso_lote
+    end
+  end
+
+  resources :materiais_apoio do
+    collection do
+      get :todos
+    end
+
+    member do
+      get :baixar
+    end
+  end
 end

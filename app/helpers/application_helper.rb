@@ -34,15 +34,36 @@ module ApplicationHelper
   # Identifica qual separador está ativo na navegação móvel (barra inferior).
   def mobile_nav_tab
     path = request.path
+    e = edicao_em_curso
 
     return :sessao if controller_name == "sessions"
-    return :servos if controller_name == "servos"
-    return :equipes if path.match?(%r{/edicoes/\d+/equipes}) || path == equipes_em_curso_path
-    return :edicao if edicao_em_curso && path.match?(%r{\A/edicoes/#{edicao_em_curso.id}(?!/equipes)}o)
-    return :edicoes if path == edicoes_path || path == new_edicao_path
+    return :apoio if controller_name == "materiais_apoio"
+    if pode_gerir_painel?
+      return :equipes if path.match?(%r{/edicoes/\d+/equipes}) || path == equipes_em_curso_path
+    else
+      return :cenaculo if e && path.match?(%r{/edicoes/#{e.id}/cenaculos})
+    end
+    return :edicao if e && path.match?(%r{\A/edicoes/#{e.id}}o) && !path.match?(%r{/edicoes/\d+/equipes})
+    return :servos if pode_gerir_painel? && controller_name == "servos"
+    return :perfil if !pode_gerir_painel? && controller_name == "servos"
+    return :edicoes if pode_gerir_painel? && (path == edicoes_path || path == new_edicao_path)
     return :home if controller_name == "inicio" || path == root_path
 
     :none
+  end
+
+  # Primeiro cenáculo do participante na edição em curso, ou lista se há vários.
+  def mobile_nav_cenaculo_href
+    return unless user_signed_in? && !pode_gerir_painel? && edicao_em_curso
+
+    escopo = current_user.servo&.cenaculos&.where(edicao_id: edicao_em_curso.id)&.order(:nome)
+    return if escopo.blank?
+
+    escopo.one? ? edicao_cenaculo_path(edicao_em_curso, escopo.first) : edicao_cenaculos_path(edicao_em_curso)
+  end
+
+  def mobile_nav_grid_class
+    pode_gerir_painel? ? "grid-cols-6" : "grid-cols-4"
   end
 
   def mobile_nav_link_classes(active)

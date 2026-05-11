@@ -16,6 +16,10 @@ class Edicao < ApplicationRecord
     "#{ano} · n.º #{numero_edicao}"
   end
 
+  def rotulo_curto
+    "#{ano}.#{numero_edicao}"
+  end
+
   def equipes_com_composicao_count
     equipe_servos.distinct.count(:equipe_id)
   end

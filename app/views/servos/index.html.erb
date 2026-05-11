@@ -5,11 +5,47 @@
   <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
     <div class="min-w-0">
       <h1 class="font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Servos</h1>
-      <p class="mt-2 text-sm text-stone-600">Base de voluntários cadastrados. Equipas e pastoria em cenáculos são tratados por edição.</p>
+      <p class="mt-2 text-sm text-stone-600">Base de servos cadastrados. Equipes e pastores de cenáculos são tratados por edição.</p>
+      <p class="mt-3 max-w-xl rounded-xl border border-teal-200/70 bg-teal-50/50 px-3 py-2 text-xs leading-relaxed text-teal-950">
+        <span class="font-semibold"><%= t("servos.link_publico_titulo") %></span>
+        <%= link_to cadastro_servo_url, cadastro_servo_url,
+                    class: "break-all font-medium text-teal-900 underline underline-offset-2 hover:text-teal-950" %>
+        <%= t("servos.link_publico_dica") %>
+      </p>
     </div>
     <%= link_to "Novo servo", new_servo_path,
                 class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
   </div>
+
+  <% if @servos_aguardando_acesso.any? %>
+    <% pwd_configurada = ENV["SVES_SEED_SERVO_PASSWORD"].present? %>
+    <%= form_with url: liberar_acesso_lote_servos_path, method: :post, class: "mt-8 rounded-2xl border border-amber-200/80 bg-amber-50/40 px-4 py-5 sm:px-6" do %>
+      <p class="text-sm font-semibold text-amber-950"><%= t("servos.liberar_lote_titulo") %></p>
+      <p class="mt-2 text-xs leading-relaxed text-amber-900/90"><%= t("servos.liberar_lote_texto") %></p>
+      <% unless pwd_configurada %>
+        <p class="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900"><%= t("servos.liberar_sem_senha_env") %></p>
+      <% end %>
+      <ul class="mt-4 max-h-60 space-y-2 overflow-y-auto rounded-xl border border-amber-100/90 bg-white/80 p-3">
+        <% @servos_aguardando_acesso.each do |servo| %>
+          <li class="flex items-start gap-3 text-sm">
+            <%= check_box_tag "servo_ids[]", servo.id, false,
+                              id: dom_id(servo, :liberar_lote),
+                              class: "relative top-1 h-4 w-4 rounded border-stone-300 text-stone-900",
+                              disabled: !pwd_configurada %>
+            <%= label_tag dom_id(servo, :liberar_lote), class: "min-w-0 flex-1 cursor-pointer leading-snug text-stone-800" do %>
+              <span class="font-medium text-stone-900"><%= servo.nome %></span>
+              <% if servo.email.present? %>
+                <span class="mt-0.5 block truncate font-mono text-xs text-stone-600"><%= servo.email %></span>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      <%= submit_tag t("servos.liberar_lote_submit"),
+                     class: "mt-4 min-h-[44px] w-full cursor-pointer rounded-full bg-amber-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-amber-950 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto",
+                     disabled: !pwd_configurada %>
+    <% end %>
+  <% end %>
 
   <% if @servos.any? %>
     <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
@@ -21,6 +57,11 @@
                 <span class="block font-medium text-stone-900"><%= servo.nome %></span>
                 <% if servo.user %>
                   <span class="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-900"><%= t("servos.index_badge_acesso") %></span>
+                <% elsif servo.email.present? %>
+                  <span class="inline-flex shrink-0 items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-900"><%= t("servos.index_badge_sem_acesso") %></span>
+                <% end %>
+                <% if servo.origem_cadastro == Servo::ORIGEM_PUBLICO %>
+                  <span class="inline-flex shrink-0 items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-teal-900"><%= t("servos.index_badge_publico") %></span>
                 <% end %>
               </div>
               <% if servo.conjuge %>

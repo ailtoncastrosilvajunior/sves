@@ -4,10 +4,25 @@ module Authentication
 
   included do
     before_action :require_login
+    before_action :require_password_change!, if: :password_change_required?
     helper_method :current_user, :user_signed_in?
   end
 
   private
+
+  def password_change_required?
+    user_signed_in? && current_user.must_change_password?
+  end
+
+  def require_password_change!
+    waived =
+      (controller_path == "palavra_passes" && %w[edit update].include?(action_name)) ||
+      (controller_path == "alterar_senhas" && %w[edit update].include?(action_name)) ||
+      (controller_name == "sessions" && action_name == "destroy")
+    return if waived
+
+    redirect_to edit_palavra_passe_path, alert: I18n.t("sessions.require_password_change_flash")
+  end
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id].present?
@@ -34,6 +49,8 @@ module Authentication
   end
 
   def skip_store_return_after_login?
+    return true if request.path == "/cadastro-servo"
+
     request.path.start_with?(new_session_path)
   end
 end

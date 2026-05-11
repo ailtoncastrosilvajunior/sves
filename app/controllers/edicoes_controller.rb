@@ -4,6 +4,10 @@ class EdicoesController < ApplicationController
   before_action :define_edicao, only: %i[
     show edit update destroy marcar_em_curso importar_casais_csv
   ]
+  before_action :redirecionar_participante_da_lista_edicoes!, only: :index
+  before_action :negar_se_nao_coordenacao!,
+                only: %i[new create edit update destroy marcar_em_curso importar_casais_csv]
+  before_action :garantir_acesso_show_edicao!, only: :show
 
   def index
     @edicoes = Edicao.order(ano: :desc, numero_edicao: :desc)

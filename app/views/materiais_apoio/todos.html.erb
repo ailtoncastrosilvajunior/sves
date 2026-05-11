@@ -1,0 +1,64 @@
+<% content_for :title, t("material_apoio.meta.titulo_gestao") %>
+
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: materiais_apoio_path, label: "Lista pública" %>
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <h1 class="font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= t("material_apoio.todos.heading") %></h1>
+      <p class="mt-2 text-sm text-stone-600"><%= t("material_apoio.todos.subheading") %></p>
+      <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-stone-500">
+        <%= link_to t("material_apoio.links.ver_lista_publica"),
+                    materiais_apoio_path,
+                    class: "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-950" %>
+      </div>
+    </div>
+    <%= link_to t("material_apoio.links.novo"),
+                new_material_apoio_path,
+                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+  </div>
+
+  <% if @materiais.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+      <% @materiais.each do |m| %>
+        <li class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div class="min-w-0 flex-1 space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-medium text-stone-900"><%= m.titulo %></span>
+              <% if m.ativo? %>
+                <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-950 ring-1 ring-emerald-200/80"><%= t("material_apoio.estado.publico") %></span>
+              <% else %>
+                <span class="shrink-0 rounded-full bg-stone-200/70 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-stone-700"><%= t("material_apoio.estado.fora_ar") %></span>
+              <% end %>
+              <span class="text-xs text-stone-500"><%= t("material_apoio.todos.rotulo_ordem", n: m.ordem) %></span>
+            </div>
+            <% if m.descricao.present? %>
+              <p class="text-sm leading-relaxed text-stone-600 whitespace-pre-wrap"><%= m.descricao %></p>
+            <% end %>
+            <% if m.arquivo.attached? %>
+              <% blob = m.arquivo.blob %>
+              <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-stone-500">
+                <kbd class="rounded-md bg-stone-100 px-1.5 py-0.5 font-mono text-stone-800 ring-1 ring-stone-200/80"><%= blob.filename %></kbd>
+                <span>· <%= number_to_human_size(blob.byte_size, precision: 1) %></span>
+              </p>
+              <%= link_to t("material_apoio.links.baixar_teste"),
+                          baixar_material_apoio_path(m),
+                          class: "inline-block text-xs font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-950" %>
+            <% else %>
+              <p class="rounded-lg border border-dashed border-amber-300 bg-amber-50/70 px-3 py-2 text-xs text-amber-950"><%= t("material_apoio.todos.sem_ficheiro") %></p>
+            <% end %>
+          </div>
+          <div class="flex shrink-0 flex-col gap-2 sm:items-end sm:justify-center">
+            <%= link_to t("material_apoio.links.editar"), edit_material_apoio_path(m),
+                        class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-900/15 bg-white px-4 py-2.5 text-center text-sm font-medium text-stone-900 hover:bg-stone-50 sm:min-h-0 sm:w-40 sm:py-2" %>
+            <%= button_to t("material_apoio.links.excluir"), material_apoio_path(m), method: :delete,
+                          form_class: "w-full sm:w-40",
+                          class: "w-full cursor-pointer rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-center text-sm font-medium text-rose-950 hover:bg-rose-100/90",
+                          data: { turbo_confirm: t("material_apoio.confirmar_remover", titulo: m.titulo) } %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600"><%= t("material_apoio.todos.vazio") %></p>
+  <% end %>
+</div>

@@ -17,6 +17,12 @@ class SessionsController < ApplicationController
     end
 
     iniciar_sessao_para(utilizador)
+
+    if utilizador.must_change_password?
+      redirect_to edit_palavra_passe_path, notice: I18n.t("sessions.flash_must_change_password")
+      return
+    end
+
     redirect_para = session.delete(:return_to_after_login).presence || root_path
     redirect_to redirect_para, notice: I18n.t("sessions.flash_signed_in")
   end

@@ -4,7 +4,7 @@
   <nav
     class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-stone-200/90 bg-stone-50/95 px-1.5 pt-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] shadow-[0_-8px_32px_-12px_rgba(28,25,23,0.14)] backdrop-blur-xl supports-[backdrop-filter]:bg-stone-50/80"
     aria-label="Navegação principal">
-    <div class="mx-auto flex max-w-xl justify-between gap-0.5">
+    <div class="mx-auto grid w-full max-w-2xl <%= mobile_nav_grid_class %> gap-px px-0">
       <%= link_to root_path,
                   { class: mobile_nav_link_classes(tab == :home) }.merge(mobile_nav_aria_current(tab == :home)) do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :home) %>">
@@ -21,6 +21,7 @@
         <span class="truncate">Edição</span>
       <% end %>
 
+      <% if pode_gerir_painel? %>
       <%= link_to equipes_em_curso_path,
                   { class: mobile_nav_link_classes(tab == :equipes) }.merge(mobile_nav_aria_current(tab == :equipes)) do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :equipes) %>">
@@ -28,7 +29,18 @@
         </svg>
         <span class="truncate">Equipes</span>
       <% end %>
+      <% else %>
+      <% cen_href = mobile_nav_cenaculo_href || mobile_edicao_tab_url %>
+      <%= link_to cen_href,
+                  { class: mobile_nav_link_classes(tab == :cenaculo) }.merge(mobile_nav_aria_current(tab == :cenaculo)) do %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :cenaculo) %>">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.09 9.09 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 1 0-4.682 2.72 9.09 9.09 0 0 0 3.741.479m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+        <span class="truncate">Grupo</span>
+      <% end %>
+      <% end %>
 
+      <% if pode_gerir_painel? %>
       <%= link_to servos_path,
                   { class: mobile_nav_link_classes(tab == :servos) }.merge(mobile_nav_aria_current(tab == :servos)) do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :servos) %>">
@@ -36,13 +48,24 @@
         </svg>
         <span class="truncate">Servos</span>
       <% end %>
+      <% end %>
 
+      <%= link_to materiais_apoio_path,
+                  { class: mobile_nav_link_classes(tab == :apoio) }.merge(mobile_nav_aria_current(tab == :apoio)) do %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :apoio) %>">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z" />
+        </svg>
+        <span class="truncate">Apoio</span>
+      <% end %>
+
+      <% if pode_gerir_painel? %>
       <%= link_to edicoes_path,
                   { class: mobile_nav_link_classes(tab == :edicoes) }.merge(mobile_nav_aria_current(tab == :edicoes)) do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true" class="<%= icon_cls.call(tab == :edicoes) %>">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm0 5.25h.007v.008H3.75v-.008Zm0 5.25h.007v.008H3.75v-.008Z" />
         </svg>
         <span class="truncate">Lista</span>
+      <% end %>
       <% end %>
     </div>
   </nav>

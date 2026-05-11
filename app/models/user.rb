@@ -1,9 +1,15 @@
 class User < ApplicationRecord
+  # Só formulário: confirmação da senha actual em «alterar senha» voluntário.
+  attr_accessor :current_password
+
   has_secure_password
 
   normalizes :email, with: ->(e) { e.to_s.strip.downcase }
 
   has_one :servo, inverse_of: :user, dependent: :nullify
+
+  # Conta com privilégios de plataforma (regras futuras: apenas admin).
+  scope :admins, -> { where(admin: true) }
 
   validates :email, presence: true,
                     uniqueness: { case_sensitive: false },

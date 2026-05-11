@@ -1,0 +1,7 @@
+<% content_for :title, t("material_apoio.meta.titulo_editar") %>
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: todos_materiais_apoio_path, label: t("material_apoio.links.gestao_todos") %>
+  <h1 class="font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= t("material_apoio.editar.heading", titulo: @material.titulo) %></h1>
+
+  <div class="mx-auto mt-10 max-w-2xl"><%= render "form" %></div>
+</div>

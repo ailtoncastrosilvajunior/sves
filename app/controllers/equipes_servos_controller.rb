@@ -1,5 +1,6 @@
 class EquipesServosController < ApplicationController
   before_action :set_edicao
+  before_action :negar_se_nao_coordenacao!
   before_action :set_equipe
 
   def create

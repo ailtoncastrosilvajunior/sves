@@ -18,9 +18,29 @@
 
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500"><%= t("inicio.marca_face") %></p>
-    <h1 class="mt-5 max-w-3xl font-display text-3xl font-normal leading-[1.15] tracking-tight text-stone-900 min-[375px]:text-4xl sm:text-5xl sm:leading-[1.12] lg:text-[3.35rem]">
-      <%= t("inicio.titulo") %>
-    </h1>
+    <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between lg:items-center lg:gap-10">
+      <h1 class="min-w-0 max-w-3xl flex-1 font-display text-3xl font-normal leading-[1.15] tracking-tight min-[375px]:text-4xl sm:text-5xl sm:leading-[1.12] lg:text-[3.35rem]">
+        <span class="block text-stone-900"><%= t("inicio.titulo_linha1") %></span>
+        <span class="mt-2.5 block bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-900 bg-clip-text text-4xl font-semibold leading-[1.08] tracking-tight text-transparent min-[375px]:text-5xl sm:mt-3 sm:text-6xl lg:mt-3.5 lg:text-[4.35rem] lg:leading-[1.05]">
+          <%= @edicao_painel&.rotulo_curto || t("inicio.titulo_edicao_fallback") %>
+        </span>
+      </h1>
+      <% if user_signed_in? && @edicao_painel %>
+        <div class="relative inline-flex max-w-full shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-teal-900 to-emerald-900 px-5 py-4 shadow-lg shadow-teal-900/25 ring-1 ring-white/15 sm:px-6 sm:py-5"
+             role="status"
+             aria-label="<%= t('inicio.painel_casais.aria', count: @casais_inscritos_count, rotulo: @edicao_painel.rotulo) %>">
+          <span class="sr-only"><%= t("inicio.painel_casais.rotulo_edicao", rotulo: @edicao_painel.rotulo) %>:</span>
+          <div class="flex items-baseline gap-3 sm:gap-4">
+            <span class="font-display text-4xl font-normal tabular-nums leading-none tracking-tight text-white sm:text-5xl">
+              <%= @casais_inscritos_count %>
+            </span>
+            <span class="text-sm font-semibold uppercase tracking-wide text-teal-200/95 sm:text-base">
+              <%= t("inicio.painel_casais.inscritos_label", count: @casais_inscritos_count) %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
     <p class="mt-6 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">
       <%= t("inicio.subtitulo") %>
     </p>
@@ -30,6 +50,13 @@
       <% end %>
       <span class="text-center text-sm font-medium text-stone-500 min-[400px]:text-left"><%= t("inicio.cta_secundario") %></span>
     </div>
+
+    <% if user_signed_in? && @edicao_painel.blank? %>
+      <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-4 text-sm text-stone-600">
+        <%= t("inicio.painel_casais.sem_edicao") %>
+        <%= link_to t("inicio.painel_casais.ir_edicoes"), edicoes_path, class: "font-medium text-stone-900 underline underline-offset-2 hover:text-stone-700" %>.
+      </p>
+    <% end %>
   </div>
 </section>
 

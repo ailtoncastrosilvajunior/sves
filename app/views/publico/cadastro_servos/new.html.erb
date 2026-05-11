@@ -1,0 +1,58 @@
+<% content_for :title, t("cadastro_servos.page_title") %>
+
+<div class="mx-auto flex min-h-[min(100dvh,48rem)] max-w-lg flex-col justify-center px-4 py-10 sm:px-6 sm:py-16">
+  <div class="rounded-2xl border border-stone-200/80 bg-white/90 p-6 shadow-lg shadow-stone-900/5 ring-1 ring-stone-900/[0.02] sm:p-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500"><%= t("cadastro_servos.subtitulo") %></p>
+    <h1 class="mt-4 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= t("cadastro_servos.titulo") %></h1>
+    <p class="mt-2 text-sm leading-relaxed text-stone-600"><%= t("cadastro_servos.intro") %></p>
+
+    <%= form_with model: @servo, url: cadastro_servo_path, class: "mt-8 space-y-5", html: { autocomplete: "on" } do |f| %>
+      <% if @servo.errors.any? %>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <ul class="mt-1 list-inside list-disc">
+            <% @servo.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :nome, t("cadastro_servos.nome_label"), class: "block text-sm font-medium text-stone-700" %>
+        <%= f.text_field :nome,
+                         required: true,
+                         autocomplete: "name",
+                         autofocus: true,
+                         class: "mt-2 min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= f.label :sexo, t("cadastro_servos.sexo_label"), class: "block text-sm font-medium text-stone-700" %>
+        <%= f.select :sexo,
+                     options_for_select(
+                       [["(opcional)", ""]] + [["Masculino", "M"], ["Feminino", "F"]],
+                       @servo.sexo
+                     ),
+                     {},
+                     class: "mt-2 min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= f.label :email, t("cadastro_servos.email_label"), class: "block text-sm font-medium text-stone-700" %>
+        <%= f.email_field :email,
+                          required: true,
+                          autocomplete: "email",
+                          class: "mt-2 min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+      </div>
+
+      <div class="pt-2">
+        <%= f.submit t("cadastro_servos.submit"),
+                     class: "min-h-[48px] w-full cursor-pointer rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:min-h-[44px]" %>
+      </div>
+    <% end %>
+
+    <p class="mt-8 border-t border-stone-100 pt-6 text-center text-sm text-stone-500">
+      <%= link_to t("cadastro_servos.voltar_inicio"), root_path, class: "font-medium text-stone-800 underline-offset-4 hover:text-stone-950 hover:underline" %>
+    </p>
+  </div>
+</div>

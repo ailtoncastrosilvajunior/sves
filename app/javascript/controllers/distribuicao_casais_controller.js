@@ -31,8 +31,8 @@ export default class extends Controller {
         const total = this.cartaoTargets.length
         this.resultadoFiltragemTarget.textContent =
           matched === total
-            ? `Filtros: todos os ${total} candidatos ficam visíveis.`
-            : `Filtros: ${matched} de ${total} candidatos visíveis.`
+            ? `Filtros: todos os ${total} registos ficam visíveis.`
+            : `Filtros: ${matched} de ${total} registos visíveis.`
         this.resultadoFiltragemTarget.classList.remove("hidden")
       } else {
         this.resultadoFiltragemTarget.textContent = ""

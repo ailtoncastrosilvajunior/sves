@@ -6,7 +6,7 @@
     <div class="min-w-0">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>
       <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Equipes</h1>
-      <p class="mt-2 text-sm text-stone-600">As equipas são partilhadas entre edições. Aqui vê todas e, entre parêntesis, quantos membros cada uma tem na composição para <%= @edicao.rotulo %>.</p>
+      <p class="mt-2 text-sm text-stone-600">As equipes são partilhadas entre edições. Aqui vê todas e, entre parêntesis, quantos membros cada uma tem na composição para <%= @edicao.rotulo %>.</p>
     </div>
     <%= link_to "Nova equipe", new_edicao_equipe_path(@edicao),
                 class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
@@ -30,7 +30,7 @@
     </ul>
   <% else %>
     <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
-      Ainda não há equipas registadas no sistema — crie a primeira aqui ao lado.
+      Ainda não há equipes registadas no sistema — crie a primeira aqui ao lado.
     </p>
   <% end %>
 </div>

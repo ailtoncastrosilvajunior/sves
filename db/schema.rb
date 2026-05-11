@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_10_184925) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_11_190200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -137,23 +137,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_184925) do
     t.index ["nome"], name: "index_equipes_on_nome_unique", unique: true
   end
 
+  create_table "material_apoios", force: :cascade do |t|
+    t.boolean "ativo", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "descricao"
+    t.integer "ordem", default: 0, null: false
+    t.string "titulo", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ativo"], name: "index_material_apoios_on_ativo"
+    t.index ["ordem", "titulo"], name: "index_material_apoios_on_ordem_and_titulo"
+  end
+
   create_table "servos", force: :cascade do |t|
     t.bigint "conjuge_id"
     t.datetime "created_at", null: false
     t.string "email"
     t.string "nome", null: false
+    t.string "origem_cadastro", default: "painel", null: false
+    t.string "papel", default: "coordenacao", null: false
     t.string "sexo", limit: 20
     t.string "telefone"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index "lower(TRIM(BOTH FROM email))", name: "index_servos_on_normalized_email_unique", unique: true, where: "((email IS NOT NULL) AND (TRIM(BOTH FROM email) <> ''::text))"
     t.index ["conjuge_id"], name: "index_servos_on_conjuge_id"
-    t.index ["email"], name: "index_servos_on_email"
     t.index ["user_id"], name: "index_servos_on_user_id", unique: true, where: "(user_id IS NOT NULL)"
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.boolean "must_change_password", default: false, null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

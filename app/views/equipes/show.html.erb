@@ -6,7 +6,7 @@
     <div class="min-w-0">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Equipe · <%= @edicao.rotulo %></p>
       <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= @equipe.nome %></h1>
-      <p class="mt-2 text-sm text-stone-600">Membros com papel nesta equipa apenas na edição <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span> (<span class="font-medium text-stone-800">coordenação</span> ou <span class="font-medium text-stone-800">participação</span>). Outras edições são independentes.</p>
+      <p class="mt-2 text-sm text-stone-600">Membros com papel nesta equipe apenas na edição <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span> (<span class="font-medium text-stone-800">coordenação</span> ou <span class="font-medium text-stone-800">participação</span>). Outras edições são independentes.</p>
     </div>
     <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
       <%= link_to "Editar", edit_edicao_equipe_path(@edicao, @equipe),
@@ -15,7 +15,7 @@
                     form: {
                       class: "w-full sm:w-auto",
                       data: {
-                        turbo_confirm: "Remover esta equipa e todos os vínculos servo–equipa em todas as edições?"
+                        turbo_confirm: "Remover esta equipe e todos os vínculos servo–equipe em todas as edições?"
                       }
                     },
                     class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
@@ -90,7 +90,7 @@
           <div class="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
             <div>
               <p class="text-xs font-semibold uppercase tracking-wide text-stone-500">Arrastar daqui</p>
-              <p class="mt-1 text-sm text-stone-600">Lista com todos os servos da base que ainda não estão nesta equipa para <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span>. <span class="lg:hidden"><span class="font-medium text-stone-800">Telemóvel:</span> toque para seleccionar vários;</span><span class="hidden lg:inline">Em ecrã largo também pode arrastar;</span> cônjuge associado faz o par entrar quando ambos estão na base.</p>
+              <p class="mt-1 text-sm text-stone-600">Lista com todos os servos da base que ainda não estão nesta equipe para <span class="font-medium text-stone-800"><%= @edicao.rotulo %></span>. <span class="lg:hidden"><span class="font-medium text-stone-800">Telemóvel:</span> toque para seleccionar vários;</span><span class="hidden lg:inline">Em ecrã largo também pode arrastar;</span> cônjuge associado faz o par entrar quando ambos estão na base.</p>
               <ul data-equipe-vinculos-drag-target="pool"
                   class="mt-4 max-h-[22rem] space-y-2 overflow-y-auto rounded-xl border border-stone-200/90 bg-stone-50/50 p-3">
                 <% @servos_disponiveis_para_vinculo.each do |s| %>
@@ -142,7 +142,7 @@
         <% end %>
     <% else %>
       <p class="mt-6 rounded-2xl border border-stone-200/80 bg-stone-50/60 px-5 py-5 text-sm text-stone-600">
-        Nesta edição já não há ninguém de fora por acrescentar: todos os voluntários registados fazem parte desta equipa. Para convidar mais nomes ou retirá-los, use a <%= link_to "lista de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %> ou retire alguém na secção Membros acima e volte aqui.
+        Nesta edição já não há ninguém de fora por acrescentar: todos os voluntários registados fazem parte desta equipe. Para convidar mais nomes ou retirá-los, use a <%= link_to "lista de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %> ou retire alguém na secção Membros acima e volte aqui.
       </p>
     <% end %>
   </section>

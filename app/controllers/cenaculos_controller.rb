@@ -2,12 +2,16 @@
 
 class CenaculosController < ApplicationController
   before_action :set_edicao
+  before_action :garantir_acesso_cenaculos_na_edicao!, only: %i[index show new create edit update destroy]
   before_action :set_cenaculo, only: %i[show edit update destroy]
+  before_action :garantir_cenaculo_do_participante!, only: :show
+  before_action :negar_se_nao_coordenacao!, only: %i[new create edit update destroy]
 
   def index
     @cenaculos = @edicao.cenaculos
       .includes(:imagem_attachment, :cenaculo_casais, :cenaculo_servos)
       .order(:nome)
+    @cenaculos = @cenaculos.where(id: current_user.servo.cenaculo_ids) unless pode_gerir_painel?
   end
 
   def show
@@ -21,15 +25,20 @@ class CenaculosController < ApplicationController
       .includes(:servo)
       .order("servos.nome ASC")
 
-    ocupacao_na_edicao = CenaculoCasal.joins(:cenaculo).where(cenaculos: { edicao_id: @edicao.id }).select(:casal_id)
+    if pode_gerir_painel?
+      ocupacao_na_edicao = CenaculoCasal.joins(:cenaculo).where(cenaculos: { edicao_id: @edicao.id }).select(:casal_id)
 
-    @casais_para_adicionar = Casal.where(edicao_id: @edicao.id)
-      .where.not(id: ocupacao_na_edicao)
-      .order(Arel.sql("casais.inscrito_em DESC NULLS LAST"))
-      .order(:nome_completo_ele)
+      @casais_para_adicionar = Casal.where(edicao_id: @edicao.id)
+        .where.not(id: ocupacao_na_edicao)
+        .order(Arel.sql("casais.inscrito_em DESC NULLS LAST"))
+        .order(:nome_completo_ele)
 
-    pastores_ids = @cenaculo.servos.pluck(:id)
-    @servos_para_adicionar = Servo.where.not(id: pastores_ids).order(:nome)
+      pastores_ids = @cenaculo.servos.pluck(:id)
+      @servos_para_adicionar = Servo.where.not(id: pastores_ids).order(:nome)
+    else
+      @casais_para_adicionar = Casal.none
+      @servos_para_adicionar = Servo.none
+    end
   end
 
   def new

@@ -1,0 +1,32 @@
+<%# locals: (f), (campo), (label), (required: true), (autocomplete:) %>
+<div>
+  <%= f.label campo, label, class: "block text-sm font-medium text-stone-700" %>
+  <div class="relative mt-2"
+       data-controller="password-visibility"
+       data-password-visibility-show-label-value="<%= t("password_visibility.mostrar") %>"
+       data-password-visibility-hide-label-value="<%= t("password_visibility.ocultar") %>">
+    <%= f.password_field campo,
+                         required: local_assigns.fetch(:required, true),
+                         autocomplete: autocomplete,
+                         class: "min-h-[48px] w-full rounded-xl border border-stone-300 bg-white py-2.5 pl-3 pr-12 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                         data: { password_visibility_target: "input" } %>
+    <button type="button"
+            class="absolute inset-y-0 right-0 flex items-center px-3 text-stone-500 outline-none transition hover:text-stone-800 focus-visible:ring-2 focus-visible:ring-stone-400/80 rounded-r-xl"
+            data-password-visibility-target="button"
+            data-action="password-visibility#toggle"
+            aria-label="<%= t("password_visibility.mostrar") %>"
+            aria-pressed="false">
+      <span data-password-visibility-target="iconShow" class="inline-flex" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+      </span>
+      <span data-password-visibility-target="iconHide" class="hidden inline-flex" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 0 1-4.293 5.274M6.228 6.228 3 3m12.894 12.894L21 21" />
+        </svg>
+      </span>
+    </button>
+  </div>
+</div>

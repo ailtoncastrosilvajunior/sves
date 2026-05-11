@@ -1,29 +1,152 @@
 pt-BR:
+  password_visibility:
+    mostrar: "Mostrar senha"
+    ocultar: "Ocultar senha"
+  errors:
+    messages:
+      blank: "não pode ficar em branco"
+      confirmation: "não coincide com o valor esperado"
+  activerecord:
+    attributes:
+      material_apoio:
+        titulo: "Título"
+        descricao: "Descrição"
+        ativo: "Ativo na lista pública"
+        ordem: "Ordem"
+        arquivo: "Arquivo anexo"
+      user:
+        admin: "Administrador da plataforma"
+        password: "Nova senha"
+        password_confirmation: "Confirmar senha"
+        current_password: "Senha actual"
+      servo:
+        papel: "Classificação no painel"
+    models:
+      material_apoio:
+        one: "Material de apoio"
+        other: "Materiais de apoio"
+    errors:
+      messages:
+        confirmation: "não coincide com %{attribute}"
+        too_short:
+          one: "é muito curto (mínimo: 1 caractere)"
+          other: "é muito curto (mínimo: %{count} caracteres)"
+      models:
+        material_apoio:
+          attributes:
+            arquivo:
+              blank: "é obrigatório enviar um arquivo (PDF, Word ou ODT)."
+        user:
+          attributes:
+            current_password:
+              invalid: "não está correcta"
+            password:
+              too_short: "deve ter pelo menos %{count} caracteres"
+            password_confirmation:
+              confirmation: "não coincide com a nova senha"
   sessions:
     page_title: "Entrar · SVES"
     subtitulo_marca: "Coordenação"
     heading: "Acesso ao painel"
-    subheading: "Use o e‑mail da sua conta SVES e a sua palavra‑passe. O painel só é para a equipa de coordenação e servos com acesso atribuído."
+    subheading: "Use o e‑mail da sua conta SVES e a sua senha. O painel só é para a equipe de coordenação e servos com acesso atribuído."
     email_label: "E-mail"
-    password_label: "Palavra‑passe"
+    password_label: "senha"
     submit_entrar: "Entrar"
     voltar_inicio: "Voltar ao início"
     require_login_flash: "Inicie sessão para continuar."
-    credentials_invalid: "E-mail ou palavra‑passe incorretos."
+    credentials_invalid: "E-mail ou senha incorretos."
     flash_signed_in: "Sessão iniciada."
     flash_signed_out: "Sessão terminada."
+    flash_must_change_password: "Defina uma nova senha para continuar."
+    require_password_change_flash: "Por segurança, defina uma nova senha antes de usar o painel."
+  palavra_passes:
+    page_title: "Nova senha · SVES"
+    subtitulo: "Segurança"
+    titulo: "Definir nova senha"
+    explicacao: "A sua conta foi criada com uma senha padrão. Altere sua senha de acesso (mínimo 8 caracteres) para usar o painel normalmente."
+    nova_label: "Nova senha"
+    confirmar_label: "Confirmar"
+    submit: "Atualizar"
+    flash_atualizada: "senha atualizada. Pode usar o painel."
+  alterar_senha:
+    nav_link: "Alterar senha"
+    page_title: "Alterar senha · SVES"
+    subtitulo: "Conta"
+    titulo: "Alterar a sua senha"
+    explicacao: "Indique a senha actual e a nova senha (mínimo 8 caracteres). Pode usar esta página quando quiser atualizar a senha sem ajuda da coordenação."
+    actual_label: "Senha actual"
+    nova_label: "Nova senha"
+    confirmar_label: "Confirmar nova senha"
+    submit: "Guardar nova senha"
+    flash_ok: "Senha actualizada com sucesso."
+  cadastro_servos:
+    page_title: "Cadastro de servo · SVES"
+    subtitulo: "Equipe"
+    titulo: "Cadastro de voluntário (servo)"
+    intro: "Preencha os dados abaixo. A coordenação irá associar o seu acesso ao painel quando apropriado — receberá instruções pelo grupo ou pelo e‑mail indicado."
+    nome_label: "Nome completo"
+    sexo_label: "Sexo"
+    email_label: "E-mail"
+    telefone_label: "Telefone (opcional)"
+    submit: "Enviar cadastro"
+    voltar_inicio: "Voltar ao início"
+    sucesso: "Cadastro recebido. A coordenação irá validar e liberar o acesso ao painel."
+    email_obrigatorio: "é obrigatório para identificação e acesso futuro"
+    ja_tem_acesso: "Este e‑mail já tem acesso ao painel. Entre em «Entrar no painel» ou contacte a coordenação."
+    email_duplicado: "já está registado — use «Entrar no painel» ou contacte a coordenação se precisar atualizar dados."
+  autorizacao:
+    apenas_coordenacao: "Esta área é só para a coordenação."
+    participante_so_edicao_em_curso: "Só pode consultar a edição em curso."
+    sem_cenaculo_nesta_edicao: "A sua conta não está associada a um cenáculo nesta edição. Contacte a coordenação."
+    cenaculo_nao_autorizado: "Não tem acesso a este cenáculo."
+    servo_apenas_perfil_proprio: "Só pode consultar o perfil do seu casal."
   servos:
     acesso_precisa_email: "é necessário para criar acesso à plataforma"
     senha_obrigatoria_com_acesso: "é necessária para criar acesso (mínimo 8 caracteres)"
-    sem_conta_para_alterar_senha: "Este servo ainda não tem conta. Marque «Dar acesso à plataforma» e defina uma palavra‑passe."
-    definir_senha_sem_conta: "Não há conta associada a este servo. Marque «Dar acesso à plataforma» ou deixe a palavra‑passe em branco."
+    sem_conta_para_alterar_senha: "Este servo ainda não tem conta. Marque «Dar acesso à plataforma» e defina uma senha."
+    definir_senha_sem_conta: "Não há conta associada a este servo. Marque «Dar acesso à plataforma» ou deixe a senha em branco."
     email_ja_associado_conta: "já está associado a outra conta de acesso"
     form_acesso_secao_titulo: "Acesso à plataforma (opcional)"
     form_acesso_explicacao: "Crie uma conta de login apenas para servos que vão usar o painel. O e‑mail deve ser único entre utilizadores SVES."
     form_dar_acesso: "Dar acesso à plataforma (palavras‑passe abaixo)"
-    form_instruction_password_existing_user: "Para alterar a palavra‑passe use os campos abaixo (mínimo 8 caracteres). Deixe em branco para manter."
+    form_instruction_password_existing_user: "Para alterar a senha use os campos abaixo (mínimo 8 caracteres). Deixe em branco para manter."
     form_placeholder_senha: "Mínimo 8 caracteres"
+    form_papel_dica: "Participantes acedem só à edição em curso e ao(s) cenáculo(s) onde são pastores."
     index_badge_acesso: "com acesso SVES"
+    index_badge_sem_acesso: "sem acesso"
+    index_badge_publico: "formulário público"
+    show_origem_label: "Origem do cadastro"
+    show_papel_label: "Classificação"
+    papel:
+      coordenacao: "Coordenação"
+      participante: "Participante (pastor de cenáculo)"
+    origem:
+      painel: "Registado pela coordenação"
+      publico: "Auto‑cadastro (link público)"
+      importacao: "Importação / seeds"
+    link_publico_titulo: "Link para voluntários se cadastrarem:"
+    link_publico_dica: "— envie no WhatsApp ou use num QR code que aponte para este endereço."
+    liberar_acesso_submit: "Liberar acesso (senha padrão)"
+    liberar_sucesso: "Conta criada com a senha padrão do ambiente. O servo deve entrar e será pedida a troca de senha."
+    liberar_falhou: "Não foi possível liberar o acesso."
+    liberar_sem_senha_env: "Defina SVES_SEED_SERVO_PASSWORD no ambiente para usar a libertação em lote com senha padrão."
+    liberar_ja_tem_acesso: "Este servo já tem conta de acesso."
+    liberar_email_ligado_outro_servo: "Este e‑mail já está associado a outro servo com conta."
+    liberar_lote_titulo: "Liberar acesso em lote"
+    liberar_lote_texto: "Marque os servos que já têm e‑mail e ainda não têm conta. Será criado um User com a senha padrão e será obrigatório alterá‑la no primeiro login."
+    liberar_lote_submit: "Criar contas para os selecionados"
+    liberar_lote_ok:
+      one: "1 conta criada com sucesso."
+      other: "%{count} contas criadas com sucesso."
+    liberar_lote_falhas: "Alguns falharam: %{detalhes}"
+    liberar_lote_nenhum: "Selecione pelo menos um servo."
+    redefinir_senha_submit: "Redefinir senha do participante"
+    redefinir_sucesso: "Senha reposta para a padrão do ambiente (SVES_SEED_SERVO_PASSWORD). No próximo login será pedida uma nova senha."
+    redefinir_falhou: "Não foi possível redefinir a senha."
+    redefinir_sem_conta: "Este servo ainda não tem conta de acesso."
+    redefinir_so_participante: "Esta acção só se aplica a servos com classificação «participante»."
+    redefinir_nao_admin_alvo: "Não é possível usar esta acção em contas de administrador da plataforma."
+    redefinir_confirmar: "Repor a senha com o valor de SVES_SEED_SERVO_PASSWORD? O participante deverá definir uma nova senha ao entrar."
   casais_views:
     index:
       resumo_um: "%{count} casal registado nesta edição."
@@ -57,11 +180,22 @@ pt-BR:
     credito_html: 'Face de Cristo · Seminário de Vida no Espírito Santo para Casais'
   inicio:
     marca_face: "Face de Cristo"
-    titulo: "Seminário de Vida no Espírito Santo — Casais · 2026.1"
+    titulo_linha1: "Seminário de Vida no Espírito Santo — Casais"
+    titulo_edicao_fallback: "2026.1"
     subtitulo: "Organize edições, servos em equipes, casais participantes e cenáculos em um só lugar — com importação a partir da planilha ou CSV quando estiver disponível."
     banner_alt: "Banner do Seminário de Vida no Espírito Santo para Casais — 15 a 17 de maio, Face de Cristo."
     cta_primario: "Gerir edições"
-    cta_secundario: "Servos, equipes, casais e cenáculos: em construção"
+    cta_secundario: "Servos, equipes, casais e cenáculos"
+    painel_casais:
+      rotulo_edicao: "Edição em curso · %{rotulo}"
+      aria:
+        one: "Edição %{rotulo}: %{count} casal inscrito"
+        other: "Edição %{rotulo}: %{count} casais inscritos"
+      inscritos_label:
+        one: "inscrito"
+        other: "inscritos"
+      sem_edicao: "Não há edição marcada como em curso — não mostramos aqui a contagem de casais."
+      ir_edicoes: "Gerir edições"
     pe: "Pela intercessão de Nossa Senhora do Carmo, São João Paulo II, São Francisco de Assis e Santa Terezinha"
     evento_inscricoes:
       secao_titulo: "Inscrições e informações do evento"
@@ -90,7 +224,7 @@ pt-BR:
   cards:
     edicoes:
       titulo: "Edições"
-      texto: "Ano, número e vínculo com a planilha de referência por rodada."
+      texto: "Ano, número e vínculo com a planilha de referência por migração."
     equipes:
       titulo: "Equipes"
       texto: "Composição e papel de cada servo em coordenação ou participação."
@@ -100,3 +234,48 @@ pt-BR:
     cenaculos:
       titulo: "Cenáculos"
       texto: "Reunião dos casais participantes com nome, cor, imagem e pastores nesta edição."
+
+  material_apoio:
+    meta:
+      titulo_index: "Materiais de apoio · SVES"
+      titulo_gestao: "Gerir materiais de apoio · SVES"
+      titulo_novo: "Novo material · SVES"
+      titulo_editar: "Editar material · SVES"
+    index:
+      heading: "Materiais de apoio"
+      subheading: "Documentos globais (todas as edições): PDF, Word ou ODT. O que aparece aqui só inclui registros marcados como ativos e com arquivo anexo."
+      vazio_html: "Não há materiais disponíveis no momento. Coordenação pode subir materiais pela gestão ao lado ou pelo painel quando estiver configurado."
+    todos:
+      heading: "Todos os materiais de apoio"
+      subheading: "Inclui itens desativados (fora da lista vista pelos servos). Use esta tela para reativar, editar ordem ou anexos."
+      rotulo_ordem: "Ordem %{n}"
+      sem_ficheiro: "Sem arquivo anexo — edite este registro e envie um PDF, DOC/DOCX ou ODT antes de disponibilizar."
+      vazio: "Nenhum material cadastrado ainda."
+    novo:
+      heading: "Registrar material"
+      lead: "O arquivo fica disponível apenas para usuários que acessarem o painel; itens marcados como inativos não aparecem na lista principal."
+    editar:
+      heading: 'Editar «%{titulo}»'
+    mensagem_checkbox_remove: "Ao salvar com esta opção, o arquivo será removido. Sem um novo arquivo, o formulário não pode ser gravado até você anexar de novo."
+    estado:
+      publico: "Ativo"
+      fora_ar: "Fora do ar"
+    links:
+      novo: "Novo material"
+      gestao_todos: "Gestão · todos os itens"
+      ver_lista_publica: "Ver lista vista pelos servos"
+      editar: "Editar"
+      excluir: "Excluir"
+      baixar: "Baixar arquivo"
+      baixar_teste: "Baixar (testar link)"
+    form_tipos_anexo: "Aceitos: PDF (.pdf), Word (.doc, .docx) ou LibreOffice Writer (.odt). Tamanho máximo 30 MB."
+    flash:
+      criado: "Material criado."
+      atualizado: "Material atualizado."
+      removido: "Material excluído."
+      sem_ficheiro: "Este registro não tem arquivo anexado para download."
+      baixar_inativo: "Este material não está disponível na lista pública."
+    confirmar_remover: "Remover definitivamente este material («%{titulo}»)?"
+    errors:
+      arquivo_tipos: "O arquivo deve ser PDF, Word (.doc/.docx) ou ODT."
+      arquivo_tamanho: "O arquivo não pode ultrapassar %{max_mb} MB."

@@ -1,6 +1,9 @@
 # Atalhos que dependem da edição marcada como «em curso» (única ativa).
 class ContextoController < ApplicationController
   def equipes
+    negar_se_nao_coordenacao!
+    return if performed?
+
     e = edicao_em_curso
     if e
       redirect_to edicao_equipes_path(e)

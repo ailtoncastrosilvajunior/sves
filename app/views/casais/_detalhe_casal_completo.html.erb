@@ -1,0 +1,143 @@
+<%# locals: casal %>
+<article class="min-w-0 w-full flex-1 space-y-4">
+  <header class="space-y-1">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <h3 class="text-base font-semibold leading-snug text-stone-900">
+        <%= casal.nome_completo_ele.presence || "—" %>
+        <span class="font-normal text-stone-400"> e </span>
+        <%= casal.nome_completo_ela.presence || "—" %>
+      </h3>
+    </div>
+
+    <% if casal.apelido_ele.present? || casal.apelido_ela.present? %>
+      <p class="text-sm font-medium leading-relaxed text-teal-900">
+        <% if casal.apelido_ele.present? %>
+          <span class="text-teal-700/80">Ele prefere</span> <%= casal.apelido_ele.strip %>
+        <% end %>
+        <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
+          <span class="mx-1 text-teal-500/55">·</span>
+        <% end %>
+        <% if casal.apelido_ela.present? %>
+          <span class="text-teal-700/80">Ela prefere</span> <%= casal.apelido_ela.strip %>
+        <% end %>
+      </p>
+    <% end %>
+
+    <div class="flex flex-wrap gap-2 pt-2">
+      <% if casal.inscrito_em.present? %>
+        <span class="inline-flex rounded-full bg-stone-100 px-3 py-0.5 text-xs font-medium text-stone-700">
+          Inscrito <%= l(casal.inscrito_em, format: :short) %>
+        </span>
+      <% end %>
+      <span class="inline-flex rounded-full bg-stone-100 px-3 py-0.5 text-xs font-medium text-stone-700">
+        Fonte <%= rotulo_fonte_casal(casal) %>
+      </span>
+      <% if casal.teve_casamento_anterior.present? %>
+        <span class="inline-flex rounded-full bg-violet-100/90 px-3 py-0.5 text-xs font-medium text-violet-950">
+          Casamento anterior <%= resumo_um_linha(casal.teve_casamento_anterior, length: 32) %>
+        </span>
+      <% end %>
+      <% if casal.filhos_abc_jesus.present? || casal.horarios_abc_jesus.present? %>
+        <span class="inline-flex rounded-full bg-teal-100/90 px-3 py-0.5 text-xs font-semibold text-teal-950">
+          Espaço infantil ABC Jesus
+        </span>
+      <% end %>
+    </div>
+  </header>
+
+  <% if casal.telefones_contato.present? || casal.email_contato.present? %>
+    <div class="rounded-xl border border-stone-100 bg-stone-50/60 px-3 py-3 text-xs text-stone-700 sm:text-sm">
+      <% if casal.telefones_contato.present? %>
+        <p class="break-words"><span class="font-medium text-stone-600">Tel.</span> <%= casal.telefones_contato %></p>
+      <% end %>
+      <% if casal.email_contato.present? %>
+        <p class="mt-2 break-all">
+          <span class="font-medium text-stone-600">Email</span>
+          <%= mail_to casal.email_contato, casal.email_contato,
+                      class: "text-stone-900 underline underline-offset-2 hover:text-teal-800" %>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <dl class="grid gap-x-6 gap-y-2 text-xs sm:grid-cols-2 sm:text-sm">
+    <div>
+      <dt class="font-medium uppercase tracking-wide text-stone-400">Nascimento (ele)</dt>
+      <dd class="mt-0.5 font-medium text-stone-900">
+        <% dn = casal.data_nascimento_ele %>
+        <% if dn %>
+          <% idade_ele = idade_para_contexto(dn) %>
+          <%= l(dn, format: :short) %>
+          <% if idade_ele %>
+            <span class="whitespace-nowrap text-stone-500"> (~<%= idade_ele %>)</span>
+          <% end %>
+        <% else %>
+          —
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt class="font-medium uppercase tracking-wide text-stone-400">Nascimento (ela)</dt>
+      <dd class="mt-0.5 font-medium text-stone-900">
+        <% dn = casal.data_nascimento_ela %>
+        <% if dn %>
+          <% idade_ela = idade_para_contexto(dn) %>
+          <%= l(dn, format: :short) %>
+          <% if idade_ela %>
+            <span class="whitespace-nowrap text-stone-500"> (~<%= idade_ela %>)</span>
+          <% end %>
+        <% else %>
+          —
+        <% end %>
+      </dd>
+    </div>
+    <% if casal.endereco.present? %>
+      <div class="sm:col-span-2">
+        <dt class="font-medium uppercase tracking-wide text-stone-400">Endereço</dt>
+        <dd class="mt-0.5 whitespace-pre-line leading-relaxed text-stone-800"><%= h(truncate(casal.endereco.squish, length: 420, omission: "…")) %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <% carac_u = casal.caracterizacao_uniao %>
+  <% if carac_u.present? %>
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-stone-400">União · visão rápida</p>
+      <p class="mt-1 border-l-[3px] border-teal-600/55 pl-3 text-sm leading-relaxed text-stone-800"><%= truncate(carac_u.squish, length: 360, omission: "…") %></p>
+    </div>
+  <% end %>
+
+  <% extras_relevantes = casal.igreja_casamento_e_data.present? ||
+                          casal.movimentos_ele.present? ||
+                          casal.movimentos_ela.present? ||
+                          casal.filhos_abc_jesus.present? ||
+                          casal.horarios_abc_jesus.present? ||
+                          casal.como_conheceu_seminario.present? %>
+  <% if extras_relevantes %>
+    <details class="group rounded-xl border border-stone-200 bg-stone-50/40 text-sm text-stone-800 open:border-teal-200/70 open:bg-white">
+      <summary class="cursor-pointer select-none px-4 py-3 font-medium text-stone-900 marker:text-teal-800 group-open:text-teal-950">
+        Mais contexto da inscrição
+      </summary>
+      <div class="border-t border-stone-100 px-4 pb-4 pt-3 text-xs leading-relaxed text-stone-700 sm:text-sm">
+        <% if casal.igreja_casamento_e_data.present? %>
+          <p class="mb-3"><span class="font-semibold text-stone-600">Igreja · data:</span><br /><%= h(truncate(casal.igreja_casamento_e_data.to_s.squish, length: 500, omission: "…")) %></p>
+        <% end %>
+        <% if casal.movimentos_ele.present? %>
+          <p class="mb-3"><span class="font-semibold text-stone-600">Movimento (ele):</span><br /><%= truncate(casal.movimentos_ele.squish, length: 480, omission: "…") %></p>
+        <% end %>
+        <% if casal.movimentos_ela.present? %>
+          <p class="mb-3"><span class="font-semibold text-stone-600">Movimento (ela):</span><br /><%= truncate(casal.movimentos_ela.squish, length: 480, omission: "…") %></p>
+        <% end %>
+        <% if casal.filhos_abc_jesus.present? %>
+          <p class="mb-3"><span class="font-semibold text-stone-600">ABC Jesus · crianças:</span><br /><%= truncate(casal.filhos_abc_jesus.squish, length: 420, omission: "…") %></p>
+        <% end %>
+        <% if casal.horarios_abc_jesus.present? %>
+          <p class="mb-3"><span class="font-semibold text-stone-600">ABC Jesus · horários:</span><br /><%= truncate(casal.horarios_abc_jesus.squish, length: 360, omission: "…") %></p>
+        <% end %>
+        <% if casal.como_conheceu_seminario.present? %>
+          <p class=""><span class="font-semibold text-stone-600">Como conheceram o SVES:</span><br /><%= truncate(casal.como_conheceu_seminario.squish, length: 460, omission: "…") %></p>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+</article>

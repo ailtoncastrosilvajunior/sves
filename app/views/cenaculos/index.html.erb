@@ -7,11 +7,17 @@
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>
       <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Cenáculos</h1>
       <p class="mt-2 text-sm text-stone-600">
+        <% if pode_gerir_painel? %>
         Agrupe casais inscritos e defina os servos «pastores» de cada cenáculo. Nome e cor são únicos por edição.
+        <% else %>
+        Os cenáculos em que você participa como pastor nesta edição.
+        <% end %>
       </p>
     </div>
+    <% if pode_gerir_painel? %>
     <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao),
                 class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+    <% end %>
   </div>
 
   <% if @cenaculos.any? %>
@@ -46,7 +52,11 @@
     </ul>
   <% else %>
     <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
+      <% if pode_gerir_painel? %>
       Ainda não há cenáculos nesta edição — crie o primeiro com o botão acima ou importando organização quando estiver disponível.
+      <% else %>
+      Ainda não há cenáculos associados a si nesta edição. Contacte a coordenação se algo estiver em falta.
+      <% end %>
     </p>
   <% end %>
 </div>

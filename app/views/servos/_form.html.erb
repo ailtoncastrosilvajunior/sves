@@ -20,6 +20,15 @@
                      autofocus: true %>
   </div>
 
+  <div>
+    <%= f.label :papel, t("activerecord.attributes.servo.papel"), class: "block text-sm font-medium text-stone-700" %>
+    <%= f.select :papel,
+                 [[t("servos.papel.coordenacao"), Servo::PAPEL_COORDENACAO], [t("servos.papel.participante"), Servo::PAPEL_PARTICIPANTE]],
+                 {},
+                 class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+    <p class="mt-1 text-xs text-stone-500"><%= t("servos.form_papel_dica") %></p>
+  </div>
+
   <div class="grid gap-6 sm:grid-cols-2">
     <div>
       <%= f.label :sexo, "Sexo", class: "block text-sm font-medium text-stone-700" %>
@@ -77,14 +86,14 @@
     <% end %>
     <div class="mt-5 grid gap-4 sm:grid-cols-2">
       <div class="sm:col-span-1">
-        <%= f.label :password, "Palavra‑passe (nova conta ou alteração)", class: "block text-sm font-medium text-stone-700" %>
+        <%= f.label :password, "senha (nova conta ou alteração)", class: "block text-sm font-medium text-stone-700" %>
         <%= f.password_field :password,
                              autocomplete: "new-password",
                              placeholder: t("servos.form_placeholder_senha"),
                              class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
       </div>
       <div class="sm:col-span-1">
-        <%= f.label :password_confirmation, "Confirmar palavra‑passe", class: "block text-sm font-medium text-stone-700" %>
+        <%= f.label :password_confirmation, "Confirmar senha", class: "block text-sm font-medium text-stone-700" %>
         <%= f.password_field :password_confirmation,
                              autocomplete: "new-password",
                              class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
