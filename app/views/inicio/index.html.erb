@@ -25,7 +25,7 @@
           <%= @edicao_painel&.rotulo_curto || t("inicio.titulo_edicao_fallback") %>
         </span>
       </h1>
-      <% if user_signed_in? && @edicao_painel && pode_gerir_painel? %>
+      <% if user_signed_in? && @edicao_painel %>
         <div class="relative inline-flex max-w-full shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-teal-900 to-emerald-900 px-5 py-4 shadow-lg shadow-teal-900/25 ring-1 ring-white/15 sm:px-6 sm:py-5"
              role="status"
              aria-label="<%= t('inicio.painel_casais.aria', count: @casais_inscritos_count, rotulo: @edicao_painel.rotulo) %>">

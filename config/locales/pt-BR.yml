@@ -246,7 +246,7 @@ pt-BR:
       titulo_editar: "Editar material · SVES"
     index:
       heading: "Materiais de apoio"
-      subheading: "Documentos globais (todas as edições): PDF, Word ou ODT. O que aparece aqui só inclui registros marcados como ativos e com arquivo anexo."
+      subheading: "Documentos globais (todas as edições): PDF, Word ou ODT."
       vazio_html: "Não há materiais disponíveis no momento. Coordenação pode subir materiais pela gestão ao lado ou pelo painel quando estiver configurado."
     todos:
       heading: "Todos os materiais de apoio"

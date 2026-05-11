@@ -1,8 +1,16 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+# Solid Queue / Solid Cache usam BD próprias (ou o mesmo Postgres via DATABASE_URL).
+# `db:migrate` só mexe na primary — falta `solid_queue_jobs` e dá 500 ao enfileirar jobs (ex.: ActiveStorage::PurgeJob).
+# `db:prepare` aplica migrações da primary e carrega `queue_schema.rb` / `cache_schema.rb` / etc.
+#
+# Na App Platform o CMD costuma ser `sh -c "bundle exec rails server ..."`: não há `./bin/rails` e `server` como $@ finais.
+skip_prepare="${SKIP_DB_PREPARE:-}"
+if [ -n "${DATABASE_URL:-}" ] && [ "$skip_prepare" != "1" ]; then
+  cmd="$*"
+  if [[ "$cmd" == *"rails"*server* ]] || [[ "$cmd" == *"bin/thrust"* ]] || { [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; }; then
+    ./bin/rails db:prepare
+  fi
 fi
 
 exec "${@}"

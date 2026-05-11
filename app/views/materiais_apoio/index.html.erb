@@ -22,9 +22,9 @@
   </div>
 
   <% if @materiais.any? %>
-    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+    <ul class="mt-10 divide-y divide-stone-200/80 overflow-hidden rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
       <% @materiais.each do |m| %>
-        <li class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <li class="flex flex-col gap-3 px-5 py-4 transition-colors duration-150 hover:bg-stone-50/90 active:bg-stone-100/85 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div class="min-w-0 flex-1">
             <span class="block font-medium text-stone-900"><%= m.titulo %></span>
             <% if m.descricao.present? %>

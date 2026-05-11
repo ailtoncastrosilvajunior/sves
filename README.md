@@ -39,9 +39,11 @@ Antes do `./bin/dev`, o comando do Compose faz **`rm -f tmp/pids/server.pid`** �
 
 A imagem gerada pelo `Dockerfile` do Rails está orientada à produção (Thruster, `assets:precompile`, usuário não root).
 
-Deploy na **DigitalOcean App Platform**: utilize esse `Dockerfile`, defina **`RAILS_MASTER_KEY`**, **`SECRET_KEY_BASE`** (ou apenas master key conforme fluxo Rails), **`DATABASE_URL`** para o Postgres gerenciado e execute migrações em um **job/cron de release** (por exemplo `bin/rails db:migrate`). O health check HTTP pode apontar para **`/up`**.
+Deploy na **DigitalOcean App Platform**: utilize esse `Dockerfile`, defina **`RAILS_MASTER_KEY`**, **`SECRET_KEY_BASE`** (ou apenas master key conforme fluxo Rails), **`DATABASE_URL`** para o Postgres gerenciado. No arranque do contentor web, o **`bin/docker-entrypoint`** corre **`bin/rails db:prepare`** (desde que o comando contenha `rails` + `server`, ou `bin/thrust`), o que **cria/atualiza a primary e carrega o schema da fila Solid Queue** (`solid_queue_jobs`, etc.). Se desativar esse passo, use um job de release com **`bin/rails db:prepare`** — **não** use só `db:migrate`, senão faltam as tabelas da fila e uploads (Active Storage) podem falhar com `relation "solid_queue_jobs" does not exist`.
 
-**Nota:** em produção o Rails 8 usa bancos adicionais para Solid Cache, Solid Queue e Solid Cable (`sves_production_cache`, `_queue`, `_cable` no `config/database.yml`). Crie esses bancos no cluster ou ajuste as URLs (`CACHE_DATABASE_URL`, etc.) conforme a documentação do Rails.
+Variável opcional: **`SKIP_DB_PREPARE=1`** ignora o `db:prepare` no entrypoint (útil se preparares a BD só num job de release). O health check HTTP pode apontar para **`/up`**.
+
+**Nota:** em produção o Rails 8 usa configs extra para Solid Cache, Solid Queue e Solid Cable (`_cache`, `_queue`, `_cable` no `database.yml` quando não usas só `DATABASE_URL`). Com **um único `DATABASE_URL`**, todas partilham o mesmo Postgres; `db:prepare` cria as tabelas necessárias nessa base. Se usares bases separadas no cluster, cria-as ou ajusta nomes/URLs conforme a documentação do Rails.
 
 ## Fora do Docker (opcional)
 
