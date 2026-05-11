@@ -8,6 +8,7 @@ class EdicoesController < ApplicationController
   before_action :negar_se_nao_coordenacao!,
                 only: %i[new create edit update destroy marcar_em_curso importar_casais_csv]
   before_action :garantir_acesso_show_edicao!, only: :show
+  before_action :redirecionar_participante_para_os_seus_cenaculos!, only: :show
 
   def index
     @edicoes = Edicao.order(ano: :desc, numero_edicao: :desc)

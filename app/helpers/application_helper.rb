@@ -43,7 +43,7 @@ module ApplicationHelper
     else
       return :cenaculo if e && path.match?(%r{/edicoes/#{e.id}/cenaculos})
     end
-    return :edicao if e && path.match?(%r{\A/edicoes/#{e.id}}o) && !path.match?(%r{/edicoes/\d+/equipes})
+    return :edicao if pode_gerir_painel? && e && path.match?(%r{\A/edicoes/#{e.id}}o) && !path.match?(%r{/edicoes/\d+/equipes})
     return :servos if pode_gerir_painel? && controller_name == "servos"
     return :perfil if !pode_gerir_painel? && controller_name == "servos"
     return :edicoes if pode_gerir_painel? && (path == edicoes_path || path == new_edicao_path)
@@ -63,7 +63,7 @@ module ApplicationHelper
   end
 
   def mobile_nav_grid_class
-    pode_gerir_painel? ? "grid-cols-6" : "grid-cols-4"
+    pode_gerir_painel? ? "grid-cols-6" : "grid-cols-3"
   end
 
   def mobile_nav_link_classes(active)
@@ -80,6 +80,8 @@ module ApplicationHelper
   end
 
   def mobile_edicao_tab_url
+    return mobile_nav_cenaculo_href || root_path if user_signed_in? && !pode_gerir_painel?
+
     edicao_em_curso ? edicao_path(edicao_em_curso) : edicoes_path
   end
 

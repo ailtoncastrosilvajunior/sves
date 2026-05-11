@@ -57,15 +57,16 @@
               <%# Desktop: ligações + separador fino + identidade + «Sair» neutro %>
               <nav class="hidden min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-1.5 text-sm font-medium text-stone-600 lg:flex lg:gap-x-4" aria-label="Secções do painel">
                 <% if edicao_em_curso %>
+                  <% if pode_gerir_painel? %>
                   <%= link_to "Edição em curso", edicao_path(edicao_em_curso),
                               class: "inline-flex max-w-[11rem] truncate rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900 sm:max-w-none",
                               title: edicao_em_curso.rotulo %>
-                  <% if pode_gerir_painel? %>
                   <%= link_to "Equipes", equipes_em_curso_path,
                               class: "inline-flex items-center rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900" %>
                   <% elsif mobile_nav_cenaculo_href.present? %>
-                  <%= link_to "Cenáculo", mobile_nav_cenaculo_href,
-                              class: "inline-flex items-center rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900" %>
+                  <%= link_to "Meu cenáculo", mobile_nav_cenaculo_href,
+                              class: "inline-flex max-w-[11rem] truncate rounded-lg px-2 py-1 transition hover:bg-stone-100 hover:text-stone-900 sm:max-w-none",
+                              title: edicao_em_curso.rotulo %>
                   <% end %>
                 <% end %>
                 <% if pode_gerir_painel? %>

@@ -1,7 +1,9 @@
 <% content_for :title, "Cenáculos · #{@edicao.rotulo} · SVES" %>
 
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-  <%= render "application/back_button", href: edicao_path(@edicao), label: "Ficha da edição" %>
+  <% index_volta_href = pode_gerir_painel? ? edicao_path(@edicao) : root_path %>
+  <% index_volta_label = pode_gerir_painel? ? "Ficha da edição" : "Início" %>
+  <%= render "application/back_button", href: index_volta_href, label: index_volta_label %>
   <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
     <div class="min-w-0">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>

@@ -1,7 +1,17 @@
 <% content_for :title, "#{@cenaculo.nome} · #{@edicao.rotulo} · SVES" %>
+<% cenaculo_volta_href =
+     if pode_gerir_painel?
+       edicao_path(@edicao)
+     elsif current_user.servo
+       esc = current_user.servo.cenaculos.where(edicao_id: @edicao.id).order(:nome)
+       esc.many? ? edicao_cenaculos_path(@edicao) : root_path
+     else
+       root_path
+     end %>
+<% cenaculo_volta_label = pode_gerir_painel? ? "Edição" : (current_user.servo&.cenaculos&.where(edicao_id: @edicao.id)&.many? ? "Meus cenáculos" : "Início") %>
 
 <div class="mx-auto w-full min-w-0 max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-  <%= render "application/back_button", href: edicao_path(@edicao), label: "Edição" %>
+  <%= render "application/back_button", href: cenaculo_volta_href, label: cenaculo_volta_label %>
   <div class="flex w-full min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
     <div class="min-w-0 flex-1">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Cenáculo · <%= @edicao.rotulo %></p>
@@ -56,7 +66,7 @@
                 <span class="text-stone-400"> e </span>
                 <span><%= c.nome_completo_ela.presence || "—" %></span>
               </p>
-              <% if c.apelido_ele.present? || c.apelido_ela.present? %>
+              <% if pode_gerir_painel? && (c.apelido_ele.present? || c.apelido_ela.present?) %>
                 <p class="mt-1.5 text-sm font-medium text-teal-900">
                   <% if c.apelido_ele.present? %>
                     <span class="text-teal-700/80">Ele ·</span> <%= c.apelido_ele %>
@@ -109,6 +119,7 @@
     <% end %>
   </section>
 
+  <% if pode_gerir_painel? %>
   <section class="mt-14" aria-labelledby="cen-grupo-pastores">
     <h2 id="cen-grupo-pastores" class="font-display text-lg text-stone-900">Pastores</h2>
 
@@ -118,14 +129,13 @@
           <li class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div class="min-w-0">
               <% permitidos = current_user.servo ? Servo.ids_do_casal_incluindo(current_user.servo) : [] %>
-              <% if pode_gerir_painel? || permitidos.include?(vinculo.servo_id) %>
+              <% if permitidos.include?(vinculo.servo_id) %>
               <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
                           class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
               <% else %>
               <span class="font-medium text-stone-900"><%= vinculo.servo.nome %></span>
               <% end %>
             </div>
-            <% if pode_gerir_painel? %>
             <%= button_to "Retirar",
                           [@edicao, @cenaculo, vinculo],
                           method: :delete,
@@ -135,7 +145,6 @@
                             },
                           },
                           class: "w-full shrink-0 cursor-pointer rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 sm:w-auto" %>
-            <% end %>
           </li>
         <% end %>
       </ul>
@@ -145,7 +154,6 @@
       </p>
     <% end %>
 
-    <% if pode_gerir_painel? %>
     <% if @servos_para_adicionar.any? %>
       <%= form_with model: [@edicao, @cenaculo, CenaculoServo.new],
                     class: "mt-8 flex flex-col gap-4 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm sm:flex-row sm:flex-wrap sm:items-end" do |f| %>
@@ -172,6 +180,30 @@
         </p>
       <% end %>
     <% end %>
+  </section>
+  <% else %>
+  <section class="mt-14" aria-labelledby="cen-grupo-pastores-leitura">
+    <h2 id="cen-grupo-pastores-leitura" class="font-display text-lg text-stone-900">Pastores</h2>
+
+    <% if @cenaculo_servos_lista.any? %>
+      <ul class="mt-6 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/95 shadow-sm">
+        <% @cenaculo_servos_lista.each do |vinculo| %>
+          <li class="px-5 py-4">
+            <% permitidos = current_user.servo ? Servo.ids_do_casal_incluindo(current_user.servo) : [] %>
+            <% if permitidos.include?(vinculo.servo_id) %>
+              <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+                          class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
+            <% else %>
+              <span class="font-medium text-stone-900"><%= vinculo.servo.nome %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
+        Ainda não há pastores atribuídos.
+      </p>
     <% end %>
   </section>
+  <% end %>
 </div>

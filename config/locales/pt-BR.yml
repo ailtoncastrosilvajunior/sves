@@ -98,6 +98,8 @@ pt-BR:
     apenas_coordenacao: "Esta área é só para a coordenação."
     participante_so_edicao_em_curso: "Só pode consultar a edição em curso."
     sem_cenaculo_nesta_edicao: "A sua conta não está associada a um cenáculo nesta edição. Contacte a coordenação."
+    sem_cenaculo_nesta_edicao_or_sem_edicao: "Não há edição em curso acessível ou a sua conta não está num cenáculo desta edição."
+    sem_perfil_servo: "A sua conta não está ligada a um perfil de servo. Contacte a coordenação."
     cenaculo_nao_autorizado: "Não tem acesso a este cenáculo."
     servo_apenas_perfil_proprio: "Só pode consultar o perfil do seu casal."
   servos:
@@ -185,6 +187,7 @@ pt-BR:
     subtitulo: "Organize edições, servos em equipes, casais participantes e cenáculos em um só lugar — com importação a partir da planilha ou CSV quando estiver disponível."
     banner_alt: "Banner do Seminário de Vida no Espírito Santo para Casais — 15 a 17 de maio, Face de Cristo."
     cta_primario: "Gerir edições"
+    cta_primario_participante: "Meu cenáculo"
     cta_secundario: "Servos, equipes, casais e cenáculos"
     painel_casais:
       rotulo_edicao: "Edição em curso · %{rotulo}"

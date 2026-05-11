@@ -11,7 +11,9 @@ class CenaculosController < ApplicationController
     @cenaculos = @edicao.cenaculos
       .includes(:imagem_attachment, :cenaculo_casais, :cenaculo_servos)
       .order(:nome)
-    @cenaculos = @cenaculos.where(id: current_user.servo.cenaculo_ids) unless pode_gerir_painel?
+    if !pode_gerir_painel? && current_user.servo
+      @cenaculos = @cenaculos.where(id: current_user.servo.cenaculo_ids)
+    end
   end
 
   def show

@@ -25,7 +25,7 @@
           <%= @edicao_painel&.rotulo_curto || t("inicio.titulo_edicao_fallback") %>
         </span>
       </h1>
-      <% if user_signed_in? && @edicao_painel %>
+      <% if user_signed_in? && @edicao_painel && pode_gerir_painel? %>
         <div class="relative inline-flex max-w-full shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-teal-900 to-emerald-900 px-5 py-4 shadow-lg shadow-teal-900/25 ring-1 ring-white/15 sm:px-6 sm:py-5"
              role="status"
              aria-label="<%= t('inicio.painel_casais.aria', count: @casais_inscritos_count, rotulo: @edicao_painel.rotulo) %>">
@@ -45,8 +45,22 @@
       <%= t("inicio.subtitulo") %>
     </p>
     <div class="mt-10 flex flex-col gap-4 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-center">
-      <%= link_to (edicao_em_curso ? edicao_path(edicao_em_curso) : edicoes_path), class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-center text-sm font-medium text-white no-underline shadow-lg shadow-stone-900/10 ring-1 ring-stone-900/5 transition hover:bg-stone-800 min-[400px]:w-auto" do %>
-        <%= t("inicio.cta_primario") %>
+      <% painel_href =
+           if user_signed_in? && !pode_gerir_painel?
+             mobile_nav_cenaculo_href.presence || root_path
+           elsif edicao_em_curso
+             edicao_path(edicao_em_curso)
+           else
+             edicoes_path
+           end %>
+      <% painel_cta =
+           if user_signed_in? && !pode_gerir_painel?
+             t("inicio.cta_primario_participante")
+           else
+             t("inicio.cta_primario")
+           end %>
+      <%= link_to painel_href, class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-center text-sm font-medium text-white no-underline shadow-lg shadow-stone-900/10 ring-1 ring-stone-900/5 transition hover:bg-stone-800 min-[400px]:w-auto" do %>
+        <%= painel_cta %>
       <% end %>
       <span class="text-center text-sm font-medium text-stone-500 min-[400px]:text-left"><%= t("inicio.cta_secundario") %></span>
     </div>
