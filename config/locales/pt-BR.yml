@@ -96,6 +96,7 @@ pt-BR:
     email_duplicado: "já está registado — use «Entrar no painel» ou contacte a coordenação se precisar atualizar dados."
   autorizacao:
     apenas_coordenacao: "Esta área é só para a coordenação."
+    apenas_administrador: "Esta ação é só para administradores da plataforma."
     participante_so_edicao_em_curso: "Só pode consultar a edição em curso."
     sem_cenaculo_nesta_edicao: "A sua conta não está associada a um cenáculo nesta edição. Contacte a coordenação."
     sem_cenaculo_nesta_edicao_or_sem_edicao: "Não há edição em curso acessível ou a sua conta não está num cenáculo desta edição."
@@ -269,8 +270,8 @@ pt-BR:
       ver_lista_publica: "Ver lista vista pelos servos"
       editar: "Editar"
       excluir: "Excluir"
-      baixar: "Baixar arquivo"
-      baixar_teste: "Baixar (testar link)"
+      baixar: "Download"
+      baixar_teste: "Download"
     form_tipos_anexo: "Aceitos: PDF (.pdf), Word (.doc, .docx) ou LibreOffice Writer (.odt). Tamanho máximo 30 MB."
     flash:
       criado: "Material criado."

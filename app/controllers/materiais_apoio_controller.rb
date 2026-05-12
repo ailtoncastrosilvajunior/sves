@@ -3,6 +3,7 @@
 # Materiais editoriais globais (PDF, Word, …) para servos; +ativo+ controla visibilidade na lista pública.
 class MateriaisApoioController < ApplicationController
   before_action :negar_se_nao_coordenacao!, only: %i[todos new create edit update destroy]
+  before_action :negar_se_nao_administrador!, only: %i[edit update destroy]
   before_action :set_material, only: %i[edit update destroy baixar]
 
   def index

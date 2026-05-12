@@ -38,6 +38,12 @@ module AutorizacaoPainel
     redirect_to redirecionamento_apos_negacao!, alert: I18n.t("autorizacao.apenas_coordenacao")
   end
 
+  def negar_se_nao_administrador!
+    return if administrador?
+
+    redirect_back fallback_location: root_path, alert: I18n.t("autorizacao.apenas_administrador")
+  end
+
   def redirecionamento_apos_negacao!
     s = current_user&.servo
     return root_path if s.blank? || edicao_em_curso.blank?

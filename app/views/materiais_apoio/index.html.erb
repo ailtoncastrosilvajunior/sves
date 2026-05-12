@@ -22,25 +22,43 @@
   </div>
 
   <% if @materiais.any? %>
-    <ul class="mt-10 divide-y divide-stone-200/80 overflow-hidden rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+    <ul class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-2" role="list">
       <% @materiais.each do |m| %>
-        <li class="flex flex-col gap-3 px-5 py-4 transition-colors duration-150 hover:bg-stone-50/90 active:bg-stone-100/85 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div class="min-w-0 flex-1">
-            <span class="block font-medium text-stone-900"><%= m.titulo %></span>
-            <% if m.descricao.present? %>
-              <p class="mt-2 text-sm leading-relaxed text-stone-600 whitespace-pre-wrap"><%= m.descricao %></p>
-            <% end %>
-            <% blob = m.arquivo.blob %>
-            <p class="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-stone-500">
-              <kbd class="rounded-md bg-stone-100 px-1.5 py-0.5 font-mono text-stone-800 ring-1 ring-stone-200/80"><%= blob.filename.to_s %></kbd>
-              <span>· <%= number_to_human_size(blob.byte_size, precision: 1) %></span>
-            </p>
-          </div>
-          <div class="shrink-0 sm:pt-0.5">
-            <%= link_to t("material_apoio.links.baixar"),
-                        baixar_material_apoio_path(m),
-                        class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-900/15 bg-white px-4 py-2.5 text-center text-sm font-semibold text-stone-900 shadow-sm transition hover:bg-stone-50 sm:min-h-0 sm:w-auto sm:py-2" %>
-          </div>
+        <li class="min-w-0">
+          <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-gradient-to-b from-white via-white to-stone-50/90 p-5 shadow-sm ring-1 ring-stone-900/[0.035] transition duration-200 hover:border-teal-200/70 hover:shadow-md hover:shadow-teal-900/10 sm:p-6">
+            <div class="flex gap-4">
+              <%= render "materiais_apoio/icone_documento" %>
+              <div class="min-w-0 flex-1">
+                <h2 class="font-display text-lg font-medium leading-snug tracking-tight text-stone-900"><%= m.titulo %></h2>
+                <% if m.descricao.present? %>
+                  <p class="mt-3 line-clamp-4 text-sm leading-relaxed text-stone-600 sm:line-clamp-none sm:whitespace-pre-wrap"><%= m.descricao %></p>
+                <% end %>
+              </div>
+            </div>
+            <%# Mobile: 3 botões na mesma linha (grelha). Sem admin: só Baixar em largura total. %>
+            <div class="mt-5 border-t border-stone-200/60 pt-4">
+              <% if administrador? %>
+                <div class="grid grid-cols-3 gap-1.5 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-2">
+                  <%= link_to t("material_apoio.links.baixar"),
+                              baixar_material_apoio_path(m),
+                              class: "inline-flex min-h-10 items-center justify-center rounded-full bg-teal-800 px-1.5 py-2 text-center text-[0.65rem] font-semibold leading-tight text-white shadow-sm ring-1 ring-teal-900/20 transition hover:bg-teal-900 active:bg-teal-950 sm:order-3 sm:min-h-9 sm:px-4 sm:text-sm" %>
+                  <%= link_to t("material_apoio.links.editar"),
+                              edit_material_apoio_path(m),
+                              class: "inline-flex min-h-10 items-center justify-center rounded-full border border-stone-300 bg-white px-1.5 py-2 text-center text-[0.65rem] font-medium leading-tight text-stone-800 shadow-sm transition hover:bg-stone-50 sm:order-2 sm:min-h-9 sm:px-4 sm:text-sm" %>
+                  <%= button_to t("material_apoio.links.excluir"),
+                                material_apoio_path(m),
+                                method: :delete,
+                                form: { class: "m-0 min-w-0 sm:order-1 sm:inline-block sm:w-auto" },
+                                class: "flex min-h-10 w-full cursor-pointer items-center justify-center rounded-full border border-rose-200/90 bg-rose-50/90 px-1.5 py-2 text-center text-[0.65rem] font-medium leading-tight text-rose-900 transition hover:border-rose-300 hover:bg-rose-100/90 sm:min-h-9 sm:w-auto sm:px-4 sm:text-sm",
+                                data: { turbo_confirm: t("material_apoio.confirmar_remover", titulo: m.titulo) } %>
+                </div>
+              <% else %>
+                <%= link_to t("material_apoio.links.baixar"),
+                            baixar_material_apoio_path(m),
+                            class: "inline-flex min-h-11 w-full items-center justify-center rounded-full bg-teal-800 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm ring-1 ring-teal-900/20 transition hover:bg-teal-900 sm:w-auto" %>
+              <% end %>
+            </div>
+          </article>
         </li>
       <% end %>
     </ul>
