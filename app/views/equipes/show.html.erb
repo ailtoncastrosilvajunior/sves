@@ -54,7 +54,7 @@
 
     <% if @base_voluntarios_vazia %>
       <p class="mt-6 rounded-2xl border border-stone-200/80 bg-amber-50/80 px-5 py-5 text-sm leading-relaxed text-amber-950">
-        Ainda não há nenhum servo na <%= link_to "base de voluntários", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>.
+        Ainda não há nenhum servo na <%= link_to "base de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>.
         Cadastre pelo menos um perfil antes de arrastar ou largar aqui.
       </p>
     <% elsif @servos_disponiveis_para_vinculo.any? %>
@@ -142,7 +142,7 @@
         <% end %>
     <% else %>
       <p class="mt-6 rounded-2xl border border-stone-200/80 bg-stone-50/60 px-5 py-5 text-sm text-stone-600">
-        Nesta edição já não há ninguém de fora por acrescentar: todos os voluntários registados fazem parte desta equipe. Para convidar mais nomes ou retirá-los, use a <%= link_to "lista de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %> ou retire alguém na secção Membros acima e volte aqui.
+        Nesta edição já não há ninguém de fora por acrescentar: todos os servos registados fazem parte desta equipe. Para convidar mais nomes ou retirá-los, use a <%= link_to "lista de servos", servos_path, class: "font-medium text-stone-900 underline-offset-4 hover:underline" %> ou retire alguém na secção Membros acima e volte aqui.
       </p>
     <% end %>
   </section>

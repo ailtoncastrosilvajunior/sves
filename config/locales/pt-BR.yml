@@ -82,7 +82,7 @@ pt-BR:
   cadastro_servos:
     page_title: "Cadastro de servo · SVES"
     subtitulo: "Equipe"
-    titulo: "Cadastro de voluntário (servo)"
+    titulo: "Cadastro de servo de cenáculo"
     intro: "Preencha os dados abaixo. A coordenação irá associar o seu acesso ao painel quando apropriado — receberá instruções pelo grupo ou pelo e‑mail indicado."
     nome_label: "Nome completo"
     sexo_label: "Sexo"
@@ -126,7 +126,7 @@ pt-BR:
       painel: "Registado pela coordenação"
       publico: "Auto‑cadastro (link público)"
       importacao: "Importação / seeds"
-    link_publico_titulo: "Link para voluntários se cadastrarem:"
+    link_publico_titulo: "Link para servos se cadastrarem:"
     link_publico_dica: "— envie no WhatsApp ou use num QR code que aponte para este endereço."
     liberar_acesso_submit: "Liberar acesso (senha padrão)"
     liberar_sucesso: "Conta criada com a senha padrão do ambiente. O servo deve entrar e será pedida a troca de senha."

@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  # Só formulário: confirmação da senha actual em «alterar senha» voluntário.
+  # Só formulário: confirmação da senha actual em «alterar senha» servo.
   attr_accessor :current_password
 
   has_secure_password

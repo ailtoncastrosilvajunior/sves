@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Troca voluntária de palavra-passe (utilizador autenticado, com senha actual).
+# Troca voluntária de senha (utilizador autenticado, com senha actual).
 class AlterarSenhasController < ApplicationController
   def edit
   end
