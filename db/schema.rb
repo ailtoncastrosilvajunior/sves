@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_12_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_12_120000) do
     t.index ["cenaculo_id"], name: "index_cenaculo_casais_on_cenaculo_id"
   end
 
+  create_table "cenaculo_presenca_reunioes", force: :cascade do |t|
+    t.bigint "casal_id", null: false
+    t.bigint "cenaculo_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "edicao_reuniao_cenaculo_id", null: false
+    t.boolean "presente_ela", default: false, null: false
+    t.boolean "presente_ele", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["casal_id"], name: "index_cenaculo_presenca_reunioes_on_casal_id"
+    t.index ["cenaculo_id", "edicao_reuniao_cenaculo_id"], name: "idx_on_cenaculo_id_edicao_reuniao_cenaculo_id_1b33ae641f"
+    t.index ["cenaculo_id"], name: "index_cenaculo_presenca_reunioes_on_cenaculo_id"
+    t.index ["edicao_reuniao_cenaculo_id", "casal_id"], name: "idx_presenca_reuniao_casal_unique", unique: true
+    t.index ["edicao_reuniao_cenaculo_id"], name: "index_cenaculo_presenca_reunioes_on_edicao_reuniao_cenaculo_id"
+  end
+
   create_table "cenaculo_servos", force: :cascade do |t|
     t.bigint "cenaculo_id", null: false
     t.datetime "created_at", null: false
@@ -100,10 +115,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_12_120000) do
     t.string "cor", limit: 32
     t.datetime "created_at", null: false
     t.bigint "edicao_id", null: false
+    t.string "local_homens"
+    t.string "local_mulheres"
     t.string "nome", null: false
     t.datetime "updated_at", null: false
     t.index ["edicao_id", "nome"], name: "index_cenaculos_on_edicao_id_and_nome", unique: true
     t.index ["edicao_id"], name: "index_cenaculos_on_edicao_id"
+  end
+
+  create_table "edicao_reuniao_cenaculos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "descricao"
+    t.bigint "edicao_id", null: false
+    t.string "estado", default: "em_preparacao", null: false
+    t.integer "ordem", default: 0, null: false
+    t.string "titulo", null: false
+    t.datetime "updated_at", null: false
+    t.index ["edicao_id", "estado"], name: "index_edicao_reuniao_cenaculos_on_edicao_id_and_estado"
+    t.index ["edicao_id", "ordem"], name: "index_edicao_reuniao_cenaculos_on_edicao_id_and_ordem"
+    t.index ["edicao_id"], name: "index_edicao_reuniao_cenaculos_on_edicao_id"
   end
 
   create_table "edicoes", force: :cascade do |t|
@@ -180,9 +210,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_12_120000) do
   add_foreign_key "casais", "edicoes"
   add_foreign_key "cenaculo_casais", "casais"
   add_foreign_key "cenaculo_casais", "cenaculos"
+  add_foreign_key "cenaculo_presenca_reunioes", "casais"
+  add_foreign_key "cenaculo_presenca_reunioes", "cenaculos"
+  add_foreign_key "cenaculo_presenca_reunioes", "edicao_reuniao_cenaculos"
   add_foreign_key "cenaculo_servos", "cenaculos"
   add_foreign_key "cenaculo_servos", "servos"
   add_foreign_key "cenaculos", "edicoes"
+  add_foreign_key "edicao_reuniao_cenaculos", "edicoes"
   add_foreign_key "equipe_servos", "edicoes"
   add_foreign_key "equipe_servos", "equipes"
   add_foreign_key "equipe_servos", "servos"

@@ -1,6 +1,7 @@
 class Edicao < ApplicationRecord
   has_many :casais, class_name: "Casal", inverse_of: :edicao, dependent: :destroy
   has_many :cenaculos, dependent: :destroy
+  has_many :edicao_reuniao_cenaculos, dependent: :destroy
   has_many :equipe_servos, class_name: "EquipeServo", dependent: :destroy
 
   scope :em_curso, -> { where(ativa: true) }

@@ -4,7 +4,7 @@
   <% index_volta_href = pode_gerir_painel? ? edicao_path(@edicao) : root_path %>
   <% index_volta_label = pode_gerir_painel? ? "Ficha da edição" : "Início" %>
   <%= render "application/back_button", href: index_volta_href, label: index_volta_label %>
-  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+  <div class="flex flex-col gap-4">
     <div class="min-w-0">
       <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edição <%= @edicao.rotulo %></p>
       <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Cenáculos</h1>
@@ -17,41 +17,124 @@
       </p>
     </div>
     <% if pode_gerir_painel? %>
-    <% if administrador? %>
-    <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao),
-                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-teal-200 bg-teal-50/70 px-4 py-2 text-center text-sm font-medium text-teal-950 hover:bg-teal-100/70 sm:w-auto sm:min-h-0 sm:py-2" %>
-    <% end %>
-    <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao),
-                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
+    <% btn_wrap = "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full px-4 py-2 text-center text-sm font-medium transition sm:w-auto sm:min-h-[42px] sm:py-2" %>
+    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3" role="toolbar" aria-label="Ações dos cenáculos">
+      <% if administrador? %>
+      <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao),
+                  class: "#{btn_wrap} border border-teal-200 bg-teal-50/70 text-teal-950 hover:bg-teal-100/70" %>
+      <% end %>
+      <%= link_to t("impressao_equipe_cenaculos.link_lista_cenaculos"), impressao_equipe_cenaculos_edicao_path(@edicao),
+                  data: { turbo: false },
+                  class: "#{btn_wrap} border border-stone-200 bg-white text-stone-800 shadow-sm ring-1 ring-stone-900/5 hover:border-stone-300 hover:bg-stone-50" %>
+      <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao),
+                  class: "#{btn_wrap} bg-stone-900 text-white shadow-sm ring-1 ring-stone-900/5 hover:bg-stone-800" %>
+    </div>
     <% end %>
   </div>
 
   <% if @cenaculos.any? %>
-    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/90 shadow-sm">
+    <ul class="mt-10 grid list-none gap-4 sm:grid-cols-1 xl:grid-cols-2">
       <% @cenaculos.each do |cenaculo| %>
-        <li>
+        <% n_casais = cenaculo.cenaculo_casais.size %>
+        <% n_pastores = cenaculo.cenaculo_servos.size %>
+        <% linhas_coord = linhas_coordenacao_pastoral_cenaculo(cenaculo) %>
+        <% tem_homens = cenaculo.local_homens.present? %>
+        <% tem_mulheres = cenaculo.local_mulheres.present? %>
+        <% cor_acento = cenaculo.cor.present? && cenaculo.cor.match?(Cenaculo::HEX_COR) ? cenaculo.cor : nil %>
+        <li class="min-w-0">
           <%= link_to edicao_cenaculo_path(@edicao, cenaculo),
-                      class: "flex min-h-[56px] flex-wrap items-center justify-between gap-4 px-5 py-4 transition hover:bg-stone-50/90 active:bg-stone-100/90 sm:min-h-0" do %>
-            <div class="flex min-w-0 flex-wrap items-center gap-3">
-              <% if cenaculo.imagem.attached? %>
-                <%= cenaculo_imagem_tag(cenaculo, resize_to_limit: [112, 112],
-                                        class: "h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-stone-200/80",
-                                        alt: "") %>
-              <% elsif cenaculo.cor.present? && cenaculo.cor.match?(Cenaculo::HEX_COR) %>
-                <span class="h-14 w-14 shrink-0 rounded-xl ring-1 ring-stone-200/70" style="<%= "background-color: #{cenaculo.cor}" %>"></span>
-              <% end %>
-              <div class="min-w-0">
-                <span class="block truncate font-medium text-stone-900"><%= cenaculo.nome %></span>
-                <span class="mt-0.5 block text-xs text-stone-500">
-                  <%= cenaculo.cenaculo_casais.size %> <%= cenaculo.cenaculo_casais.size == 1 ? "casal" : "casais" %>
-                  <% n_p = cenaculo.cenaculo_servos.size %>
-                  <% if n_p.positive? %>
-                    · <%= n_p %> <%= n_p == 1 ? "pastor" : "pastores" %>
-                  <% end %>
-                </span>
+                      class: "group/card relative flex h-full min-h-[44px] flex-col overflow-hidden rounded-2xl border border-stone-200/60 bg-white pl-[0.875rem] shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-4px_rgb(0_0_0/0.07)] outline-none ring-1 ring-stone-900/[0.025] transition duration-300 hover:-translate-y-1 hover:border-teal-300/55 hover:shadow-[0_4px_6px_rgb(0_0_0/0.03),0_16px_36px_-8px_rgb(20_184_166/0.14)] hover:ring-teal-900/[0.06] focus-visible:ring-2 focus-visible:ring-teal-500/90 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:pl-5" do %>
+            <%# Barra lateral %>
+            <span class="pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-full <%= cor_acento.present? ? '' : 'bg-linear-to-b from-teal-400 via-teal-500 to-teal-700 shadow-[2px_0_12px_-2px_rgb(20_184_166/0.45)]' %>"
+                  style="<%= cor_acento.present? ? "background-color: #{cor_acento}; box-shadow: 2px 0 14px -4px #{cor_acento}88" : '' %>"
+                  aria-hidden="true"></span>
+
+            <div class="relative flex min-w-0 gap-3 px-3 pb-2 pt-3.5 sm:gap-3.5 sm:px-4 sm:pb-2 sm:pt-4">
+              <div class="relative shrink-0 self-start pt-0.5">
+                <% if cenaculo.imagem.attached? %>
+                  <div class="rounded-2xl bg-stone-100 p-[3px] shadow-md shadow-stone-900/12 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg group-hover/card:shadow-teal-900/10">
+                    <%= cenaculo_imagem_tag(cenaculo, resize_to_limit: [144, 144],
+                                            class: "h-[3.35rem] w-[3.35rem] rounded-[calc(1rem-2px)] object-cover transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem]",
+                                            alt: cenaculo.nome) %>
+                  </div>
+                <% elsif cor_acento.present? %>
+                  <div class="rounded-2xl bg-stone-100 p-[3px] shadow-md shadow-stone-900/12 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg">
+                    <span class="block h-[3.35rem] w-[3.35rem] rounded-[calc(1rem-2px)] shadow-inner ring-1 ring-black/[0.08] transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem]"
+                          style="<%= "background-color: #{cor_acento}" %>"
+                          aria-hidden="true"></span>
+                  </div>
+                <% else %>
+                  <div class="rounded-2xl bg-teal-100 p-[3px] shadow-md shadow-teal-900/15 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg">
+                    <span class="flex h-[3.35rem] w-[3.35rem] items-center justify-center rounded-[calc(1rem-2px)] bg-white/95 text-lg font-display font-semibold tracking-tight text-teal-800/55 shadow-inner transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem]"
+                          aria-hidden="true"><%= cenaculo.nome.first.upcase %></span>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="min-w-0 flex-1 space-y-2.5">
+                <div class="min-w-0">
+                  <h2 class="font-display text-[1.0625rem] leading-snug tracking-tight text-stone-900 transition duration-200 group-hover/card:text-teal-950 sm:text-lg"><%= cenaculo.nome %></h2>
+                  <div class="mt-2 flex flex-wrap gap-1.5">
+                    <span class="inline-flex items-center rounded-full bg-stone-100/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-stone-600 tabular-nums shadow-inner shadow-white/60 ring-1 ring-stone-200/70"><%= t("cenaculos.index.stats_casais", count: n_casais) %></span>
+                    <% if n_pastores.positive? %>
+                      <span class="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-teal-950 shadow-inner shadow-teal-100/80 ring-1 ring-teal-200/70"><%= t("cenaculos.index.stats_pastores", count: n_pastores) %></span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="rounded-xl border border-teal-100/90 bg-teal-50 px-2.5 py-2 shadow-sm shadow-teal-900/[0.04] ring-1 ring-teal-100/60">
+                    <div class="flex flex-wrap items-start gap-x-2 gap-y-1">
+                      <span class="inline-flex shrink-0 items-center gap-1 rounded-lg bg-white/80 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-stone-600 ring-1 ring-teal-200/70">
+                        <svg class="h-3 w-3 text-teal-600 opacity-90" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2.5 1h-.086a4.94 4.94 0 0 1-4.828 0H5.5A2.5 2.5 0 0 0 3 11.5V13h10v-1.5A2.5 2.5 0 0 0 10.5 9Z"/></svg>
+                        <%= t("cenaculos.index.secao_coordenacao_abrev") %>
+                      </span>
+                      <% if linhas_coord.any? %>
+                        <p class="min-w-0 flex-1 text-xs font-medium leading-snug text-stone-800"><%= linhas_coord.join(" · ") %></p>
+                      <% else %>
+                        <p class="text-xs italic leading-snug text-stone-500"><%= t("cenaculos.index.sem_coordenacao_curto") %></p>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <div class="rounded-lg border border-teal-100/90 border-l-[3px] border-l-teal-500 bg-teal-50 px-2 py-1.5 shadow-sm shadow-teal-900/[0.05]">
+                      <p class="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-teal-900/75">
+                        <svg class="h-3 w-3 shrink-0 opacity-80" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 14s5-3.13 5-7c0-2.76-2.24-5-5-5S3 4.24 3 7c0 3.87 5 7 5 7Z"/><circle cx="8" cy="7" r="1.75"/></svg>
+                        <%= t("cenaculos.index.local_homens_abrev") %>
+                      </p>
+                      <p class="mt-1 line-clamp-2 text-[11px] font-medium leading-snug text-stone-800">
+                        <% if tem_homens %>
+                          <%= cenaculo.local_homens %>
+                        <% else %>
+                          <span class="font-normal text-stone-400"><%= t("cenaculos.index.sem_local_definido") %></span>
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="rounded-lg border border-rose-100/90 border-l-[3px] border-l-rose-500 bg-rose-50 px-2 py-1.5 shadow-sm shadow-rose-900/[0.05]">
+                      <p class="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-rose-900/70">
+                        <svg class="h-3 w-3 shrink-0 opacity-80" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 14s5-3.13 5-7c0-2.76-2.24-5-5-5S3 4.24 3 7c0 3.87 5 7 5 7Z"/><circle cx="8" cy="7" r="1.75"/></svg>
+                        <%= t("cenaculos.index.local_mulheres_abrev") %>
+                      </p>
+                      <p class="mt-1 line-clamp-2 text-[11px] font-medium leading-snug text-stone-800">
+                        <% if tem_mulheres %>
+                          <%= cenaculo.local_mulheres %>
+                        <% else %>
+                          <span class="font-normal text-stone-400"><%= t("cenaculos.index.sem_local_definido") %></span>
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <span class="shrink-0 text-xs text-stone-500">Ver cenáculo →</span>
+
+            <div class="relative mt-auto flex min-h-[2.875rem] items-center justify-end gap-3 border-t border-stone-200/45 bg-stone-50 px-3 py-2 sm:px-4">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-600 px-3.5 py-1.5 text-[11px] font-semibold text-white shadow-md shadow-teal-900/25 ring-1 ring-teal-500/40 transition duration-300 hover:bg-teal-700 group-hover/card:shadow-lg group-hover/card:shadow-teal-900/30 group-hover/card:ring-teal-400/50">
+                <%= t("cenaculos.index.ver_cenaculo") %>
+                <svg class="h-3.5 w-3.5 transition duration-300 group-hover/card:translate-x-0.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8.293 3.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414-1.414L11.586 9H3a1 1 0 1 1 0-2h8.586L8.293 4.707a1 1 0 0 1 0-1.414z"/></svg>
+              </span>
+            </div>
           <% end %>
         </li>
       <% end %>

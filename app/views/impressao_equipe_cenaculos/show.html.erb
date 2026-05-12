@@ -1,0 +1,118 @@
+<% content_for :title, t("impressao_equipe_cenaculos.page_title", edicao: @edicao.rotulo) %>
+
+<div class="no-print toolbar-impressao">
+  <%= link_to t("impressao_equipe_cenaculos.toolbar_voltar"), edicao_path(@edicao), data: { turbo: false } %>
+  <button type="button" onclick="window.print()"><%= t("impressao_equipe_cenaculos.toolbar_imprimir") %></button>
+</div>
+
+<p class="no-print muted" style="max-width:297mm;margin:0 auto 1rem;padding:0 4px;font-size:11px;">
+  <%= t("impressao_equipe_cenaculos.dica_pdf_backgrounds_html") %>
+</p>
+
+<div class="sheet">
+  <header class="doc-head">
+    <h1><%= t("impressao_equipe_cenaculos.titulo_documento") %></h1>
+    <p class="sub"><%= t("impressao_equipe_cenaculos.subtitulo") %></p>
+    <p class="edicao"><%= @edicao.rotulo %></p>
+  </header>
+
+  <div class="coord-box">
+    <strong><%= t("impressao_equipe_cenaculos.coord_titulo") %></strong>
+    <% if @coordenacao_geral_linhas.any? %>
+      <div class="linhas">
+        <% @coordenacao_geral_linhas.each do |linha| %>
+          <%= linha %><br>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="muted" style="margin:0;"><%= t("impressao_equipe_cenaculos.coord_vazio") %></p>
+    <% end %>
+    <p class="muted" style="margin:6px 0 0;font-size:8px;"><%= t("impressao_equipe_cenaculos.coord_nota_fonte") %></p>
+  </div>
+
+  <table class="grid" aria-label="<%= t("impressao_equipe_cenaculos.tabela_aria") %>">
+    <thead>
+      <tr>
+        <th style="width:22px"><%= t("impressao_equipe_cenaculos.col_ordem") %></th>
+        <th style="width:14%"><%= t("impressao_equipe_cenaculos.col_cenaculo") %></th>
+        <th class="cor-head" style="width:10%"><%= t("impressao_equipe_cenaculos.col_cor") %></th>
+        <th style="width:12%"><%= t("impressao_equipe_cenaculos.col_pastores_homens") %></th>
+        <th style="width:12%"><%= t("impressao_equipe_cenaculos.col_pastores_mulheres") %></th>
+        <th style="width:11%"><%= t("impressao_equipe_cenaculos.col_local_homens") %></th>
+        <th style="width:11%"><%= t("impressao_equipe_cenaculos.col_local_mulheres") %></th>
+        <th style="width:22%"><%= t("impressao_equipe_cenaculos.col_participantes") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @cenaculos.any? %>
+        <% @cenaculos.each_with_index do |cenaculo, idx| %>
+          <% pm = pastores_por_sexo_texto_impressao(cenaculo) %>
+          <% hex_cor = cenaculo_cor_hex_para_impressao(cenaculo) %>
+          <% participantes = linhas_casais_participantes_impressao(cenaculo) %>
+          <tr>
+            <td class="num"><%= idx + 1 %>º</td>
+            <td class="nome-cen"><%= cenaculo.nome %></td>
+            <td class="cor-cell">
+              <% if hex_cor.present? %>
+                <span class="swatch">
+                  <span class="swatch-dot" style="<%= "background-color: #{hex_cor};" %>"></span>
+                  <span style="font-size:9px;font-weight:600;"><%= hex_cor.upcase %></span>
+                </span>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if pm[:homens].present? %>
+                <%= pm[:homens] %>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% end %>
+              <% if pm[:sem_sexo].present? %>
+                <div class="pastor-sem-sexo"><%= t("impressao_equipe_cenaculos.pastores_sem_sexo", nomes: pm[:sem_sexo]) %></div>
+              <% end %>
+            </td>
+            <td>
+              <% if pm[:mulheres].present? %>
+                <%= pm[:mulheres] %>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if cenaculo.local_homens.present? %>
+                <%= cenaculo.local_homens %>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if cenaculo.local_mulheres.present? %>
+                <%= cenaculo.local_mulheres %>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if participantes.any? %>
+                <ul class="compact">
+                  <% participantes.each do |linha| %>
+                    <li><%= linha %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.sem_participantes") %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="8" class="muted" style="text-align:center;padding:12px;"><%= t("impressao_equipe_cenaculos.sem_cenaculos_edicao") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <p class="rodape-doc"><%= t("impressao_equipe_cenaculos.rodape_nota") %></p>
+</div>

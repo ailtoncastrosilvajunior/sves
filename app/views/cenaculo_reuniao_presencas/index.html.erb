@@ -1,0 +1,48 @@
+<% content_for :title, t("reunioes_cenaculo.presencas.page_title_index", cenaculo: @cenaculo.nome, edicao: @edicao.rotulo) %>
+
+<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_cenaculo_path(@edicao, @cenaculo), label: t("reunioes_cenaculo.presencas.voltar_cenaculo") %>
+
+  <div class="mt-6 min-w-0">
+    <p class="text-xs font-semibold uppercase tracking-wider text-stone-500"><%= @edicao.rotulo %> · <%= @cenaculo.nome %></p>
+    <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900"><%= t("reunioes_cenaculo.presencas.heading_index") %></h1>
+    <p class="mt-2 text-sm text-stone-600"><%= t("reunioes_cenaculo.presencas.intro_index") %></p>
+  </div>
+
+  <% if @reunioes.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/95 shadow-sm">
+      <% @reunioes.each do |reuniao| %>
+        <% editar_agora = pode_editar_presencas_reuniao?(reuniao, @cenaculo) %>
+        <li class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="font-medium text-stone-900"><%= reuniao.titulo %></h2>
+              <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= reuniao.em_preparacao? ? 'bg-stone-100 text-stone-800' : reuniao.liberada? ? 'bg-emerald-100 text-emerald-900' : 'bg-sky-100 text-sky-950' %>">
+                <%= t("reunioes_cenaculo.estados.#{reuniao.estado}") %>
+              </span>
+              <% if reuniao.liberada? && !pode_gerir_painel? %>
+                <span class="text-xs font-medium text-emerald-800"><%= t("reunioes_cenaculo.presencas.etiqueta_aberta") %></span>
+              <% end %>
+            </div>
+            <% if reuniao.descricao.present? %>
+              <p class="mt-2 line-clamp-3 text-sm text-stone-600"><%= reuniao.descricao %></p>
+            <% end %>
+          </div>
+          <div class="shrink-0">
+            <% if reuniao.visivel_para_pastor? || pode_gerir_painel? %>
+              <%= link_to(editar_agora ? t("reunioes_cenaculo.presencas.abrir_lancamento") : t("reunioes_cenaculo.presencas.ver_presencas"),
+                          edit_reuniao_presencas_edicao_cenaculo_path(@edicao, @cenaculo, reuniao_id: reuniao.id),
+                          class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-800 bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800 sm:w-auto sm:min-h-0") %>
+            <% elsif !pode_gerir_painel? %>
+              <span class="text-sm text-stone-400"><%= t("reunioes_cenaculo.presencas.aguarde_liberacao") %></span>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/70 px-5 py-8 text-center text-sm text-stone-600">
+      <%= t("reunioes_cenaculo.presencas.vazio") %>
+    </p>
+  <% end %>
+</div>

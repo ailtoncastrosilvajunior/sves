@@ -10,6 +10,7 @@ class Casal < ApplicationRecord
 
   belongs_to :edicao, inverse_of: :casais
   has_many :cenaculo_casais, class_name: "CenaculoCasal", dependent: :destroy
+  has_many :cenaculo_presenca_reunioes, dependent: :destroy
   has_many :cenaculos, through: :cenaculo_casais
 
   before_save lambda {

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= content_for?(:title) ? yield(:title) : t("impressao_equipe_cenaculos.page_title_fallback") %></title>
+    <%= render "impressao_equipe_cenaculos/styles" %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+  </head>
+  <body class="impressao-equipe-cenaculos">
+    <%= yield %>
+  </body>
+</html>

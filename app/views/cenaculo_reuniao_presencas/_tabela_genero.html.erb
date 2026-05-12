@@ -1,0 +1,30 @@
+<% campo_str = campo.to_s %>
+<% heading_id = "presencas-#{campo_str}" %>
+<% cb_class = "h-5 w-5 rounded border-stone-300 text-stone-900 accent-stone-900" %>
+<section class="rounded-2xl border border-stone-200/90 bg-white shadow-sm" aria-labelledby="<%= heading_id %>">
+  <h2 id="<%= heading_id %>" class="border-b border-stone-100 px-5 py-4 font-display text-lg text-stone-900"><%= titulo_secao %></h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-stone-200 text-sm">
+      <thead class="bg-stone-50/90 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">
+        <tr>
+          <th class="px-5 py-3"><%= t("reunioes_cenaculo.presencas.col_casal") %></th>
+          <th class="px-5 py-3"><%= t("reunioes_cenaculo.presencas.col_presenca") %></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100">
+        <% casais_com_presenca.each do |casal, pres| %>
+          <tr class="hover:bg-stone-50/60">
+            <td class="px-5 py-3 font-medium text-stone-900"><%= nome_rotulo.call(casal) %></td>
+            <td class="px-5 py-3">
+              <% nome_campo = "presencas[#{casal.id}][#{campo_str}]" %>
+              <% valor = pres.public_send(campo_str) %>
+              <%= check_box_tag nome_campo, "1", valor,
+                                disabled: somente_leitura,
+                                class: cb_class %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

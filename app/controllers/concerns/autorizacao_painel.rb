@@ -8,13 +8,24 @@ module AutorizacaoPainel
   extend ActiveSupport::Concern
 
   included do
-    helper_method :pode_gerir_painel?, :servo_participante?, :administrador?
+    helper_method :pode_gerir_painel?, :servo_participante?, :administrador?, :pode_editar_presencas_reuniao?
   end
 
   private
 
   def administrador?
     current_user&.admin?
+  end
+
+  # Presenças: quem gere o painel (coordenação ou admin) edita em qualquer estado — incluindo encerrada.
+  # Pastores do cenáculo só marcam quando a reunião está +liberada+ (em preparação ou encerrada: só consulta / só coordenação).
+  def pode_editar_presencas_reuniao?(reuniao, cenaculo)
+    return false if reuniao.blank? || cenaculo.blank?
+    return true if pode_gerir_painel?
+
+    return false unless reuniao.liberada?
+
+    current_user&.servo&.cenaculos&.exists?(id: cenaculo.id)
   end
 
   def pode_gerir_painel?

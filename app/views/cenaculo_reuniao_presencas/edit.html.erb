@@ -1,0 +1,77 @@
+<% content_for :title, t("reunioes_cenaculo.presencas.page_title_edit", titulo: @reuniao.titulo, cenaculo: @cenaculo.nome) %>
+
+<div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: reunioes_cenaculo_edicao_cenaculo_path(@edicao, @cenaculo), label: t("reunioes_cenaculo.presencas.voltar_lista_reunioes") %>
+
+  <div class="mt-6 min-w-0">
+    <p class="text-xs font-semibold uppercase tracking-wider text-stone-500"><%= @cenaculo.nome %> · <%= @edicao.rotulo %></p>
+    <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900"><%= @reuniao.titulo %></h1>
+    <% if @reuniao.descricao.present? %>
+      <p class="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-stone-600"><%= @reuniao.descricao %></p>
+    <% end %>
+    <p class="mt-3">
+      <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium <%= @reuniao.em_preparacao? ? 'bg-stone-100 text-stone-800' : @reuniao.liberada? ? 'bg-emerald-100 text-emerald-900' : 'bg-sky-100 text-sky-950' %>">
+        <%= t("reunioes_cenaculo.estados.#{@reuniao.estado}") %>
+      </span>
+    </p>
+  </div>
+
+  <% if @somente_leitura %>
+    <div class="mt-6 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-800">
+      <%= t("reunioes_cenaculo.presencas.somente_leitura_aviso") %>
+    </div>
+  <% end %>
+
+  <% if @somente_leitura %>
+    <div class="mt-10 space-y-10">
+      <%= render "cenaculo_reuniao_presencas/tabela_genero",
+                 titulo_secao: t("reunioes_cenaculo.presencas.secao_ele"),
+                 casais_com_presenca: @casais_com_presenca,
+                 campo: :presente_ele,
+                 nome_rotulo: ->(c) { c.nome_completo_ele.presence || "—" },
+                 somente_leitura: true %>
+      <%= render "cenaculo_reuniao_presencas/tabela_genero",
+                 titulo_secao: t("reunioes_cenaculo.presencas.secao_ela"),
+                 casais_com_presenca: @casais_com_presenca,
+                 campo: :presente_ela,
+                 nome_rotulo: ->(c) { c.nome_completo_ela.presence || "—" },
+                 somente_leitura: true %>
+    </div>
+  <% else %>
+    <%= form_with url: update_reuniao_presencas_edicao_cenaculo_path(@edicao, @cenaculo, reuniao_id: @reuniao.id),
+                  method: :patch,
+                  class: "mt-10 space-y-10",
+                  html: { data: { turbo: false } } do %>
+      <div class="flex flex-wrap gap-2 rounded-2xl border border-stone-200 bg-stone-50/80 px-4 py-4">
+        <span class="self-center text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("reunioes_cenaculo.presencas.acoes_rapidas") %></span>
+        <%= button_tag t("reunioes_cenaculo.presencas.marcar_todos_ele"), name: "acao_lote", value: "todos_ele", type: :submit,
+                       class: "rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-100" %>
+        <%= button_tag t("reunioes_cenaculo.presencas.marcar_todos_ela"), name: "acao_lote", value: "todos_ela", type: :submit,
+                       class: "rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-100" %>
+        <%= button_tag t("reunioes_cenaculo.presencas.marcar_todos_ambos"), name: "acao_lote", value: "todos_ambos", type: :submit,
+                       class: "rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-100" %>
+        <%= button_tag t("reunioes_cenaculo.presencas.limpar_todos"), name: "acao_lote", value: "limpar", type: :submit,
+                       class: "rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-950 hover:bg-amber-100/80" %>
+      </div>
+
+      <%= render "cenaculo_reuniao_presencas/tabela_genero",
+                 titulo_secao: t("reunioes_cenaculo.presencas.secao_ele"),
+                 casais_com_presenca: @casais_com_presenca,
+                 campo: :presente_ele,
+                 nome_rotulo: ->(c) { c.nome_completo_ele.presence || "—" },
+                 somente_leitura: false %>
+
+      <%= render "cenaculo_reuniao_presencas/tabela_genero",
+                 titulo_secao: t("reunioes_cenaculo.presencas.secao_ela"),
+                 casais_com_presenca: @casais_com_presenca,
+                 campo: :presente_ela,
+                 nome_rotulo: ->(c) { c.nome_completo_ela.presence || "—" },
+                 somente_leitura: false %>
+
+      <div class="pt-4">
+        <%= submit_tag t("reunioes_cenaculo.presencas.gravar_presencas"),
+                       class: "min-h-[48px] w-full cursor-pointer rounded-full bg-stone-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-stone-800 sm:w-auto sm:min-h-[44px]" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

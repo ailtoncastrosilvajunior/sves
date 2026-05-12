@@ -1,0 +1,53 @@
+<% content_for :title, t("reunioes_cenaculo.page_title_index", edicao: @edicao.rotulo) %>
+
+<div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_path(@edicao), label: t("reunioes_cenaculo.voltar_edicao") %>
+
+  <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <p class="text-xs font-semibold uppercase tracking-wider text-stone-500"><%= @edicao.rotulo %></p>
+      <h1 class="mt-2 font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= t("reunioes_cenaculo.heading_index") %></h1>
+      <p class="mt-2 text-sm text-stone-600"><%= t("reunioes_cenaculo.intro_index") %></p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to t("reunioes_cenaculo.novo_lote"), novo_lote_edicao_reunioes_cenaculo_index_path(@edicao),
+                  class: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-950 hover:bg-teal-100 sm:min-h-0" %>
+      <%= link_to t("reunioes_cenaculo.nova_uma"), new_edicao_reunioes_cenaculo_path(@edicao),
+                  class: "inline-flex min-h-[44px] items-center justify-center rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800 sm:min-h-0" %>
+    </div>
+  </div>
+
+  <% if @reunioes.any? %>
+    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/95 shadow-sm">
+      <% @reunioes.each do |reuniao| %>
+        <li class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("reunioes_cenaculo.rotulo_ordem", ordem: reuniao.ordem) %></p>
+            <h2 class="mt-1 font-medium text-stone-900"><%= reuniao.titulo %></h2>
+            <% if reuniao.descricao.present? %>
+              <p class="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-600"><%= reuniao.descricao %></p>
+            <% end %>
+            <p class="mt-3">
+              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium <%= reuniao.em_preparacao? ? 'bg-stone-100 text-stone-800' : reuniao.liberada? ? 'bg-emerald-100 text-emerald-900' : 'bg-sky-100 text-sky-950' %>">
+                <%= t("reunioes_cenaculo.estados.#{reuniao.estado}") %>
+              </span>
+            </p>
+          </div>
+          <div class="flex shrink-0 flex-wrap gap-2">
+            <%= link_to t("reunioes_cenaculo.editar"), edit_edicao_reunioes_cenaculo_path(@edicao, reuniao),
+                        class: "inline-flex min-h-[40px] items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 hover:bg-stone-50" %>
+            <%= button_to t("reunioes_cenaculo.remover"), edicao_reunioes_cenaculo_path(@edicao, reuniao), method: :delete,
+                          form: {
+                            data: { turbo_confirm: t("reunioes_cenaculo.confirmar_remover") },
+                          },
+                          class: "cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-100" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/70 px-5 py-8 text-center text-sm text-stone-600">
+      <%= t("reunioes_cenaculo.vazio_index") %>
+    </p>
+  <% end %>
+</div>

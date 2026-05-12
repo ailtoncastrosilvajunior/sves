@@ -1,0 +1,257 @@
+<style>
+  /*
+    Folha única A4 paisagem — equipe de cenáculos (SVES).
+    Cores: print-color-adjust para quadrados HEX; no Chrome active «Gráficos de fundo» ao guardar PDF.
+  */
+  :root {
+    --ink: #1c1917;
+    --muted: #57534e;
+    --line: #d6d3d1;
+    --thead: #f5f5f4;
+    --accent: #0f766e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body.impressao-equipe-cenaculos {
+    margin: 0;
+    padding: 1rem;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.35;
+    color: var(--ink);
+    background: #fafaf9;
+  }
+
+  .toolbar-impressao {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-width: 297mm;
+    margin: 0 auto 1rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+  }
+
+  .toolbar-impressao a {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .toolbar-impressao a:hover {
+    text-decoration: underline;
+  }
+
+  .toolbar-impressao button {
+    cursor: pointer;
+    border: none;
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(to right, #0d9488, #0f766e);
+    box-shadow: 0 2px 8px rgb(15 118 110 / 0.35);
+  }
+
+  .toolbar-impressao button:hover {
+    filter: brightness(1.06);
+  }
+
+  .sheet {
+    max-width: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    padding: 10mm 12mm;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+  }
+
+  header.doc-head {
+    text-align: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  header.doc-head h1 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  header.doc-head .sub {
+    margin: 6px 0 0;
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  header.doc-head .edicao {
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .coord-box {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    background: linear-gradient(to bottom, #fafaf9, #fff);
+  }
+
+  .coord-box strong {
+    display: block;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .coord-box .linhas {
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  table.grid {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  table.grid th,
+  table.grid td {
+    border: 1px solid var(--line);
+    padding: 4px 5px;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  table.grid thead th {
+    background: var(--thead);
+    font-size: 7.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  table.grid thead th.cor-head {
+    text-align: left;
+  }
+
+  table.grid tbody td.num {
+    width: 22px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 9px;
+    background: #fafaf9;
+  }
+
+  table.grid tbody td.nome-cen {
+    font-weight: 700;
+    font-size: 9.5px;
+  }
+
+  table.grid tbody td.cor-cell {
+    text-align: left;
+  }
+
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .swatch-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .muted {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 9px;
+  }
+
+  .pastor-sem-sexo {
+    margin-top: 4px;
+    font-size: 8px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  ul.compact {
+    margin: 0;
+    padding-left: 1em;
+  }
+
+  ul.compact li {
+    margin: 0 0 2px;
+    font-size: 9px;
+  }
+
+  .rodape-doc {
+    margin: 8px 0 0;
+    font-size: 8px;
+    color: #78716c;
+    text-align: center;
+  }
+
+  @media print {
+    .sheet,
+    .sheet * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body.impressao-equipe-cenaculos {
+      padding: 0;
+      background: #fff;
+    }
+
+    .sheet {
+      box-shadow: none;
+      border-radius: 0;
+      max-width: none;
+      padding: 0;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+  }
+</style>

@@ -17,6 +17,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "equipe", "equipes"
   inflect.irregular "cenaculo", "cenaculos"
   inflect.irregular "casal", "casais"
+  inflect.irregular "reuniao", "reunioes"
   inflect.irregular "material_apoio", "materiais_apoio"
 end
 
@@ -26,5 +27,6 @@ ActiveSupport::Inflector.inflections(:pt) do |inflect|
   inflect.irregular "equipe", "equipes"
   inflect.irregular "cenaculo", "cenaculos"
   inflect.irregular "casal", "casais"
+  inflect.irregular "reuniao", "reunioes"
   inflect.irregular "material_apoio", "materiais_apoio"
 end

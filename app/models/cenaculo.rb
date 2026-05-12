@@ -6,6 +6,7 @@ class Cenaculo < ApplicationRecord
   has_many :cenaculo_servos, class_name: "CenaculoServo", dependent: :destroy
   has_many :servos, through: :cenaculo_servos # pastores deste cenáculo
   has_many :cenaculo_casais, class_name: "CenaculoCasal", dependent: :destroy
+  has_many :cenaculo_presenca_reunioes, dependent: :destroy
   # +source+: sem isto o Inflector inglês faz +casais+ → «casai», que não existe no join.
   has_many :casais, through: :cenaculo_casais, source: :casal
 

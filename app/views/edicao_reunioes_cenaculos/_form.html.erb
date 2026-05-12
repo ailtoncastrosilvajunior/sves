@@ -1,0 +1,38 @@
+<% input_class = "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm" %>
+<% label_class = "block text-sm font-medium text-stone-700" %>
+
+<% if @reuniao.errors.any? %>
+  <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+    <ul class="mt-1 list-inside list-disc">
+      <% @reuniao.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div>
+  <%= f.label :titulo, class: label_class %>
+  <%= f.text_field :titulo, required: true, class: input_class %>
+</div>
+
+<div>
+  <%= f.label :descricao, class: label_class %>
+  <%= f.text_area :descricao, rows: 6, class: "#{input_class} min-h-[8rem]" %>
+  <p class="mt-1 text-xs text-stone-500"><%= t("reunioes_cenaculo.dica_descricao") %></p>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-2">
+  <div>
+    <%= f.label :ordem, class: label_class %>
+    <%= f.number_field :ordem, min: 0, step: 1, class: input_class %>
+  </div>
+  <div>
+    <%= f.label :estado, class: label_class %>
+    <%= f.select :estado,
+                 EdicaoReuniaoCenaculo.estados.keys.map { |k| [t("reunioes_cenaculo.estados.#{k}"), k.to_s] },
+                 {},
+                 class: input_class %>
+    <p class="mt-1 text-xs text-stone-500"><%= t("reunioes_cenaculo.dica_estado") %></p>
+  </div>
+</div>

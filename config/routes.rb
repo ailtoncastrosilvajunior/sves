@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     member do
       patch :marcar_em_curso
       post :importar_casais_csv
+      get :impressao_equipe_cenaculos, to: "impressao_equipe_cenaculos#show"
     end
     resources :equipes do
       resources :vinculos, controller: :equipes_servos, only: %i[create destroy] do
@@ -29,7 +30,18 @@ Rails.application.routes.draw do
       end
     end
     resources :casais, only: %i[index]
+    resources :reunioes_cenaculo, controller: "edicao_reunioes_cenaculos", except: %i[show] do
+      collection do
+        get :novo_lote
+        post :criar_lote
+      end
+    end
     resources :cenaculos do
+      member do
+        get "reunioes_cenaculo", to: "cenaculo_reuniao_presencas#index", as: :reunioes_cenaculo
+        get "reunioes_cenaculo/:reuniao_id/presencas", to: "cenaculo_reuniao_presencas#edit", as: :edit_reuniao_presencas
+        patch "reunioes_cenaculo/:reuniao_id/presencas", to: "cenaculo_reuniao_presencas#update", as: :update_reuniao_presencas
+      end
       resources :cenaculo_casais, path: "membros_casais", only: %i[create destroy]
       resources :cenaculo_servos, path: "pastores", only: %i[create destroy]
     end

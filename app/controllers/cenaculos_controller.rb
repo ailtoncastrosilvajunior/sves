@@ -9,7 +9,7 @@ class CenaculosController < ApplicationController
 
   def index
     @cenaculos = @edicao.cenaculos
-      .includes(:imagem_attachment, :cenaculo_casais, :cenaculo_servos)
+      .includes(:imagem_attachment, :cenaculo_casais, cenaculo_servos: { servo: :conjuge })
       .order(:nome)
     if !pode_gerir_painel? && current_user.servo
       @cenaculos = @cenaculos.where(id: current_user.servo.cenaculo_ids)
@@ -90,7 +90,7 @@ class CenaculosController < ApplicationController
   end
 
   def cenaculo_params
-    params.require(:cenaculo).permit(:nome, :cor, :imagem)
+    params.require(:cenaculo).permit(:nome, :cor, :local_homens, :local_mulheres, :imagem)
   end
 
   def atualizar_com_imagem_opcional(record)

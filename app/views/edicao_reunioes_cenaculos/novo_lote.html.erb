@@ -1,0 +1,35 @@
+<% content_for :title, t("reunioes_cenaculo.page_title_lote", edicao: @edicao.rotulo) %>
+
+<div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+  <%= render "application/back_button", href: edicao_reunioes_cenaculo_index_path(@edicao), label: t("reunioes_cenaculo.voltar_lista") %>
+  <h1 class="mt-6 font-display text-2xl tracking-tight text-stone-900"><%= t("reunioes_cenaculo.heading_lote") %></h1>
+  <p class="mt-2 text-sm leading-relaxed text-stone-600"><%= t("reunioes_cenaculo.intro_lote") %></p>
+
+  <%= form_with url: criar_lote_edicao_reunioes_cenaculo_index_path(@edicao), method: :post, class: "mt-8 space-y-8", html: { data: { turbo: false } } do %>
+    <% @linhas.each_with_index do |_linha, i| %>
+      <fieldset class="rounded-2xl border border-stone-200/90 bg-white px-4 py-5 shadow-sm sm:px-5">
+        <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("reunioes_cenaculo.lote_linha_label", n: i + 1) %></legend>
+        <div class="mt-4 space-y-4">
+          <div>
+            <%= label_tag "reunioes_#{i}_titulo", t("activerecord.attributes.edicao_reuniao_cenaculo.titulo"), class: "block text-sm font-medium text-stone-700" %>
+            <%= text_field_tag "reunioes[#{i}][titulo]", "", id: "reunioes_#{i}_titulo",
+                               class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-sm focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20",
+                               autocomplete: "off" %>
+          </div>
+          <div>
+            <%= label_tag "reunioes_#{i}_descricao", t("activerecord.attributes.edicao_reuniao_cenaculo.descricao"), class: "block text-sm font-medium text-stone-700" %>
+            <%= text_area_tag "reunioes[#{i}][descricao]", "", id: "reunioes_#{i}_descricao", rows: 3,
+                              class: "mt-2 w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-sm focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20" %>
+          </div>
+        </div>
+      </fieldset>
+    <% end %>
+
+    <div class="flex flex-wrap gap-3 pt-2">
+      <%= submit_tag t("reunioes_cenaculo.criar_lote_submit"),
+                     class: "min-h-[44px] cursor-pointer rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-stone-800" %>
+      <%= link_to t("reunioes_cenaculo.cancelar"), edicao_reunioes_cenaculo_index_path(@edicao),
+                  class: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 hover:bg-stone-50" %>
+    </div>
+  <% end %>
+</div>
