@@ -12,11 +12,29 @@ default: &default
   encoding: unicode
   pool: <%= Integer(ENV.fetch("RAILS_MAX_THREADS", "5")) %>
 
+<%# Com DATABASE_URL (ex.: laptop ligado ao Postgres de produção), a config segue o modelo Rails 8:
+    primary + cache + queue + cable no mesmo cluster. Sem isto, `db:prepare` em development
+    nunca cria `solid_queue_jobs` — só a primary. %>
 development:
-  <<: *default
   <% if db_url != "" %>
-  url: <%= db_url %>
+  primary:
+    <<: *default
+    url: <%= db_url %>
+  cache:
+    <<: *default
+    migrations_paths: db/cache_migrate
+    url: <%= db_url %>
+  queue:
+    <<: *default
+    migrations_paths: db/queue_migrate
+    pool: <%= Integer(ENV.fetch("SOLID_QUEUE_POOL", "5")) %>
+    url: <%= db_url %>
+  cable:
+    <<: *default
+    migrations_paths: db/cable_migrate
+    url: <%= db_url %>
   <% else %>
+  <<: *default
   database: <%= ENV.fetch("DATABASE_NAME") { "sves_development" } %>
   username: <%= ENV.fetch("DATABASE_USERNAME") { ENV["USER"] } %>
   password: <%= ENV["DATABASE_PASSWORD"].presence %>
