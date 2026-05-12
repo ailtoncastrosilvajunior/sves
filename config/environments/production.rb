@@ -50,8 +50,20 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  #
+  # Solid Queue precisa das tabelas `solid_queue_*` no Postgres (`bin/rails db:prepare`).
+  # Sem elas, o Active Storage enfileira PurgeJob e a app devolve 500 (ex.: upload de imagem do cenáculo).
+  #
+  # Por defeito: :inline — o job corre no mesmo pedido HTTP; não usa `solid_queue_jobs`.
+  # Para fila persistente + plugin Puma: defina ACTIVE_JOB_ADAPTER=solid_queue e prepare a BD;
+  # opcionalmente SOLID_QUEUE_IN_PUMA=true (ver config/puma.rb).
+  active_job_adapter =
+    (ENV["ACTIVE_JOB_ADAPTER"].to_s.strip.presence || "inline").to_sym
+  config.active_job.queue_adapter = active_job_adapter
+
+  if active_job_adapter == :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
+  end
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
