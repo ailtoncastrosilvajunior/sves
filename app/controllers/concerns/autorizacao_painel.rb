@@ -41,7 +41,14 @@ module AutorizacaoPainel
   def negar_se_nao_administrador!
     return if administrador?
 
-    redirect_back fallback_location: root_path, alert: I18n.t("autorizacao.apenas_administrador")
+    fallback =
+      if instance_variable_defined?(:@edicao) && @edicao.present?
+        edicao_path(@edicao)
+      else
+        root_path
+      end
+
+    redirect_back fallback_location: fallback, alert: I18n.t("autorizacao.apenas_administrador")
   end
 
   def redirecionamento_apos_negacao!

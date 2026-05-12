@@ -48,4 +48,14 @@ module CenaculosHelper
   def rotulo_fonte_casal(casal)
     t("casais_views.fontes.#{casal.fonte_importacao}", default: casal.fonte_importacao.to_s.titleize)
   end
+
+  # Miniatura via Active Storage; se o processador (ex.: libvips) falhar, mostra o original.
+  def cenaculo_imagem_tag(cenaculo, resize_to_limit:, **html_options)
+    return "".html_safe unless cenaculo.imagem.attached?
+
+    image_tag cenaculo.imagem.variant(resize_to_limit: resize_to_limit), html_options
+  rescue StandardError => e
+    Rails.logger.warn("Cenaculo##{cenaculo.id} imagem variant: #{e.class}: #{e.message}")
+    image_tag cenaculo.imagem, html_options
+  end
 end

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <title><%= resultado.edicao_rotulo %> · <%= t("cenaculos.distribuicao_sugestao.doc_titulo_curto") %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body{font-family:ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial;line-height:1.45;color:#1c1917;margin:28px;background:#fafaf9}
+    header{margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid #e7e5e4}
+    h1{font-size:1.65rem;margin:8px 0 4px;font-weight:700}
+    h2{font-size:1.35rem;margin:34px 0 12px;border-bottom:1px solid #d6d3d1;padding-bottom:6px}
+    h3{font-size:1.05rem;margin:18px 0 8px}
+    .muted{color:#57534e;font-size:.9rem;margin:6px 0}
+    .caixa{background:#fff;border:1px solid #e7e5e4;border-radius:14px;padding:18px 20px;margin:16px 0}
+    ul{margin:8px 0 0 20px}
+    .colunas{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media print{body{background:#fff;margin:12px}.caixa{box-shadow:none}}
+    @media(max-width:720px){.colunas{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="muted"><%= t("cenaculos.distribuicao_sugestao.doc_cabecalho_rubrica") %></p>
+    <h1><%= resultado.edicao_rotulo %></h1>
+    <p class="muted">
+      <%= l(resultado.gerado_em, format: :short) %> ·
+      <%= t("cenaculos.distribuicao_sugestao.doc_resumo_html",
+            total: resultado.total_casais,
+            grupos: resultado.quantidade_grupos,
+            limite: resultado.casais_por_grupo) %>
+    </p>
+    <p class="muted"><%= resultado.semilla_observacao %></p>
+    <p class="muted">
+      <%= resultado.somente_sem_cenaculo ? t("cenaculos.distribuicao_sugestao.doc_filtrou_somente_livres") : t("cenaculos.distribuicao_sugestao.doc_incluiu_todos_os_casados") %>
+    </p>
+  </header>
+
+  <section class="caixa">
+    <h3><%= t("cenaculos.distribuicao_sugestao.doc_secao_prompt") %></h3>
+    <div class="muted"><%= sanitize resultado.texto_regra, tags: %w[p strong em b i ul ol li br], attributes: %w[] %></div>
+  </section>
+
+  <% resultado.grupos.each do |grupo| %>
+    <section>
+      <h2><%= t("cenaculos.distribuicao_sugestao.doc_grupo_heading", numero: grupo.numero) %>
+        (<%= t("cenaculos.distribuicao_sugestao.doc_plhr_casais", count: grupo.membros.size) %>)</h2>
+      <% if grupo.introducao&.any? %>
+        <div class="caixa">
+          <h3><%= t("cenaculos.distribuicao_sugestao.doc_motivos_grupo") %></h3>
+          <ul>
+            <% grupo.introducao.each do |linha_intro| %>
+              <li><%= linha_intro %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <% if grupo.resumo_dimensao&.any? %>
+        <div class="caixa">
+          <h3><%= t("cenaculos.distribuicao_sugestao.doc_distribuicao_marcadores") %></h3>
+          <ul class="muted">
+            <% grupo.resumo_dimensao.each do |linha| %>
+              <li><%= linha %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="caixa">
+        <h3><%= t("cenaculos.distribuicao_sugestao.doc_casais_heading") %></h3>
+        <ol class="muted">
+          <% grupo.membros.each do |casamento| %>
+            <li><strong><%= casamento.nome_completo_ele.presence || casamento.apelido_ele.presence || "Esposo" %></strong>
+              &
+              <strong><%= casamento.nome_completo_ela.presence || casamento.apelido_ela.presence || "Esposa" %></strong>
+            </li>
+          <% end %>
+        </ol>
+        <div class="colunas" style="margin-top:14px;">
+          <div>
+            <h3><%= t("cenaculos.distribuicao_sugestao.doc_homens_heading") %></h3>
+            <ul class="muted">
+              <% grupo.membros.each do |c| %>
+                <li><%= c.nome_completo_ele.presence || c.apelido_ele.presence || "(homem não identificado pela ficha)" %></li>
+              <% end %>
+            </ul>
+          </div>
+          <div>
+            <h3><%= t("cenaculos.distribuicao_sugestao.doc_mulheres_heading") %></h3>
+            <ul class="muted">
+              <% grupo.membros.each do |c| %>
+                <li><%= c.nome_completo_ela.presence || c.apelido_ela.presence || "(mulher não identificada pela ficha)" %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <p class="muted"><%= t("cenaculos.distribuicao_sugestao.doc_nota_paridade_pastoral") %></p>
+      </div>
+      <div class="caixa">
+        <h3><%= t("cenaculos.distribuicao_sugestao.doc_motivo_por_casal_heading") %></h3>
+        <% grupo.explicacao_por_casal&.each do |info| %>
+          <p style="margin:12px 0 4px;font-weight:600;"><%= info.fetch(:nome) %></p>
+          <ul class="muted">
+            <% Array.wrap(info[:linhas]).each do |frase_inteligencial| %>
+              <li><%= frase_inteligencial %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</body>
+</html>

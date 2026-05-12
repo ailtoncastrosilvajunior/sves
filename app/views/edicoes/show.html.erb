@@ -46,28 +46,45 @@
   <% end %>
 
   <% if pode_gerir_painel? %>
-  <dl class="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-3 sm:gap-4">
-    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
+  <dl class="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-3 sm:items-stretch sm:gap-5">
+    <% painel_cards_acoes =
+         "inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-2xl border px-4 py-2.5 text-center text-sm font-medium transition sm:min-h-[42px] sm:w-auto sm:py-2" %>
+    <div class="@container/card flex h-full min-h-[10.5rem] flex-col rounded-2xl border border-stone-200/90 bg-linear-to-b from-white to-stone-50/40 px-5 py-5 shadow-sm shadow-stone-900/[0.04] ring-1 ring-stone-900/[0.04] transition hover:border-stone-300/95 hover:shadow-md hover:shadow-stone-900/[0.06]">
       <dt class="text-xs uppercase tracking-wide text-stone-500">Equipes com membros nesta edição</dt>
-      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <span class="font-display text-2xl text-stone-900"><%= @edicao.equipes_com_composicao_count %></span>
-        <%= link_to "Gerir todas as equipes", edicao_equipes_path(@edicao), class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      <dd class="mt-4 flex flex-1 flex-col gap-5">
+        <span class="font-display text-[1.85rem] leading-none tracking-tight text-stone-900 tabular-nums sm:text-[2rem]"><%= @edicao.equipes_com_composicao_count %></span>
+        <nav class="mt-auto flex flex-wrap gap-2.5 @[24rem]/card:flex-nowrap" aria-label="Ações relacionadas às equipes">
+          <%= link_to "Gerir todas as equipes", edicao_equipes_path(@edicao),
+                      class:
+                        "#{painel_cards_acoes} w-full basis-full border-stone-200/95 bg-white text-stone-800 shadow-sm hover:border-stone-300 hover:bg-stone-50 sm:w-fit sm:flex-initial sm:basis-auto" %>
+        </nav>
       </dd>
     </div>
-    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
+    <div class="@container/card flex h-full min-h-[10.5rem] flex-col rounded-2xl border border-stone-200/90 bg-linear-to-b from-white to-stone-50/40 px-5 py-5 shadow-sm shadow-stone-900/[0.04] ring-1 ring-stone-900/[0.04] transition hover:border-stone-300/95 hover:shadow-md hover:shadow-stone-900/[0.06]">
       <dt class="text-xs uppercase tracking-wide text-stone-500">Casais</dt>
-      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <span class="font-display text-2xl text-stone-900"><%= @edicao.casais.count %></span>
-        <%= link_to "Ver lista de casais", edicao_casais_path(@edicao),
-                    class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+      <dd class="mt-4 flex flex-1 flex-col gap-5">
+        <span class="font-display text-[1.85rem] leading-none tracking-tight text-stone-900 tabular-nums sm:text-[2rem]"><%= @edicao.casais.count %></span>
+        <nav class="mt-auto flex flex-wrap gap-2.5 @[24rem]/card:flex-nowrap" aria-label="Ações relacionadas aos casais">
+          <%= link_to "Ver lista de casais", edicao_casais_path(@edicao),
+                      class:
+                        "#{painel_cards_acoes} w-full basis-full border-stone-200/95 bg-white text-stone-800 shadow-sm hover:border-stone-300 hover:bg-stone-50 sm:w-fit sm:flex-initial sm:basis-auto" %>
+        </nav>
       </dd>
     </div>
-    <div class="rounded-2xl border border-stone-200/80 bg-white/80 px-5 py-4 shadow-sm">
-      <dt class="text-xs uppercase tracking-wide text-stone-500">Cenáculos</dt>
-      <dd class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <span class="font-display text-2xl text-stone-900"><%= @edicao.cenaculos.count %></span>
-        <%= link_to "Gerir cenáculos", edicao_cenaculos_path(@edicao),
-                    class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
+    <div class="@container/card flex h-full min-h-[10.5rem] flex-col rounded-2xl border border-teal-200/40 bg-linear-to-br from-teal-50/[0.45] via-white to-stone-50/50 px-5 py-5 shadow-sm shadow-teal-900/[0.04] ring-1 ring-teal-900/[0.06] transition hover:border-teal-200/80 hover:shadow-md hover:shadow-teal-900/[0.07]">
+      <dt class="text-xs uppercase tracking-wide text-teal-900/85">Cenáculos</dt>
+      <dd class="mt-4 flex flex-1 flex-col gap-5">
+        <span class="font-display text-[1.85rem] leading-none tracking-tight text-stone-900 tabular-nums sm:text-[2rem]"><%= @edicao.cenaculos.count %></span>
+        <nav class="mt-auto flex flex-wrap items-stretch gap-2.5 @[22rem]/card:flex-nowrap" aria-label="Ações relacionadas aos cenáculos">
+          <% if administrador? %>
+          <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao),
+                      class:
+                        "#{painel_cards_acoes} min-h-[3rem] w-full min-w-0 flex-1 border-teal-200/95 bg-teal-50 text-teal-950 hover:border-teal-300 hover:bg-teal-100/80 @[22rem]/card:min-w-[10.5rem] @[22rem]/card:flex-none sm:min-h-[42px]" %>
+          <% end %>
+          <%= link_to "Gerir cenáculos", edicao_cenaculos_path(@edicao),
+                      class:
+                        "#{painel_cards_acoes} min-h-[3rem] w-full min-w-0 flex-1 border-stone-200/95 bg-white text-stone-800 shadow-sm hover:border-stone-300 hover:bg-stone-50 @[22rem]/card:min-w-[9rem] @[22rem]/card:flex-none sm:min-h-[42px]" %>
+        </nav>
       </dd>
     </div>
   </dl>

@@ -44,6 +44,12 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# Armazenamento objeto S3-compatible (DigitalOcean Spaces, AWS S3) para Active Storage em produção/PaaS
+gem "aws-sdk-s3", require: false
+
+# S3-compatible object storage (DigitalOcean Spaces, AWS S3, etc.) — Active Storage produção em PaaS
+gem "aws-sdk-s3", require: false
+
 group :development, :test do
   gem "dotenv-rails"
 

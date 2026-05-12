@@ -51,7 +51,16 @@ class CenaculosController < ApplicationController
   end
 
   def create
-    @cenaculo = @edicao.cenaculos.build(cenaculo_params)
+    permitted = cenaculo_params
+    @cenaculo = @edicao.cenaculos.build(permitted.except(:imagem))
+    begin
+      @cenaculo.imagem.attach(permitted[:imagem]) if permitted[:imagem].present?
+    rescue StandardError => e
+      Rails.logger.warn("[cenaculos#create] imagem: #{e.class}: #{e.message}")
+      @cenaculo.errors.add(:imagem, "não foi possível processar o ficheiro. Experimente JPG, PNG ou WebP (tamanho moderado).")
+      render :new, status: :unprocessable_entity
+      return
+    end
 
     if @cenaculo.save
       redirect_to edicao_cenaculo_path(@edicao, @cenaculo), notice: "Cenáculo criado."
@@ -95,7 +104,14 @@ class CenaculosController < ApplicationController
     end
 
     if permitted[:imagem].present?
-      record.imagem.attach(permitted[:imagem])
+      begin
+        record.imagem.attach(permitted[:imagem])
+      rescue StandardError => e
+        Rails.logger.warn("[cenaculos#update] imagem: #{e.class}: #{e.message}")
+        record.errors.add(:imagem, "não foi possível processar o ficheiro. Experimente JPG, PNG ou WebP (tamanho moderado).")
+        render :edit, status: :unprocessable_entity
+        return
+      end
     elsif remove_pedido
       record.imagem.purge
     end

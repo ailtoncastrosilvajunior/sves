@@ -45,9 +45,9 @@
     </div>
     <% if @cenaculo.imagem.attached? %>
       <div class="w-full shrink-0 self-start sm:max-w-sm lg:w-auto lg:max-w-[18rem]">
-        <%= image_tag @cenaculo.imagem.variant(resize_to_limit: [480, 480]),
-                      class: "w-full rounded-2xl border border-stone-200/80 bg-stone-100 object-cover shadow-sm",
-                      alt: "Imagem do cenáculo #{@cenaculo.nome}" %>
+        <%= cenaculo_imagem_tag(@cenaculo, resize_to_limit: [480, 480],
+                                class: "w-full rounded-2xl border border-stone-200/80 bg-stone-100 object-cover shadow-sm",
+                                alt: "Imagem do cenáculo #{@cenaculo.nome}") %>
       </div>
     <% end %>
   </div>

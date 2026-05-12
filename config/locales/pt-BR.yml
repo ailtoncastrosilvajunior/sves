@@ -6,6 +6,29 @@ pt-BR:
     messages:
       blank: "não pode ficar em branco"
       confirmation: "não coincide com o valor esperado"
+  activemodel:
+    attributes:
+      "cadastro_casal_servos_form/participante":
+        nome: "Nome completo"
+        email: "E-mail"
+        telefone: "Telefone"
+        password: "Senha"
+        password_confirmation: "Confirmar senha"
+    errors:
+      models:
+        "cadastro_casal_servos_form/participante":
+          attributes:
+            nome:
+              blank: "não pode ficar em branco"
+            email:
+              blank: "não pode ficar em branco"
+              invalid: "não é válido"
+            password:
+              blank: "não pode ficar em branco"
+              too_short: "deve ter pelo menos %{count} caracteres"
+            password_confirmation:
+              blank: "não pode ficar em branco"
+              confirmation: "não coincide com a senha"
   activerecord:
     attributes:
       material_apoio:
@@ -82,18 +105,32 @@ pt-BR:
   cadastro_servos:
     page_title: "Cadastro de servo · SVES"
     subtitulo: "Equipe"
-    titulo: "Cadastro de servo de cenáculo"
-    intro: "Preencha os dados abaixo. A coordenação irá associar o seu acesso ao painel quando apropriado — receberá instruções pelo grupo ou pelo e‑mail indicado."
+    titulo: "Cadastro de casal de cenáculo"
+    intro: "O SVES é para casais. Informe um e‑mail e uma senha para cada um: serão criadas duas contas no painel. Na primeira vez que entrar, será pedido que altere a senha."
+    secao_dele: "Dados dele"
+    secao_dele_hint: "Sexo registado como masculino."
+    secao_dela: "Dados dela"
+    secao_dela_hint: "Sexo registado como feminino."
+    lado_dele: "Ele"
+    lado_dela: "Ela"
+    grupo_oracao_label: "Grupo de oração"
+    grupo_oracao_hint: "Nome do grupo de oração a que o casal pertence (texto livre)."
     nome_label: "Nome completo"
-    sexo_label: "Sexo"
     email_label: "E-mail"
+    senha_label: "Senha (mínimo 8 caracteres)"
+    senha_confirmar_label: "Confirmar senha"
     telefone_label: "Telefone (opcional)"
     submit: "Enviar cadastro"
     voltar_inicio: "Voltar ao início"
-    sucesso: "Cadastro recebido. A coordenação irá validar e liberar o acesso ao painel."
+    ja_tem_login: "Já tenho conta — entrar"
+    sucesso: "Cadastro recebido. Cada um pode entrar no painel com o seu e‑mail e a senha definida aqui."
     email_obrigatorio: "é obrigatório para identificação e acesso futuro"
     ja_tem_acesso: "Este e‑mail já tem acesso ao painel. Entre em «Entrar no painel» ou contacte a coordenação."
-    email_duplicado: "já está registado — use «Entrar no painel» ou contacte a coordenação se precisar atualizar dados."
+    ja_conta_user: "O e‑mail %{email} já está associado a uma conta na plataforma. Use «Já tenho conta» ou contacte a coordenação."
+    ja_tem_acesso_email: "O e‑mail %{email} já está com acesso ao painel através de um perfil de servo."
+    emails_iguais: "Informe dois e‑mails diferentes (uma conta por pessoa)."
+    erro_vinculo_conjuge: "Não foi possível associar os perfis ao casal"
+    email_duplicado: "Este registo já foi gravado ao mesmo tempo por outra submissão — verifique ou use «Entrar no painel»."
   autorizacao:
     apenas_coordenacao: "Esta área é só para a coordenação."
     apenas_administrador: "Esta ação é só para administradores da plataforma."
@@ -158,6 +195,65 @@ pt-BR:
       manual: "Manual"
       arquivo_csv: "Arquivo CSV"
       planilha_google: "Planilha Google"
+  cenaculos:
+    distribuicao_sugestao:
+      titulo_html: "Sugestão de cenários de cenáculo · %{edicao} · SVES"
+      voltar_edicao: "Edição"
+      etiqueta_secao: "Distribuição"
+      heading: "Sugestão de agrupamentos"
+      intro: >-
+        Agrupa apenas em memória: lê fichas já registadas nesta edição, propõe cenários usando uma heurística simples
+        e gera um arquivo HTML para baixar ou imprimir pelo navegador. Nada registra cenáculos no painel.
+      casais_no_escopo_html:
+        zero: "<strong>0 casais</strong> na lista atual (ajuste filtros)."
+        one: "<strong>1 casal</strong> considerado pela sugestão."
+        other: "<strong>%{count} casais</strong> considerados pela sugestão."
+      apenas_livres_label: "Apenas casais sem cenáculo atribuído nesta edição"
+      apenas_livres_ajuda: >-
+        Se estiver marcado, ignoramos quem já figura oficialmente algum cenáculo registado nos dados do painel.
+        Desmarque se quiser reequilibrar cenários usando toda a listagem atual de casais registados antes de mover alguém de grupo oficial.
+      casais_por_grupo_label: "Quantidade pretendida por cenáculo"
+      casais_por_grupo_dica: "O algoritmo evita cenários apenas homogêneos; o último grupamento pode ficar menor se o número de casais não for múltiplo da meta."
+      semilla_label: "Semente (opcional) — mesma entrada gera sempre a mesma mistura inicial"
+      semilla_placeholder: "Deixe em branco ou use um número (ex.: 8742) ou uma frase curta"
+      semilla_dica: >-
+        O programa primeiro baralha a lista de casais; só depois monta os grupos. Se o campo ficar vazio,
+        o baralhamento muda a cada geração; o relatório indica na mesma qual número foi usado, para poder repetir se quiser.
+        Se preencher sempre com o mesmo número (ou a mesma frase), a ordem inicial fica estável — útil para comparar tentativas ou mostrar o mesmo resultado a outra pessoa.
+      prompt_label: "Texto público sobre a regra (pode rever antes do processamento)"
+      prompt_ajuda: >-
+        Descreva o sentido pastoral e operacional esperado antes de exportar —
+        será embutido no documento e ajuda outros leitores a compreender porque certas marcações foram usadas apenas como entrada técnica.
+      gerar_documento: "Gerar relatório HTML e descarregar"
+      avisos_na_geracao: "Abra o arquivo no navegador e use Imprimir para salvar em PDF ou imprimir papel. Para gravar grupos oficiais no sistema, continue na área de cenáculos."
+      link_curto_label: "Sugerir cenáculos somente nos dados (PDF/impressão depois pelo browser)"
+      link_menu_cenarios: "Sugestão de cenáculos"
+      ver_sem_filtro: "Incluir todos os casais da edição (mesmo os que já estão num cenáculo)"
+      ver_so_livres: "Mostrar só casais ainda sem cenáculo nesta edição"
+      doc_titulo_curto: "Sugestão de cenários de cenáculo"
+      doc_cabecalho_rubrica: "Relatório gerado em memória (não substitui o registo oficial de cenáculos no painel)."
+      doc_resumo_html: "%{total} casais em %{grupos} grupos, com meta de até %{limite} casais por cenáculo (o último grupo pode ser menor)."
+      doc_filtrou_somente_livres: "Lista usada só com casais ainda não associados a nenhum cenáculo registado nesta edição."
+      doc_incluiu_todos_os_casados: "Lista usada com todos os casais registados nesta edição segundo o filtro escolhido."
+      doc_secao_prompt: "Regra proposta antes do processamento"
+      doc_motivos_grupo: "Leituras quantitativas deste cenário face ao conjunto de fichas trabalhadas"
+      doc_distribuicao_marcadores: "Distribuição aproximada por dimensões extraídas da ficha (texto/importação)"
+      doc_casais_heading: "Casais (unidade integral)"
+      doc_homens_heading: "Esposos para encontros por género dentro deste cenáculo já listado em conjunto"
+      doc_mulheres_heading: "Esposas para os mesmos encontros paralelos já referenciados aos mesmos casais"
+      doc_nota_paridade_pastoral: >-
+        O mesmo casal servidor continua sendo o referencial pastoral deste cenáculo inteiro mesmo quando há encontros separados por sexo; esta folha apenas reproduz os nomes vindos das fichas.
+      doc_grupo_heading: "Cenáculo sugerido %{numero}"
+      doc_motivo_por_casal_heading: "Notas por casal geradas apenas a partir dos dados tratados pela heurística (revisável)"
+      texto_regra_padrao_html:
+        |-
+          <p><strong>Unidade</strong>: o agrupamento respeita casais ínteiros («uma só carne» pastoralmente dentro deste exercício apenas documental).</p>
+          <p><strong>Heterogeneidade</strong>: marcações vindas apenas dos campos já existentes nos registos dos casais; nada novo é criado pela ferramenta além das combinações propostas em memória.</p>
+          <p><strong>Encontros por género possíveis</strong>: continuam sendo os mesmos casais inteiriços já listados antes; apenas se explicitam listas paralelas caso isso sirva aos encontros por sexos já referidos institucionalmente.</p>
+      doc_plhr_casais:
+        zero: "%{count} casais"
+        one: "%{count} casal"
+        other: "%{count} casais"
   time:
     formats:
       short: "%d/%m/%Y, %H:%M"

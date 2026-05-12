@@ -33,6 +33,10 @@ Rails.application.routes.draw do
       resources :cenaculo_casais, path: "membros_casais", only: %i[create destroy]
       resources :cenaculo_servos, path: "pastores", only: %i[create destroy]
     end
+    get "cenaculos_distribuicao_sugestao", to: "sugestao_distribuicao_cenaculos#new",
+        as: :distribuicao_cenaculos_sugestao
+    post "cenaculos_distribuicao_sugestao", to: "sugestao_distribuicao_cenaculos#create",
+         as: :distribuicao_cenaculos_sugestao_envio
   end
   resources :servos do
     member do

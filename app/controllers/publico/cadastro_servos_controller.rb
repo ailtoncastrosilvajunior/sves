@@ -5,54 +5,31 @@ module Publico
     skip_before_action :require_login
 
     def new
-      @servo = Servo.new(origem_cadastro: Servo::ORIGEM_PUBLICO, papel: Servo::PAPEL_PARTICIPANTE)
+      @form = CadastroCasalServosForm.new
     end
 
     def create
-      atributos = params.require(:servo).permit(:nome, :email, :telefone, :sexo)
-      email_norm = User.normalize_email(atributos[:email])
+      atributos = cadastro_casal_params.to_unsafe_h
+      @form = CadastroCasalServosForm.new(atributos)
 
-      if email_norm.blank?
-        @servo = Servo.new(atributos_para_formulario_publico(atributos))
-        @servo.errors.add(:email, I18n.t("cadastro_servos.email_obrigatorio"))
-        render :new, status: :unprocessable_entity
-        return
+      begin
+        if @form.save
+          redirect_to cadastro_servo_path, notice: I18n.t("cadastro_servos.sucesso")
+          return
+        end
+      rescue ActiveRecord::RecordNotUnique
+        @form = CadastroCasalServosForm.new(atributos)
+        @form.errors.add(:base, I18n.t("cadastro_servos.email_duplicado"))
       end
 
-      @servo = Servo.find_by_normalized_email(email_norm)
-
-      if @servo&.user_id.present?
-        @servo = Servo.new(atributos_para_formulario_publico(atributos))
-        @servo.errors.add(:base, I18n.t("cadastro_servos.ja_tem_acesso"))
-        render :new, status: :unprocessable_entity
-        return
-      end
-
-      if @servo
-        @servo.assign_attributes(atributos_para_formulario_publico(atributos))
-      else
-        @servo = Servo.new(atributos_para_formulario_publico(atributos))
-      end
-
-      if @servo.save
-        redirect_to cadastro_servo_path, notice: I18n.t("cadastro_servos.sucesso")
-      else
-        render :new, status: :unprocessable_entity
-      end
-    rescue ActiveRecord::RecordNotUnique
-      @servo = Servo.new(atributos_para_formulario_publico(atributos))
-      @servo.errors.add(:email, I18n.t("cadastro_servos.email_duplicado"))
       render :new, status: :unprocessable_entity
     end
 
     private
 
-    # Auto‑cadastro público: sempre participante (pastor de cenáculo / formulário genérico).
-    def atributos_para_formulario_publico(permitidos)
-      permitidos.merge(
-        origem_cadastro: Servo::ORIGEM_PUBLICO,
-        papel: Servo::PAPEL_PARTICIPANTE,
-      )
+    def cadastro_casal_params
+      lado = CadastroCasalServosForm.participante_param_keys
+      params.require(:cadastro_casal).permit(:grupo_de_oracao, dela: lado, dele: lado)
     end
   end
 end

@@ -6,6 +6,20 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+# DigitalOcean Spaces (API compatível com S3). No App Platform o disco do container é efémero —
+# use este serviço em produção com ACTIVE_STORAGE_SERVICE=digitalocean_spaces.
+# Painel DO: API → Spaces → criar Space → chaves de acesso.
+# Variáveis típicas no App Platform: DO_SPACES_ACCESS_KEY_ID, DO_SPACES_SECRET_ACCESS_KEY,
+# DO_SPACES_BUCKET, DO_SPACES_REGION (ex.: nyc3, fra1), opcionalmente DO_SPACES_ENDPOINT.
+<% spaces_region = ENV.fetch("DO_SPACES_REGION", "nyc3") %>
+digitalocean_spaces:
+  service: S3
+  access_key_id: <%= ENV["DO_SPACES_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["DO_SPACES_SECRET_ACCESS_KEY"] %>
+  region: <%= spaces_region %>
+  bucket: <%= ENV["DO_SPACES_BUCKET"] %>
+  endpoint: <%= ENV["DO_SPACES_ENDPOINT"].presence || "https://#{spaces_region}.digitaloceanspaces.com" %>
+
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
 #   service: S3

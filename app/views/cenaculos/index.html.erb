@@ -17,6 +17,10 @@
       </p>
     </div>
     <% if pode_gerir_painel? %>
+    <% if administrador? %>
+    <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao),
+                class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full border border-teal-200 bg-teal-50/70 px-4 py-2 text-center text-sm font-medium text-teal-950 hover:bg-teal-100/70 sm:w-auto sm:min-h-0 sm:py-2" %>
+    <% end %>
     <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao),
                 class: "inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-full bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-stone-900/5 transition hover:bg-stone-800 sm:w-auto sm:min-h-0 sm:py-2" %>
     <% end %>
@@ -30,9 +34,9 @@
                       class: "flex min-h-[56px] flex-wrap items-center justify-between gap-4 px-5 py-4 transition hover:bg-stone-50/90 active:bg-stone-100/90 sm:min-h-0" do %>
             <div class="flex min-w-0 flex-wrap items-center gap-3">
               <% if cenaculo.imagem.attached? %>
-                <%= image_tag cenaculo.imagem.variant(resize_to_limit: [112, 112]),
-                              class: "h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-stone-200/80",
-                              alt: "" %>
+                <%= cenaculo_imagem_tag(cenaculo, resize_to_limit: [112, 112],
+                                        class: "h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-stone-200/80",
+                                        alt: "") %>
               <% elsif cenaculo.cor.present? && cenaculo.cor.match?(Cenaculo::HEX_COR) %>
                 <span class="h-14 w-14 shrink-0 rounded-xl ring-1 ring-stone-200/70" style="<%= "background-color: #{cenaculo.cor}" %>"></span>
               <% end %>
