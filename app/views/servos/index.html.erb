@@ -48,32 +48,33 @@
   <% end %>
 
   <% if @servos.any? %>
-    <ul class="mt-10 divide-y divide-stone-200/80 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm">
+    <ul class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3" role="list">
       <% @servos.each do |servo| %>
-        <li>
-          <%= link_to servo_path(servo), class: "flex min-h-[48px] flex-wrap items-center justify-between gap-3 px-5 py-3 transition hover:bg-stone-50/90 active:bg-stone-100/90 sm:min-h-0 sm:py-4" do %>
-            <div class="min-w-0 flex-1 space-y-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="block font-medium text-stone-900"><%= servo.nome %></span>
-                <% if servo.user %>
-                  <span class="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-900"><%= t("servos.index_badge_acesso") %></span>
-                <% elsif servo.email.present? %>
-                  <span class="inline-flex shrink-0 items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-900"><%= t("servos.index_badge_sem_acesso") %></span>
-                <% end %>
-                <% if servo.origem_cadastro == Servo::ORIGEM_PUBLICO %>
-                  <span class="inline-flex shrink-0 items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-teal-900"><%= t("servos.index_badge_publico") %></span>
-                <% end %>
-              </div>
-              <% if servo.conjuge %>
-                <span class="block truncate text-xs text-stone-500">Cônjuge: <%= servo.conjuge.nome %></span>
+        <li class="min-w-0">
+          <%= link_to servo_path(servo),
+                      class: "group flex h-full min-h-[44px] flex-col rounded-2xl border border-stone-200/80 bg-white/95 p-4 shadow-sm ring-1 ring-stone-900/[0.03] transition duration-150 hover:border-stone-300/90 hover:bg-stone-50/90 hover:shadow-md active:bg-stone-100/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400/70 focus-visible:ring-offset-2 sm:p-5" do %>
+            <div class="flex flex-wrap items-start justify-between gap-2 gap-y-1">
+              <span class="min-w-0 break-words font-medium text-stone-900"><%= servo.nome %></span>
+            </div>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              <% if servo.user %>
+                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-900"><%= t("servos.index_badge_acesso") %></span>
+              <% elsif servo.email.present? %>
+                <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-900"><%= t("servos.index_badge_sem_acesso") %></span>
               <% end %>
-              <% if servo.email.present? || servo.telefone.present? %>
-                <span class="block truncate text-xs text-stone-500">
-                  <%= [servo.email, servo.telefone].compact_blank.join(" · ") %>
-                </span>
+              <% if servo.origem_cadastro == Servo::ORIGEM_PUBLICO %>
+                <span class="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-teal-900"><%= t("servos.index_badge_publico") %></span>
               <% end %>
             </div>
-            <span class="shrink-0 text-xs text-stone-500">Ver · editar →</span>
+            <% if servo.conjuge %>
+              <p class="mt-3 line-clamp-2 text-xs leading-snug text-stone-600">Cônjuge: <%= servo.conjuge.nome %></p>
+            <% end %>
+            <% if servo.email.present? || servo.telefone.present? %>
+              <p class="mt-1.5 break-all font-mono text-[0.7rem] leading-snug text-stone-500 sm:break-words sm:font-sans sm:text-xs">
+                <%= [servo.email, servo.telefone].compact_blank.join(" · ") %>
+              </p>
+            <% end %>
+            <span class="mt-auto border-t border-stone-100 pt-3 text-xs font-medium text-stone-400 transition group-hover:text-stone-700">Ver · editar →</span>
           <% end %>
         </li>
       <% end %>
