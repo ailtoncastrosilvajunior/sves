@@ -19,28 +19,34 @@
   <div class="coord-box">
     <strong><%= t("impressao_equipe_cenaculos.coord_titulo") %></strong>
     <% if @coordenacao_geral_linhas.any? %>
-      <div class="linhas">
-        <% @coordenacao_geral_linhas.each do |linha| %>
-          <%= linha %><br>
-        <% end %>
-      </div>
+      <p class="coord-nomes-inline"><%= @coordenacao_geral_linhas.join(" · ") %></p>
     <% else %>
       <p class="muted" style="margin:0;"><%= t("impressao_equipe_cenaculos.coord_vazio") %></p>
     <% end %>
-    <p class="muted" style="margin:6px 0 0;font-size:8px;"><%= t("impressao_equipe_cenaculos.coord_nota_fonte") %></p>
+    <p class="muted coord-nota"><%= t("impressao_equipe_cenaculos.coord_nota_fonte") %></p>
   </div>
 
   <table class="grid" aria-label="<%= t("impressao_equipe_cenaculos.tabela_aria") %>">
+    <colgroup>
+      <col class="grid-col-num">
+      <col class="grid-col-cen">
+      <col class="grid-col-cor">
+      <col class="grid-col-ph">
+      <col class="grid-col-pm">
+      <col class="grid-col-lh">
+      <col class="grid-col-lm">
+      <col class="grid-col-part">
+    </colgroup>
     <thead>
       <tr>
-        <th style="width:22px"><%= t("impressao_equipe_cenaculos.col_ordem") %></th>
-        <th style="width:14%"><%= t("impressao_equipe_cenaculos.col_cenaculo") %></th>
-        <th class="cor-head" style="width:10%"><%= t("impressao_equipe_cenaculos.col_cor") %></th>
-        <th style="width:12%"><%= t("impressao_equipe_cenaculos.col_pastores_homens") %></th>
-        <th style="width:12%"><%= t("impressao_equipe_cenaculos.col_pastores_mulheres") %></th>
-        <th style="width:11%"><%= t("impressao_equipe_cenaculos.col_local_homens") %></th>
-        <th style="width:11%"><%= t("impressao_equipe_cenaculos.col_local_mulheres") %></th>
-        <th style="width:22%"><%= t("impressao_equipe_cenaculos.col_participantes") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_ordem") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_cenaculo") %></th>
+        <th scope="col" class="cor-head"><%= t("impressao_equipe_cenaculos.col_cor") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_pastores_homens") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_pastores_mulheres") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_local_homens") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_local_mulheres") %></th>
+        <th scope="col"><%= t("impressao_equipe_cenaculos.col_participantes") %></th>
       </tr>
     </thead>
     <tbody>
@@ -48,6 +54,7 @@
         <% @cenaculos.each_with_index do |cenaculo, idx| %>
           <% pm = pastores_por_sexo_texto_impressao(cenaculo) %>
           <% hex_cor = cenaculo_cor_hex_para_impressao(cenaculo) %>
+          <% nome_cor = cenaculo_cor_rotulo_impressao(cenaculo) %>
           <% participantes = linhas_casais_participantes_impressao(cenaculo) %>
           <tr>
             <td class="num"><%= idx + 1 %>º</td>
@@ -56,7 +63,9 @@
               <% if hex_cor.present? %>
                 <span class="swatch">
                   <span class="swatch-dot" style="<%= "background-color: #{hex_cor};" %>"></span>
-                  <span style="font-size:9px;font-weight:600;"><%= hex_cor.upcase %></span>
+                  <% if nome_cor.present? %>
+                    <span class="swatch-nome"><%= nome_cor %></span>
+                  <% end %>
                 </span>
               <% else %>
                 <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>

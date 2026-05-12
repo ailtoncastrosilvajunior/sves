@@ -29,6 +29,22 @@ Abra **http://localhost:3000**. O serviço `web` sobe Puma (`./bin/dev` com watc
 
 Antes do `./bin/dev`, o comando do Compose faz **`rm -f tmp/pids/server.pid`** — o volume `rails_tmp` podia guardar um PID velho e o Puma falhava com «A server is already running».
 
+### Telemóvel (Safari ou Chrome em iPhone) não abre a app · «não há ligação» · página em branco
+
+São dois problemas **distintos** (afetam **ambos** os browsers — não é só Safari):
+
+1. **O servidor só escutava no Mac (`127.0.0.1`)**  
+   O Puma deve aceitar pedidos vindos da **rede LAN**. Em **development**, `config/puma.rb` faz **`bind tcp://0.0.0.0:PORT`**, assim o telemóvel na mesma Wi‑Fi consegue falar com o Mac usando **`http://IP-DO-MAC:3000`**.  
+   - No Mac, IP da Wi‑Fi: `ipconfig getifaddr en0` (ou `en1` segundo a interface activa).
+
+2. **Rails bloqueia o header `Host` («Blocked hosts»)**  
+   O Rails só aceita `Host` autorizado. Em `development.rb` já há **192.168.x.x**, **10.x**, **Tailscale (`*.ts.net` e 100.64–100.127.x.x)**, **`.local`**, etc. Para outro nome, no `.env`:  
+   `DEV_ALLOWED_HOSTS=meu.hostname,203.0.113.44`
+
+Confirma: **Wi‑Fi a mesma** no Mac/telemóvel, URL **`http://`** (em dev não uses `https`), e no **Firewall** do macOS permite conexões de entrada das redes locais para **Ruby**/terminal se ele bloquear. Com **Docker Compose**, uso **`http://IP-DO-MAC:3000`** (mapeamento de portas já expõe o serviço no host).
+
+**Impressão / PDF no Safari:** em **Imprimir** marca **«Imprimir fundos»** se queres cores/quadrados no PDF (mensagem igual na página da equipe).
+
 ### DigitalOcean Managed PostgreSQL (`SSL negotiation` / ligação recusada)
 
 1. Em **Trusted sources**, inclui o **IP público** de onde fazes pedidos de fora da VPC (ex.: o teu IP em casa ou o `curl -s https://ifconfig.me` no mesmo Mac onde corres o Docker).

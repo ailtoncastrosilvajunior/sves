@@ -12,6 +12,45 @@ class Cenaculo < ApplicationRecord
 
   HEX_COR = /\A#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\z/.freeze
 
+  # Rótulos curtos (tom predominante) — formulário e impressão da equipe.
+  PALETA_CORES = [
+    ["Verde", "#1b4332"],
+    ["Verde", "#2d6a4f"],
+    ["Verde", "#40916c"],
+    ["Turquesa", "#2a9d8f"],
+    ["Azul", "#264653"],
+    ["Roxo", "#6d597a"],
+    ["Amarelo", "#e9c46a"],
+    ["Laranja", "#f4a261"],
+    ["Laranja", "#e76f51"],
+    ["Azul", "#355070"],
+    ["Rosa", "#b56576"],
+    ["Cinzento", "#6c757d"],
+    ["Cinzento", "#343a40"],
+    ["Preto", "#212529"],
+  ].freeze
+
+  def self.normalizar_hex_cor(valor)
+    raw = valor.to_s.strip
+    return nil unless raw.present? && raw.match?(HEX_COR)
+
+    h = raw.delete_prefix("#").downcase
+    h = h.chars.map { |c| c * 2 }.join if h.length == 3
+
+    "##{h}"
+  end
+
+  PALETA_ROTULO_POR_HEX = PALETA_CORES.each_with_object({}) do |(rotulo, hex), memo|
+    nh = normalizar_hex_cor(hex)
+    memo[nh] = rotulo if nh
+  end.freeze
+
+  def self.rotulo_cor_na_paleta(hex_normalizado)
+    return nil if hex_normalizado.blank?
+
+    PALETA_ROTULO_POR_HEX[hex_normalizado]
+  end
+
   validates :nome, presence: true
   validates :nome, uniqueness: { scope: :edicao_id }
   validates :cor, format: { with: HEX_COR, message: "deve ser #RGB ou #RRGGBB" }, allow_blank: true

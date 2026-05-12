@@ -122,13 +122,54 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--muted);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
-  .coord-box .linhas {
+  .coord-box .coord-nomes-inline {
+    margin: 0;
     font-size: 10px;
     font-weight: 600;
-    line-height: 1.45;
+    line-height: 1.35;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  table.grid col.grid-col-num {
+    width: 24px;
+  }
+
+  table.grid col.grid-col-cen {
+    width: 11%;
+  }
+
+  table.grid col.grid-col-cor {
+    width: 13%;
+  }
+
+  table.grid col.grid-col-ph {
+    width: 9%;
+  }
+
+  table.grid col.grid-col-pm {
+    width: 9%;
+  }
+
+  table.grid col.grid-col-lh {
+    width: 8%;
+  }
+
+  table.grid col.grid-col-lm {
+    width: 8%;
+  }
+
+  table.grid col.grid-col-part {
+    width: 42%;
+  }
+
+  table.grid thead th:first-child,
+  table.grid tbody td.num {
+    padding-left: 2px;
+    padding-right: 2px;
   }
 
   table.grid {
@@ -162,11 +203,12 @@
   }
 
   table.grid tbody td.num {
-    width: 22px;
     text-align: center;
     font-weight: 700;
     font-size: 9px;
     background: #fafaf9;
+    white-space: nowrap;
+    vertical-align: middle;
   }
 
   table.grid tbody td.nome-cen {
@@ -186,6 +228,14 @@
     flex-wrap: wrap;
   }
 
+  .swatch-nome {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+    min-width: 0;
+  }
+
   .swatch-dot {
     width: 14px;
     height: 14px;
@@ -200,6 +250,11 @@
     color: var(--muted);
     font-style: italic;
     font-size: 9px;
+  }
+
+  .coord-box .coord-nota.muted {
+    margin: 4px 0 0;
+    font-size: 8px;
   }
 
   .pastor-sem-sexo {

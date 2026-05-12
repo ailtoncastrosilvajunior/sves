@@ -83,22 +83,7 @@
         Paleta rápida
       </p>
       <div role="group" aria-labelledby="cenaculo-paleta-legenda" class="flex flex-wrap gap-2">
-        <% [
-             ["Verde escuro", "#1b4332"],
-             ["Verde bosque", "#2d6a4f"],
-             ["Verde médio", "#40916c"],
-             ["Água-mar", "#2a9d8f"],
-             ["Azul petrol.", "#264653"],
-             ["Ameixa", "#6d597a"],
-             ["Ouro suave", "#e9c46a"],
-             ["Laranja", "#f4a261"],
-             ["Terracota", "#e76f51"],
-             ["Azul grafite", "#355070"],
-             ["Rosa pó", "#b56576"],
-             ["Cinzento", "#6c757d"],
-             ["Carvão", "#343a40"],
-             ["Quase preto", "#212529"],
-           ].each do |rotulo, hexa| %>
+        <% Cenaculo::PALETA_CORES.each do |rotulo, hexa| %>
           <button type="button"
                   title="<%= "#{rotulo} (#{hexa})".gsub('"', "'") %>"
                   data-action="click->cenaculo-cor#choose"

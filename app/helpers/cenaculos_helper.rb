@@ -106,15 +106,15 @@ module CenaculosHelper
     }
   end
 
-  # Cor na impressão: só mostra quadradinho se HEX válido no modelo.
+  # Cor na impressão: HEX normalizado (#RRGGBB minúsculo) ou nil.
   def cenaculo_cor_hex_para_impressao(cenaculo)
-    raw = cenaculo.cor.to_s.strip
-    return nil unless raw.present? && raw.match?(Cenaculo::HEX_COR)
+    Cenaculo.normalizar_hex_cor(cenaculo.cor)
+  end
 
-    h = raw.delete_prefix("#").downcase
-    h = h.chars.map { |c| c * 2 }.join if h.length == 3
-
-    "##{h}"
+  # Nome da paleta rápida quando o HEX coincide; senão nil (usa só o código na vista).
+  def cenaculo_cor_rotulo_impressao(cenaculo)
+    hex = cenaculo_cor_hex_para_impressao(cenaculo)
+    Cenaculo.rotulo_cor_na_paleta(hex)
   end
 
   def linhas_casais_participantes_impressao(cenaculo)
