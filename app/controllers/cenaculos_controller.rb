@@ -57,7 +57,7 @@ class CenaculosController < ApplicationController
       @cenaculo.imagem.attach(permitted[:imagem]) if permitted[:imagem].present?
     rescue StandardError => e
       log_erro_upload_imagem(:create, e)
-      @cenaculo.errors.add(:imagem, mensagem_erro_upload_imagem(e))
+      @cenaculo.errors.add(:base, mensagem_erro_upload_imagem(e))
       render :new, status: :unprocessable_entity
       return
     end
@@ -133,7 +133,7 @@ class CenaculosController < ApplicationController
         record.imagem.attach(permitted[:imagem])
       rescue StandardError => e
         log_erro_upload_imagem(:update, e)
-        record.errors.add(:imagem, mensagem_erro_upload_imagem(e))
+        record.errors.add(:base, mensagem_erro_upload_imagem(e))
         render :edit, status: :unprocessable_entity
         return
       end

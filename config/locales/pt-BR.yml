@@ -216,7 +216,7 @@ pt-BR:
     imagem_upload:
       generico: "Não foi possível aceitar esta imagem. Prefira JPG, PNG ou WebP (tamanho moderado)."
       formato_ou_pixels: "Não conseguimos ler este ficheiro como imagem. Se tirou foto com iPhone (HEIC), use «Copiar foto» ou regule a câmar para «Mais compatível» antes de tirar — ou exporte JPEG no Fotografias e envie esse ficheiro."
-      armazem_remoto: "Falhou o envio para o armazém (Spaces). Confira na produção: ACTIVE_STORAGE_SERVICE=digitalocean_spaces e as variáveis DO_SPACES_*; depois novo deploy."
+      armazem_remoto: "Falhou o envio ao DigitalOcean Spaces. No App Platform confirme: ACTIVE_STORAGE_SERVICE=digitalocean_spaces; DO_SPACES_ACCESS_KEY_ID e DO_SPACES_SECRET_ACCESS_KEY (o par ao criar «Spaces access keys», sem esquecer o ID público da chave); DO_SPACES_BUCKET; DO_SPACES_REGION; opcional DO_SPACES_ENDPOINT=https://«região».digitaloceanspaces.com. Grave as variáveis e faça redeploy."
     form:
       secao_locais: "Locais dos encontros por género"
       dica_local_homens: "Opcional — sala, endereço ou referência para quem participa como esposo."

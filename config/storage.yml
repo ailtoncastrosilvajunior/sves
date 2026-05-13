@@ -9,13 +9,16 @@ local:
 # DigitalOcean Spaces (API compatível com S3). No App Platform o disco do container é efémero —
 # use este serviço em produção com ACTIVE_STORAGE_SERVICE=digitalocean_spaces.
 # Painel DO: API → Spaces → criar Space → chaves de acesso.
-# Variáveis típicas no App Platform: DO_SPACES_ACCESS_KEY_ID, DO_SPACES_SECRET_ACCESS_KEY,
-# DO_SPACES_BUCKET, DO_SPACES_REGION (ex.: nyc3, fra1), opcionalmente DO_SPACES_ENDPOINT.
+# Variáveis no App Platform: DO_SPACES_ACCESS_KEY_ID + DO_SPACES_SECRET_ACCESS_KEY (ambos obrigatórios),
+# DO_SPACES_BUCKET, DO_SPACES_REGION (ex.: sfo3); opcional DO_SPACES_ENDPOINT.
+# Fallbacks só para templates que já definem AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY.
 <% spaces_region = ENV.fetch("DO_SPACES_REGION", "nyc3") %>
+<% spaces_access_key_id = ENV["DO_SPACES_ACCESS_KEY_ID"].presence || ENV["DO_SPACES_KEY_ID"].presence || ENV["AWS_ACCESS_KEY_ID"].presence %>
+<% spaces_secret_access_key = ENV["DO_SPACES_SECRET_ACCESS_KEY"].presence || ENV["AWS_SECRET_ACCESS_KEY"].presence %>
 digitalocean_spaces:
   service: S3
-  access_key_id: <%= ENV["DO_SPACES_ACCESS_KEY_ID"] %>
-  secret_access_key: <%= ENV["DO_SPACES_SECRET_ACCESS_KEY"] %>
+  access_key_id: <%= spaces_access_key_id %>
+  secret_access_key: <%= spaces_secret_access_key %>
   region: <%= spaces_region %>
   bucket: <%= ENV["DO_SPACES_BUCKET"] %>
   endpoint: <%= ENV["DO_SPACES_ENDPOINT"].presence || "https://#{spaces_region}.digitaloceanspaces.com" %>
