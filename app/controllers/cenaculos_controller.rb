@@ -56,8 +56,8 @@ class CenaculosController < ApplicationController
     begin
       @cenaculo.imagem.attach(permitted[:imagem]) if permitted[:imagem].present?
     rescue StandardError => e
-      Rails.logger.warn("[cenaculos#create] imagem: #{e.class}: #{e.message}")
-      @cenaculo.errors.add(:imagem, "não foi possível processar o ficheiro. Experimente JPG, PNG ou WebP (tamanho moderado).")
+      log_erro_upload_imagem(:create, e)
+      @cenaculo.errors.add(:imagem, mensagem_erro_upload_imagem(e))
       render :new, status: :unprocessable_entity
       return
     end
@@ -93,6 +93,31 @@ class CenaculosController < ApplicationController
     params.require(:cenaculo).permit(:nome, :cor, :local_homens, :local_mulheres, :imagem)
   end
 
+  def mensagem_erro_upload_imagem(error)
+    class_name = error.class.name
+    message_down = error.message.to_s.downcase
+
+    return I18n.t("cenaculos.imagem_upload.armazem_remoto") if class_name.start_with?("Aws::")
+    if message_down.match?(/\b(signature|credentials|access denied|expired token|bucket not found|nosuchbucket|endpoint|connection refused|timed out|nodename|ssl_connect|temporary redirect|spaces)\b/)
+      return I18n.t("cenaculos.imagem_upload.armazem_remoto")
+    end
+
+    formato_msg = message_down.match?(/\b(heic|heif|avif|vips|magick|libvips|pixels|dimensions|unsupported|image processing|unable to load|unable to open|no loader|not an image|unexpected source)\b/)
+
+    imagem_engine = class_name.include?("Vips") || class_name.include?("MiniMagick")
+    imagem_engine ||= defined?(MiniMagick::Error) && error.is_a?(MiniMagick::Error)
+
+    return I18n.t("cenaculos.imagem_upload.formato_ou_pixels") if imagem_engine || formato_msg
+
+    I18n.t("cenaculos.imagem_upload.generico")
+  end
+
+  def log_erro_upload_imagem(action, error)
+    Rails.logger.warn("[cenaculos##{action}] imagem falhou: #{error.class}: #{error.message}")
+    trace = Array(error.backtrace).first(12)&.join("\n")
+    Rails.logger.warn(trace.to_s) if trace.present?
+  end
+
   def atualizar_com_imagem_opcional(record)
     permitted = cenaculo_params
     remove_pedido = ActiveModel::Type::Boolean.new.cast(params[:cenaculo][:remove_imagem])
@@ -107,8 +132,8 @@ class CenaculosController < ApplicationController
       begin
         record.imagem.attach(permitted[:imagem])
       rescue StandardError => e
-        Rails.logger.warn("[cenaculos#update] imagem: #{e.class}: #{e.message}")
-        record.errors.add(:imagem, "não foi possível processar o ficheiro. Experimente JPG, PNG ou WebP (tamanho moderado).")
+        log_erro_upload_imagem(:update, e)
+        record.errors.add(:imagem, mensagem_erro_upload_imagem(e))
         render :edit, status: :unprocessable_entity
         return
       end
