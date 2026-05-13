@@ -5,7 +5,10 @@
   <button type="button" onclick="window.print()"><%= t("impressao_equipe_cenaculos.toolbar_imprimir") %></button>
 </div>
 
-<p class="no-print muted" style="max-width:297mm;margin:0 auto 1rem;padding:0 4px;font-size:11px;">
+<p class="no-print muted sm:hidden" style="max-width:297mm;margin:0 auto 1rem;padding:0 4px;font-size:11px;">
+  <%= t("impressao_equipe_cenaculos.dica_leitura_mobile_html") %>
+</p>
+<p class="no-print muted hidden sm:block" style="max-width:297mm;margin:0 auto 1rem;padding:0 4px;font-size:11px;">
   <%= t("impressao_equipe_cenaculos.dica_pdf_backgrounds_html") %>
 </p>
 

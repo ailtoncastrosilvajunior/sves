@@ -27,7 +27,7 @@ Garante um `.env` na raiz com `DATABASE_HOST` (IP ou hostname do droplet), `DATA
 
 Abra **http://localhost:3000**. O serviço `web` sobe Puma (`./bin/dev` com watcher do Tailwind) e roda `db:prepare` na primeira vez em cima do Postgres remoto.
 
-Antes do `./bin/dev`, o comando do Compose faz **`rm -f tmp/pids/server.pid`** — o volume `rails_tmp` podia guardar um PID velho e o Puma falhava com «A server is already running».
+Antes do `./bin/dev`, o comando do Compose faz **`rm -f tmp/pids/server.pid`** — o volume `rails_tmp` podia salvar um PID velho e o Puma falhava com «A server is already running».
 
 ### Telemóvel (Safari ou Chrome em iPhone) não abre a app · «não há ligação» · página em branco
 
@@ -78,3 +78,5 @@ bin/rails test
 ```
 
 No CI, `DATABASE_URL` aponta para `sves_test` no serviço Postgres.
+
+<!-- CHECKPOINT id="ckpt_mp4574f8_2epwl6" time="2026-05-13T14:16:03.620Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->

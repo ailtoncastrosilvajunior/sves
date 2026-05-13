@@ -32,9 +32,6 @@
   <% if @edicao.ativa? %>
     <div class="mt-8 rounded-2xl border border-emerald-200/90 bg-emerald-50/80 px-5 py-4 text-sm leading-relaxed text-emerald-950">
       <p class="font-medium">Esta é a edição em curso.</p>
-      <% if pode_gerir_painel? %>
-        <p class="mt-2 text-emerald-900/95">Os atalhos <span class="font-medium">Edição em curso</span> e <span class="font-medium">Equipes</span> no topo da página levam sempre a esta rodada até mudares para outra.</p>
-      <% end %>
     </div>
   <% elsif pode_gerir_painel? %>
     <div class="mt-8 flex flex-col gap-3 rounded-2xl border border-stone-200 bg-stone-50/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -75,17 +72,11 @@
       <dt class="text-xs uppercase tracking-wide text-teal-900/85">Cenáculos</dt>
       <dd class="mt-4 flex min-w-0 flex-1 flex-col gap-5">
         <span class="font-display text-[1.85rem] leading-none tracking-tight text-stone-900 tabular-nums sm:text-[2rem]"><%= @edicao.cenaculos.count %></span>
-        <% cen_btn_teal = "#{painel_cards_acoes} min-h-[3rem] w-full min-w-0 justify-center border-teal-200/95 bg-teal-50 text-teal-950 hover:border-teal-300 hover:bg-teal-100/80 sm:min-h-[42px]" %>
-        <% cen_btn_white = "#{painel_cards_acoes} min-h-[3rem] w-full min-w-0 justify-center border-stone-200/95 bg-white text-stone-800 shadow-sm hover:border-stone-300 hover:bg-stone-50 sm:min-h-[42px]" %>
-        <nav class="mt-auto flex w-full min-w-0 flex-col gap-2.5 @[24rem]/card:flex-row @[24rem]/card:flex-wrap" aria-label="Ações relacionadas aos cenáculos">
-          <% if administrador? %>
-          <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao),
-                      class: cen_btn_teal %>
-          <% end %>
-          <%= link_to t("reunioes_cenaculo.link_na_edicao"), edicao_reunioes_cenaculo_index_path(@edicao),
-                      class: cen_btn_teal %>
+        <%# Sugestão, reuniões e folha da equipe estão na lista de cenáculos (edição/id/cenaculos). %>
+        <nav class="mt-auto flex flex-wrap gap-2.5 @[24rem]/card:flex-nowrap" aria-label="Ações relacionadas aos cenáculos">
           <%= link_to "Gerir cenáculos", edicao_cenaculos_path(@edicao),
-                      class: cen_btn_white %>
+                      class:
+                        "#{painel_cards_acoes} w-full basis-full border-stone-200/95 bg-white text-stone-800 shadow-sm hover:border-stone-300 hover:bg-stone-50 sm:w-fit sm:flex-initial sm:basis-auto" %>
         </nav>
       </dd>
     </div>

@@ -117,7 +117,7 @@ pt-BR:
     actual_label: "Senha actual"
     nova_label: "Nova senha"
     confirmar_label: "Confirmar nova senha"
-    submit: "Guardar nova senha"
+    submit: "Salvar nova senha"
     flash_ok: "Senha actualizada com sucesso."
   cadastro_servos:
     page_title: "Cadastro de servo · SVES"
@@ -216,7 +216,23 @@ pt-BR:
     imagem_upload:
       generico: "Não foi possível aceitar esta imagem. Prefira JPG, PNG ou WebP (tamanho moderado)."
       formato_ou_pixels: "Não conseguimos ler este ficheiro como imagem. Se tirou foto com iPhone (HEIC), use «Copiar foto» ou regule a câmar para «Mais compatível» antes de tirar — ou exporte JPEG no Fotografias e envie esse ficheiro."
-      armazem_remoto: "Falhou o envio ao DigitalOcean Spaces. No App Platform confirme: ACTIVE_STORAGE_SERVICE=digitalocean_spaces; DO_SPACES_ACCESS_KEY_ID e DO_SPACES_SECRET_ACCESS_KEY (o par ao criar «Spaces access keys», sem esquecer o ID público da chave); DO_SPACES_BUCKET; DO_SPACES_REGION; opcional DO_SPACES_ENDPOINT=https://«região».digitaloceanspaces.com. Grave as variáveis e faça redeploy."
+      bucket_inexistente: >-
+        O Spaces devolveu NoSuchBucket: o cliente S3 falhou mesmo com nome de bucket «correcto». O mais habitual é DO_SPACES_REGION
+        diferente do datacenter real do Space (no painel deve coincidir: ex.: sfo3 ↔ https://sfo3.digitaloceanspaces.com).
+        Se omitir DO_SPACES_REGION, este projeto assume nyc3 no storage.yml — noutro datacenter causa exactamente este erro.
+        Confirme DO_SPACES_BUCKET com o nome exacto do Space (sem espaços) e copie para DO_SPACES_REGION o datacenter indicado ao lado do mesmo Space no painel.
+        Verifique também se o Space não está marcado como agendado para eliminação; cancele o agendamento se aparecer esse aviso — nesse estado os uploads falham mesmo com nome e região correctos.
+        Opcionalmente defina DO_SPACES_ENDPOINT regional completo ou tente DO_SPACES_FORCE_PATH_STYLE=true. Reinicie a app (.env só
+        aplica ao arranque).
+      armazem_remoto: >-
+        Houve falha ao usar o armazém DigitalOcean Spaces (rede ou configuração).
+        No App Platform verifique ACTIVE_STORAGE_SERVICE=digitalocean_spaces;
+        DO_SPACES_ACCESS_KEY_ID e DO_SPACES_SECRET_ACCESS_KEY; DO_SPACES_BUCKET;
+        DO_SPACES_REGION e, se for o caso, DO_SPACES_ENDPOINT (ex.: https://sfo3.digitaloceanspaces.com).
+        O arquivo config/storage.yml neste projeto define assinatura na região us-east-1 e checksum when_required,
+        compatíveis com o Spaces; altere as variáveis e faça um novo deploy da aplicação.
+        Se o cadastro está ok mas só a foto some ao ver ou editar o cenáculo, pode ser registro órfão
+        (banco migrado sem o arquivo no bucket): marque Remover imagem atual, salve e envie a imagem de novo.
     form:
       secao_locais: "Locais dos encontros por género"
       dica_local_homens: "Opcional — sala, endereço ou referência para quem participa como esposo."
@@ -271,7 +287,7 @@ pt-BR:
       gerar_documento: "Gerar relatório HTML e descarregar"
       avisos_na_geracao: "Abra o arquivo no navegador e use Imprimir para salvar em PDF ou imprimir papel. Para gravar grupos oficiais no sistema, continue na área de cenáculos."
       link_curto_label: "Sugerir cenáculos somente nos dados (PDF/impressão depois pelo browser)"
-      link_menu_cenarios: "Sugestão de cenáculos"
+      link_menu_cenarios: "Sugestão de Distribuição"
       ver_sem_filtro: "Incluir todos os casais da edição (mesmo os que já estão num cenáculo)"
       ver_so_livres: "Mostrar só casais ainda sem cenáculo nesta edição"
       doc_titulo_curto: "Sugestão de cenários de cenáculo"
@@ -303,8 +319,10 @@ pt-BR:
     page_title_fallback: "Equipe de cenáculos · SVES"
     toolbar_voltar: "Voltar à edição"
     toolbar_imprimir: "Imprimir ou PDF"
-    link_lista_cenaculos: "Imprimir equipe (PDF)"
+    link_lista_cenaculos: "Impressão PDF"
+    link_lista_cenaculos_title: "Abre num novo separador para ver a folha no ecrã; no telemóvel pode ampliar. Use Imprimir apenas se quiser salvar em PDF ou em papel."
     dica_pdf_backgrounds_html: "Para o PDF mostrar os quadrados coloridos: no Chrome/Edge ative «Gráficos de fundo» nas opções de impressão; no Safari marque «Imprimir fundos». O CSS já usa print-color-adjust."
+    dica_leitura_mobile_html: "Isto é uma página para ler no ecrã. No telemóvel, amplie com gestos de pinça. «Imprimir ou PDF» abre o menu do sistema — só aí escolha salvar como PDF se precisar de ficheiro."
     titulo_documento: "Equipe de servos de cenáculos"
     subtitulo: "Resumo por cenáculo · dados do painel SVES"
     tabela_aria: "Equipe de servos por cenáculo"
@@ -444,12 +462,12 @@ pt-BR:
       lote_ok:
         one: "%{count} reunião criada."
         other: "%{count} reuniões criadas."
-    link_na_edicao: "Reuniões de cenáculo"
+    link_na_edicao: "Reuniões"
     link_no_cenaculo: "Presenças nas reuniões"
     presencas:
       page_title_index: "Reuniões · %{cenaculo} · %{edicao}"
       page_title_edit: "Presenças · %{titulo} · %{cenaculo}"
-      voltar_cenaculo: "Ficha do cenáculo"
+      voltar_cenaculo: "Cenáculo"
       voltar_lista_reunioes: "Lista de reuniões"
       heading_index: "Reuniões desta edição"
       intro_index: "Abra cada reunião para marcar ou consultar presenças (ele e ela). Reuniões em preparação aparecem só para quem gere o painel."

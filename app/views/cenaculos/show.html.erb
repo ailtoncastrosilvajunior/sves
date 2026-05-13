@@ -44,22 +44,23 @@
           <% end %>
         </dl>
       <% end %>
-      <%= link_to t("reunioes_cenaculo.link_no_cenaculo"), reunioes_cenaculo_edicao_cenaculo_path(@edicao, @cenaculo),
-                  class: "mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-teal-200 bg-teal-50 px-5 py-2.5 text-sm font-medium text-teal-950 hover:bg-teal-100 sm:min-h-0" %>
-      <% if pode_gerir_painel? %>
-      <div class="mt-4 flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <%= link_to "Editar ficha", edit_edicao_cenaculo_path(@edicao, @cenaculo),
-                    class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-center text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:w-auto sm:min-h-0" %>
-        <%= button_to "Remover cenáculo", edicao_cenaculo_path(@edicao, @cenaculo), method: :delete,
-                      form: {
-                        class: "w-full sm:w-auto",
-                        data: {
-                          turbo_confirm: "Remove este cenáculo, todos os casais agrupados e os pastores ligados apenas a ele nesta edição?"
+      <% reunio_btn = "inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full border border-teal-200 bg-teal-50 px-4 py-2.5 text-center text-sm font-medium text-teal-950 hover:bg-teal-100 sm:min-h-[42px] sm:px-5 sm:py-2" %>
+      <% edit_btn = "inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2.5 text-center text-sm font-medium text-stone-800 shadow-sm ring-1 ring-stone-900/5 hover:bg-stone-50 sm:min-h-[42px]" %>
+      <% remove_btn = "inline-flex min-h-[44px] cursor-pointer shrink-0 items-center justify-center rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:min-h-[42px]" %>
+      <nav class="mt-4 flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto overflow-y-visible pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 [&::-webkit-scrollbar]:hidden" aria-label="Ações do cenáculo">
+        <% if pode_gerir_painel? %>
+          <%= link_to "Editar", edit_edicao_cenaculo_path(@edicao, @cenaculo), class: edit_btn %>
+          <%= button_to "Remover", edicao_cenaculo_path(@edicao, @cenaculo), method: :delete,
+                        form: {
+                          class: "m-0 inline-flex shrink-0",
+                          data: {
+                            turbo_confirm: "Remove este cenáculo, todos os casais agrupados e os pastores ligados apenas a ele nesta edição?"
+                          },
                         },
-                      },
-                      class: "w-full cursor-pointer rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-900 hover:bg-red-100 sm:w-auto sm:py-2" %>
-      </div>
-      <% end %>
+                        class: remove_btn %>
+        <% end %>
+        <%= link_to t("reunioes_cenaculo.link_no_cenaculo"), reunioes_cenaculo_edicao_cenaculo_path(@edicao, @cenaculo), class: reunio_btn %>
+      </nav>
     </div>
     <% if @cenaculo.imagem.attached? %>
       <div class="w-full shrink-0 self-start sm:max-w-sm lg:w-auto lg:max-w-[18rem]">

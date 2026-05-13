@@ -9,19 +9,33 @@ local:
 # DigitalOcean Spaces (API compatível com S3). No App Platform o disco do container é efémero —
 # use este serviço em produção com ACTIVE_STORAGE_SERVICE=digitalocean_spaces.
 # Painel DO: API → Spaces → criar Space → chaves de acesso.
-# Variáveis no App Platform: DO_SPACES_ACCESS_KEY_ID + DO_SPACES_SECRET_ACCESS_KEY (ambos obrigatórios),
-# DO_SPACES_BUCKET, DO_SPACES_REGION (ex.: sfo3); opcional DO_SPACES_ENDPOINT.
-# Fallbacks só para templates que já definem AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY.
-<% spaces_region = ENV.fetch("DO_SPACES_REGION", "nyc3") %>
+# Variáveis: DO_SPACES_ACCESS_KEY_ID + DO_SPACES_SECRET_ACCESS_KEY (obrig.), DO_SPACES_BUCKET,
+# DO_SPACES_REGION = datacenter do Space (obrig. na prática — se omitido assume-se nyc3 e outro DC dá NoSuchBucket),
+# opcional DO_SPACES_ENDPOINT (URL regional completa) e DO_SPACES_FORCE_PATH_STYLE=true se necessário para o SDK).
+#
+# IMPORTANTE (Ruby / aws-sdk-s3 · doc. DigitalOcean): a região usada pelo SDK para *assinatura* deve ser um
+# nome de região AWS (normalmente «us-east-1»); o tráfego real vai para DO_SPACES_REGION via endpoint.
+# Se definir manualmente ambas no cliente como «sfo3», uploads costumam falhar (credenciais/assinatura inválidas).
+<% spaces_dc = ENV["DO_SPACES_REGION"].to_s.strip.presence || "nyc3" %>
+<% spaces_sdk_region = ENV["DO_SPACES_SIGNATURE_REGION"].to_s.strip.presence || "us-east-1" %>
+<% spaces_bucket = ENV["DO_SPACES_BUCKET"].to_s.strip %>
+<% spaces_endpoint = ENV["DO_SPACES_ENDPOINT"].to_s.strip.presence || "https://#{spaces_dc}.digitaloceanspaces.com" %>
+<% spaces_force_path_style = ENV["DO_SPACES_FORCE_PATH_STYLE"].to_s.strip.casecmp("true").zero? %>
 <% spaces_access_key_id = ENV["DO_SPACES_ACCESS_KEY_ID"].presence || ENV["DO_SPACES_KEY_ID"].presence || ENV["AWS_ACCESS_KEY_ID"].presence %>
+<% spaces_access_key_id = spaces_access_key_id&.strip %>
 <% spaces_secret_access_key = ENV["DO_SPACES_SECRET_ACCESS_KEY"].presence || ENV["AWS_SECRET_ACCESS_KEY"].presence %>
+<% spaces_secret_access_key = spaces_secret_access_key&.strip %>
 digitalocean_spaces:
   service: S3
   access_key_id: <%= spaces_access_key_id %>
   secret_access_key: <%= spaces_secret_access_key %>
-  region: <%= spaces_region %>
-  bucket: <%= ENV["DO_SPACES_BUCKET"] %>
-  endpoint: <%= ENV["DO_SPACES_ENDPOINT"].presence || "https://#{spaces_region}.digitaloceanspaces.com" %>
+  region: <%= spaces_sdk_region %>
+  bucket: <%= spaces_bucket %>
+  endpoint: <%= spaces_endpoint %>
+  force_path_style: <%= spaces_force_path_style %>
+  # aws-sdk-s3 ≥1.178: checksums por defeito em PutObject — Spaces pode falhar; ver rails/rails#54374.
+  request_checksum_calculation: "when_required"
+  response_checksum_validation: "when_required"
 
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
