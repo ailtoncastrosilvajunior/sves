@@ -12,7 +12,7 @@ class EquipesController < ApplicationController
     base = @equipe.equipe_servos
                  .where(edicao: @edicao)
                  .joins(:servo)
-                 .includes(:servo)
+                 .includes(servo: %i[conjuge parceiro_conjuge])
     @vinculos_coordenacao = base.coordenacao.merge(Servo.order(:nome))
     @vinculos_participacao = base.participante.merge(Servo.order(:nome))
 

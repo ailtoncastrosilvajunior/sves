@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :vinculos, controller: :equipes_servos, only: %i[create destroy] do
         collection do
           post :lote
+          delete :destroy_lote
         end
       end
     end

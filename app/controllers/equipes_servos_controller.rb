@@ -104,6 +104,36 @@ class EquipesServosController < ApplicationController
     redirect_to edicao_equipe_path(@edicao, @equipe), notice: "Servo retirado da equipe."
   end
 
+  # Remove vários vínculos de uma vez (ex.: casal na mesma linha da lista de membros).
+  def destroy_lote
+    ids = Array.wrap(params[:vinculo_ids]).map(&:to_i).select(&:positive?).uniq
+    if ids.empty?
+      redirect_to edicao_equipe_path(@edicao, @equipe), alert: "Nenhum vínculo para retirar."
+      return
+    end
+
+    registos = @equipe.equipe_servos.where(edicao_id: @edicao.id, id: ids).includes(:servo).to_a
+    if registos.size != ids.size
+      redirect_to edicao_equipe_path(@edicao, @equipe),
+                  alert: "Não foi possível retirar — a lista pode estar desactualizada. Recarregue a página."
+      return
+    end
+
+    nomes = registos.sort_by { |es| es.servo.nome.to_s.downcase }.map { |es| es.servo.nome }
+    ActiveRecord::Base.transaction do
+      registos.each(&:destroy!)
+    end
+
+    notice =
+      case nomes.length
+      when 1 then "#{nomes.first} retirado(a) da equipe."
+      when 2 then "#{nomes[0]} e #{nomes[1]} retirados da equipe."
+      else "#{nomes[0...-1].join(', ')} e #{nomes.last} retirados da equipe."
+      end
+
+    redirect_to edicao_equipe_path(@edicao, @equipe), notice: notice
+  end
+
   private
 
   def set_edicao
