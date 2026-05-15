@@ -29,7 +29,7 @@ Rails.application.routes.draw do
         end
       end
     end
-    resources :casais, only: %i[index]
+    resources :casais, only: %i[index new create]
     resources :reunioes_cenaculo, controller: "edicao_reunioes_cenaculos", except: %i[show] do
       collection do
         get :novo_lote

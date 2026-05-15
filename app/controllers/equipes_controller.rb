@@ -9,11 +9,12 @@ class EquipesController < ApplicationController
   end
 
   def show
-    @vinculos = @equipe.equipe_servos
-                        .where(edicao: @edicao)
-                        .joins(:servo)
-                        .includes(:servo)
-                        .merge(Servo.order(:nome))
+    base = @equipe.equipe_servos
+                 .where(edicao: @edicao)
+                 .joins(:servo)
+                 .includes(:servo)
+    @vinculos_coordenacao = base.coordenacao.merge(Servo.order(:nome))
+    @vinculos_participacao = base.participante.merge(Servo.order(:nome))
 
     ocupados_na_equipe = @equipe.servidor_ids_na_edicao(@edicao)
     @servos_disponiveis_para_vinculo =

@@ -1,4 +1,4 @@
-<%# locals: casal %>
+<%# locals: casal, edicao (opcional — cenáculo do grupo nesta edição) %>
 <article class="min-w-0 w-full flex-1 space-y-4">
   <header class="space-y-1">
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -43,6 +43,10 @@
         </span>
       <% end %>
     </div>
+
+    <% if local_assigns[:edicao].present? %>
+      <%= render "casais/cenaculo_linha_casal", casal: casal, edicao: local_assigns[:edicao] %>
+    <% end %>
   </header>
 
   <% if casal.telefones_contato.present? || casal.email_contato.present? %>

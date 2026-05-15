@@ -84,3 +84,5 @@ No CI, `DATABASE_URL` aponta para `sves_test` no serviço Postgres.
 <!-- CHECKPOINT id="ckpt_mp4beik9_c3ss1y" time="2026-05-13T17:09:46.233Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->
 
 <!-- CHECKPOINT id="ckpt_mp4e9ejp_506xr2" time="2026-05-13T18:29:46.597Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->
+
+<!-- CHECKPOINT id="ckpt_mp4fbze4_ustyy7" time="2026-05-13T18:59:46.540Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->

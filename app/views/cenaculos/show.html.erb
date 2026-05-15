@@ -174,19 +174,66 @@
     <% end %>
 
     <% if @servos_para_adicionar.any? %>
-      <%= form_with model: [@edicao, @cenaculo, CenaculoServo.new],
-                    class: "mt-8 flex flex-col gap-4 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm sm:flex-row sm:flex-wrap sm:items-end" do |f| %>
-        <div class="min-w-0 flex-1">
-          <%= f.label :servo_id, "Adicionar servo como pastor deste cenáculo", class: "text-sm font-medium text-stone-700" %>
-          <%= f.collection_select :servo_id,
-                                  @servos_para_adicionar,
-                                  :id,
-                                  :nome,
-                                  { prompt: "Escolha o servo..." },
-                                  class: "mt-2 block min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/30 sm:min-h-10" %>
+      <%= form_with url: edicao_cenaculo_cenaculo_servos_path(@edicao, @cenaculo),
+                    method: :post,
+                    class: "mt-8 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm",
+                    data: { controller: "distribuicao-casais" } do %>
+        <fieldset class="min-w-0 border-0 p-0">
+          <legend class="text-sm font-medium text-stone-900">Adicionar servos como pastores deste cenáculo</legend>
+          <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div class="min-w-0 flex-1">
+              <%= label_tag dom_id(@cenaculo, :filtro_pastores_cenaculo), "Filtrar por nome ou e-mail", class: "sr-only" %>
+              <%= text_field_tag :filtro_pastores_cenaculo,
+                                 "",
+                                 id: dom_id(@cenaculo, :filtro_pastores_cenaculo),
+                                 autocomplete: "off",
+                                 placeholder: "Filtrar por nome ou e-mail…",
+                                 data: {
+                                   distribuicao_casais_target: "campoBusca",
+                                   action: "input->distribuicao-casais#atualizarFiltragem",
+                                 },
+                                 class: "min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-inner outline-none ring-stone-400/30 placeholder:text-stone-400 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/25 sm:min-h-10" %>
+            </div>
+            <%= button_tag "Limpar filtro",
+                           type: "button",
+                           data: { action: "click->distribuicao-casais#limparCampoBusca" },
+                           class: "inline-flex min-h-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:min-h-10" %>
+          </div>
+          <p data-distribuicao-casais-target="semResultados"
+             class="mt-3 hidden rounded-xl border border-amber-200/90 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+             role="status">
+            Nenhum nome coincide com a busca — alargue ou limpe o filtro.
+          </p>
+          <p role="status" aria-live="polite"
+             data-distribuicao-casais-target="resultadoFiltragem"
+             class="mt-2 hidden rounded-lg bg-stone-100/90 px-3 py-2 text-sm font-medium text-stone-800"></p>
+          <div class="mt-4 max-h-[min(50vh,24rem)] overflow-y-auto rounded-xl border border-stone-200/80 bg-stone-50/40 shadow-inner">
+            <ul class="divide-y divide-stone-200/80">
+              <% @servos_para_adicionar.each do |s| %>
+                <%= tag.li class: "px-3 py-2 sm:px-4 sm:py-2.5",
+                           data: {
+                             distribuicao_casais_target: "cartao",
+                             busca: [s.nome, s.email].compact.join(" "),
+                           } do %>
+                  <label class="flex cursor-pointer items-start gap-3 rounded-lg py-1.5 pl-1 transition hover:bg-white/80">
+                    <%= check_box_tag "servo_ids[]", s.id, false,
+                                      id: dom_id(s, :pastor_cenaculo),
+                                      class: "mt-1 size-4 shrink-0 rounded border-stone-300 text-stone-900 focus:ring-stone-500/35" %>
+                    <span class="min-w-0 text-sm font-medium leading-snug text-stone-900"><%= s.nome %></span>
+                  </label>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        </fieldset>
+        <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-xs text-stone-500">
+            <% n = @servos_para_adicionar.size %>
+            <%= n == 1 ? "1 participante disponível" : "#{n} participantes disponíveis" %> como pastor neste cenáculo.
+          </p>
+          <%= submit_tag "Adicionar pastores",
+                         class: "inline-flex min-h-[44px] w-full shrink-0 cursor-pointer items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto" %>
         </div>
-        <%= f.submit "Adicionar pastor",
-                     class: "inline-flex min-h-[44px] w-full shrink-0 cursor-pointer items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto" %>
       <% end %>
     <% else %>
       <% if !Servo.exists? %>
@@ -194,8 +241,8 @@
           <%= link_to "Cadastre servos na base de dados", servos_path, class: "font-medium underline underline-offset-2 hover:text-stone-900" %> antes de designar pastores.
         </p>
       <% else %>
-        <p class="mt-6 text-sm text-stone-500">
-          Os servos disponíveis já estão todos neste cenáculo.
+        <p class="mt-6 text-sm leading-relaxed text-stone-600">
+          Não há <span class="font-medium text-stone-800">participantes</span> livres: a coordenação não aparece nesta lista e quem já é pastor de <span class="font-medium text-stone-800">outro cenáculo</span> nesta edição também não. Para mudar alguém de grupo, retire-o primeiro do cenáculo onde já está.
         </p>
       <% end %>
     <% end %>

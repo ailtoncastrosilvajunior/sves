@@ -1,7 +1,7 @@
 <% content_for :title, "Editar #{@edicao.rotulo} · SVES" %>
 
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-  <%= render "application/back_button", href: @edicao, label: "Ficha da edição" %>
+  <%= render "application/back_button", href: @edicao, label: "Edição" %>
   <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Edições</p>
   <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Editar <%= @edicao.rotulo %></h1>
   <%= render "form" %>

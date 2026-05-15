@@ -6,20 +6,49 @@ class CenaculoServosController < ApplicationController
   before_action :set_cenaculo
 
   def create
-    vinculo = @cenaculo.cenaculo_servos.build(cenaculo_servo_params)
-    servo_id_alvo = vinculo.servo_id
+    ids = Array(params[:servo_ids]).map(&:presence).compact.map(&:to_i).uniq
 
-    unless servo_id_alvo.present? && Servo.exists?(servo_id_alvo)
-      redirect_to edicao_cenaculo_path(@edicao, @cenaculo), alert: "Escolha um servo válido."
+    if ids.empty?
+      redirect_to edicao_cenaculo_path(@edicao, @cenaculo), alert: "Seleccione pelo menos um servo."
       return
     end
 
-    if vinculo.save
-      redirect_to edicao_cenaculo_path(@edicao, @cenaculo), notice: "Pastor adicionado ao cenáculo."
-    else
+    candidatos = Servo.candidatos_pastor_cenaculo_na_edicao(@edicao).where(id: ids).order(:nome).pluck(:id)
+
+    if candidatos.empty?
       redirect_to edicao_cenaculo_path(@edicao, @cenaculo),
-                  alert: vinculo.errors.full_messages.to_sentence.presence || "Não foi possível adicionar o pastor."
+                  alert: "Nenhum dos servos seleccionados pode ser adicionado (só participantes; não podem já pastorear nesta edição)."
+      return
     end
+
+    falhas = []
+
+    CenaculoServo.transaction do
+      candidatos.each do |sid|
+        registro = @cenaculo.cenaculo_servos.build(servo_id: sid)
+        unless registro.save
+          falhas.concat(registro.errors.full_messages)
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+
+    if falhas.any?
+      redirect_to edicao_cenaculo_path(@edicao, @cenaculo),
+                  alert: falhas.uniq.to_sentence.presence || "Não foi possível adicionar alguns pastores."
+      return
+    end
+
+    criados = candidatos.size
+
+    notice =
+      if criados == 1
+        "1 pastor adicionado ao cenáculo."
+      else
+        "#{criados} pastores adicionados ao cenáculo."
+      end
+
+    redirect_to edicao_cenaculo_path(@edicao, @cenaculo), notice: notice
   end
 
   def destroy
@@ -38,7 +67,4 @@ class CenaculoServosController < ApplicationController
     @cenaculo = @edicao.cenaculos.find(params[:cenaculo_id])
   end
 
-  def cenaculo_servo_params
-    params.require(:cenaculo_servo).permit(:servo_id)
-  end
 end

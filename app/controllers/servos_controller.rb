@@ -1,7 +1,7 @@
 class ServosController < ApplicationController
   before_action :define_servo, only: %i[show edit update destroy liberar_acesso redefinir_senha_participante]
-  before_action :negar_se_nao_coordenacao!, except: %i[show]
-  before_action :garantir_servo_apenas_proprio_ou_coordenacao!, only: :show
+  before_action :negar_se_nao_coordenacao!, except: %i[show edit update]
+  before_action :garantir_servo_apenas_proprio_ou_coordenacao!, only: %i[show edit update]
 
   def index
     @servos = Servo.includes(:conjuge, :user).order(:nome)
@@ -37,20 +37,24 @@ class ServosController < ApplicationController
   end
 
   def update
-    @servo.assign_attributes(servo_campos_basicos)
-
-    ok = atualizar_servo_e_conta_associada!(
-      primeiro_login_pedido: dar_login_solicitado?,
-      password: pwd_form,
-      password_confirmation: pwd_conf_form
-    )
+    if pode_gerir_painel?
+      @servo.assign_attributes(servo_campos_basicos)
+      ok = atualizar_servo_e_conta_associada!(
+        primeiro_login_pedido: dar_login_solicitado?,
+        password: pwd_form,
+        password_confirmation: pwd_conf_form,
+      )
+    else
+      @servo.assign_attributes(servo_campos_somente_nome)
+      ok = @servo.save
+    end
 
     unless ok
       render :edit, status: :unprocessable_entity
       return
     end
 
-    redirect_to @servo, notice: "Servo atualizado."
+    redirect_to @servo, notice: (pode_gerir_painel? ? "Servo atualizado." : t("servos.nome_atualizado"))
   end
 
   def destroy
@@ -128,6 +132,10 @@ class ServosController < ApplicationController
 
   def servo_campos_basicos
     servo_raiz_params.permit(:nome, :email, :telefone, :sexo, :conjuge_id, :papel)
+  end
+
+  def servo_campos_somente_nome
+    servo_raiz_params.permit(:nome)
   end
 
   def dar_login_solicitado?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,7 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
     t.string "email_contato"
     t.text "endereco"
     t.text "filhos_abc_jesus"
-    t.string "fonte_importacao", limit: 24, default: "manual", null: false
+    t.string "fonte_importacao", limit: 24, default: "cadastro_manual", null: false
     t.text "horarios_abc_jesus"
     t.text "igreja_casamento_e_data"
     t.datetime "inscrito_em"

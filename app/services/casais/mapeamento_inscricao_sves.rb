@@ -104,9 +104,23 @@ module Casais
         parse_datetime(str)
       when :data_nascimento_ele, :data_nascimento_ela
         parse_date_iso(str)
+      when :nome_completo_ele, :nome_completo_ela
+        normalizar_nome_completo_importacao(str)
       else
         str
       end
+    end
+
+    def self.normalizar_nome_completo_importacao(str)
+      str.gsub(/\s+/, " ").upcase
+    end
+
+    # Mesmo padrão aplicado na importação CSV (maiúsculas, espaços colapsados).
+    def self.aplicar_padrao_nome_completo_participante(valor)
+      str = texto_utf8(valor).strip
+      return nil if str.blank?
+
+      normalizar_nome_completo_importacao(str)
     end
 
     def self.parse_datetime(str)
@@ -124,7 +138,7 @@ module Casais
       nil
     end
 
-    private_class_method :converter, :parse_datetime, :parse_date_iso, :texto_utf8
+    private_class_method :converter, :normalizar_nome_completo_importacao, :parse_datetime, :parse_date_iso, :texto_utf8
 
     # Hash estável por edição para não duplicar linhas quando o CSV ou a planilha é reimportada.
     def self.assinatura_linha(edicao_id:, nome_completo_ele:, nome_completo_ela:, inscrito_em:)

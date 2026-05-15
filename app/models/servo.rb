@@ -30,6 +30,12 @@ class Servo < ApplicationRecord
     joins(cenaculo_servos: :cenaculo).where(cenaculos: { edicao_id: edicao.id }).distinct
   }
 
+  # Participantes que ainda não são pastores em nenhum cenáculo desta edição (coordenação fica de fora).
+  scope :candidatos_pastor_cenaculo_na_edicao, lambda { |edicao|
+    ocupados = CenaculoServo.joins(:cenaculo).where(cenaculos: { edicao_id: edicao.id }).select(:servo_id)
+    where(papel: PAPEL_PARTICIPANTE).where.not(id: ocupados)
+  }
+
   scope :aguardando_acesso_ao_painel, -> { where(user_id: nil).where.not(email: [nil, ""]) }
 
   def coordenacao?

@@ -1,8 +1,15 @@
 <% content_for :title, "Editar #{@servo.nome} · Servos · SVES" %>
 
+<% content_for :title, "#{pode_gerir_painel? ? "Editar #{@servo.nome}" : t("servos.edit_titulo_nome")} · Servos · SVES" %>
+
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-  <%= render "application/back_button", href: @servo, label: "Ficha do servo" %>
+  <%= render "application/back_button", href: @servo, label: "servo" %>
   <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">Servos</p>
-  <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Editar <%= @servo.nome %></h1>
+  <% if pode_gerir_painel? %>
+    <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl">Editar <%= @servo.nome %></h1>
+  <% else %>
+    <h1 class="mt-2 break-words font-display text-2xl tracking-tight text-stone-900 sm:text-3xl"><%= t("servos.edit_titulo_nome") %></h1>
+    <p class="mt-2 max-w-prose text-sm leading-relaxed text-stone-600"><%= t("servos.edit_participante_dica") %></p>
+  <% end %>
   <%= render "form" %>
 </div>

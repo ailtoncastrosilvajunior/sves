@@ -35,8 +35,7 @@ class CenaculosController < ApplicationController
         .order(Arel.sql("casais.inscrito_em DESC NULLS LAST"))
         .order(:nome_completo_ele)
 
-      pastores_ids = @cenaculo.servos.pluck(:id)
-      @servos_para_adicionar = Servo.where.not(id: pastores_ids).order(:nome)
+      @servos_para_adicionar = Servo.candidatos_pastor_cenaculo_na_edicao(@edicao).order(:nome)
     else
       @casais_para_adicionar = Casal.none
       @servos_para_adicionar = Servo.none

@@ -55,6 +55,18 @@ pt-BR:
         descricao: "Descrição"
         ordem: "Ordem"
         estado: "Estado"
+      casal:
+        nome_completo_ele: "Nome completo (ele)"
+        nome_completo_ela: "Nome completo (ela)"
+        apelido_ele: "Como chamar (ele)"
+        apelido_ela: "Como chamar (ela)"
+        data_nascimento_ele: "Data de nascimento (ele)"
+        data_nascimento_ela: "Data de nascimento (ela)"
+        inscrito_em: "Registo na secretaria (data e hora)"
+        email_contato: "E-mail de contacto"
+        telefones_contato: "Telefones"
+        endereco: "Endereço"
+        observacoes: "Observações (painel)"
     models:
       material_apoio:
         one: "Material de apoio"
@@ -174,6 +186,11 @@ pt-BR:
     index_badge_publico: "formulário público"
     show_origem_label: "Origem do cadastro"
     show_papel_label: "Classificação"
+    show_editar_nome: "Alterar nome"
+    nome_atualizado: "Nome atualizado."
+    edit_titulo_nome: "Alterar nome"
+    edit_participante_dica: ""
+    submit_somente_nome: "Atualizar"
     papel:
       coordenacao: "Coordenação"
       participante: "Participante (pastor de cenáculo)"
@@ -198,7 +215,7 @@ pt-BR:
     liberar_lote_falhas: "Alguns falharam: %{detalhes}"
     liberar_lote_nenhum: "Selecione pelo menos um servo."
     redefinir_senha_submit: "Redefinir senha do participante"
-    redefinir_sucesso: "Senha reposta para a padrão do ambiente (SVES_SEED_SERVO_PASSWORD). No próximo login será pedida uma nova senha."
+    redefinir_sucesso: "Senha reposta para a padrão do ambiente (#{ENV['SVES_SEED_SERVO_PASSWORD']}). No próximo login será pedida uma nova senha."
     redefinir_falhou: "Não foi possível redefinir a senha."
     redefinir_sem_conta: "Este servo ainda não tem conta de acesso."
     redefinir_so_participante: "Esta acção só se aplica a servos com classificação «participante»."
@@ -208,10 +225,32 @@ pt-BR:
     index:
       resumo_um: "%{count} casal registado nesta edição."
       resumo_varios: "%{count} casais registados nesta edição."
+      tipo_lista_nomes_chamados: "Nomes e como chamar"
+      nomes_chamados_intro: "Somente o nome civil e a forma de tratamento indicada na inscrição, para leitura rápida (reuniões, listas de presença, etc.)."
+      rotulo_esposo: "Esposo"
+      rotulo_esposa: "Esposa"
     fontes:
-      manual: "Manual"
       arquivo_csv: "Arquivo CSV"
       planilha_google: "Planilha Google"
+      cadastro_manual: "Cadastro manual (secretaria)"
+    cadastro_secretaria:
+      titulo: "Cadastrar casal"
+      subtitulo: "Use quando o casal se inscreveu presencialmente na secretaria e não consta no Google Forms ou na planilha."
+      voltar_lista: "Lista de casais"
+      sucesso: "Casal registado nesta edição."
+      duplicado: "Não foi possível gravar: já existe registo com o mesmo casal e mesma data de inscrição nesta edição, ou o e-mail de contacto está repetido."
+      erros_titulo: "Corrija os campos em falta ou inválidos:"
+      secao_participantes: "Participantes"
+      bloco_ele: "Esposo"
+      bloco_ela: "Esposa"
+      secao_registo_secretaria: "Registo na secretaria"
+      secao_contato: "Contato"
+      secao_opcional: "Notas internas"
+      dica_nomes_maiusculas: ""
+      dica_inscrito_em: "Data e hora enquanto na secretaria; deixe o padrão se for agora. Isto distingue duas inscrições do mesmo casal em dias diferentes."
+      dica_observacoes: "Visível só no painel — pagamento em dinheiro, observações da secretaria, etc."
+      submit: "Registar casal"
+      cancelar: "Cancelar"
   cenaculos:
     imagem_upload:
       generico: "Não foi possível aceitar esta imagem. Prefira JPG, PNG ou WebP (tamanho moderado)."
@@ -234,7 +273,7 @@ pt-BR:
         Se o cadastro está ok mas só a foto some ao ver ou editar o cenáculo, pode ser registro órfão
         (banco migrado sem o arquivo no bucket): marque Remover imagem atual, salve e envie a imagem de novo.
     form:
-      secao_locais: "Locais dos encontros por género"
+      secao_locais: "Locais dos encontros por gênero"
       dica_local_homens: "Opcional — sala, endereço ou referência para quem participa como esposo."
       dica_local_mulheres: "Opcional — sala, endereço ou referência para quem participa como esposa."
       placeholder_local_homens: "Ex.: Sala São José · Face de Cristo"
@@ -299,7 +338,7 @@ pt-BR:
       doc_motivos_grupo: "Leituras quantitativas deste cenário face ao conjunto de fichas trabalhadas"
       doc_distribuicao_marcadores: "Distribuição aproximada por dimensões extraídas da ficha (texto/importação)"
       doc_casais_heading: "Casais (unidade integral)"
-      doc_homens_heading: "Esposos para encontros por género dentro deste cenáculo já listado em conjunto"
+      doc_homens_heading: "Esposos para encontros por gênero dentro deste cenáculo já listado em conjunto"
       doc_mulheres_heading: "Esposas para os mesmos encontros paralelos já referenciados aos mesmos casais"
       doc_nota_paridade_pastoral: >-
         O mesmo casal servidor continua sendo o referencial pastoral deste cenáculo inteiro mesmo quando há encontros separados por sexo; esta folha apenas reproduz os nomes vindos das fichas.
@@ -309,7 +348,7 @@ pt-BR:
         |-
           <p><strong>Unidade</strong>: o agrupamento respeita casais ínteiros («uma só carne» pastoralmente dentro deste exercício apenas documental).</p>
           <p><strong>Heterogeneidade</strong>: marcações vindas apenas dos campos já existentes nos registos dos casais; nada novo é criado pela ferramenta além das combinações propostas em memória.</p>
-          <p><strong>Encontros por género possíveis</strong>: continuam sendo os mesmos casais inteiriços já listados antes; apenas se explicitam listas paralelas caso isso sirva aos encontros por sexos já referidos institucionalmente.</p>
+          <p><strong>Encontros por gênero possíveis</strong>: continuam sendo os mesmos casais inteiriços já listados antes; apenas se explicitam listas paralelas caso isso sirva aos encontros por sexos já referidos institucionalmente.</p>
       doc_plhr_casais:
         zero: "%{count} casais"
         one: "%{count} casal"
@@ -342,6 +381,10 @@ pt-BR:
     sem_cenaculos_edicao: "Nenhum cenáculo registado nesta edição."
     pastores_sem_sexo: "Pastores sem sexo registado (coluna homens): %{nomes}"
     rodape_nota: "Gerado no SVES · opcionalmente pode acrescentar-se controlo de pastas (REC/DEV) noutra folha ou versão futura."
+  equipes:
+    show:
+      grupo_coordenacao: "Coordenação"
+      grupo_participacao: "Participação"
   time:
     formats:
       short: "%d/%m/%Y, %H:%M"

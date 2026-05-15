@@ -21,6 +21,7 @@ module CenaculosHelper
       casal.como_conheceu_seminario,
       casal.fonte_importacao,
       (l(casal.inscrito_em, format: :short) if casal.inscrito_em),
+      casal.cenaculo_grupo&.nome,
     ].compact_blank
     bruto = partes.join(" ").downcase.gsub(/\s+/, " ").strip
     I18n.transliterate(bruto)
@@ -66,13 +67,13 @@ module CenaculosHelper
     return cenaculo_index_card_miniatura_sem_imagem(cenaculo, cor_acento: cor_acento) if src.blank?
 
     img_sz =
-      "[grid-area:stack] z-10 h-[3.35rem] w-[3.35rem] rounded-[calc(1rem-2px)] object-cover transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem]"
+      "[grid-area:stack] z-10 h-14 w-14 rounded-[11px] object-cover transition duration-200 group-hover/card:scale-[1.02] sm:h-16 sm:w-16"
     fb_outer =
-      "[grid-area:stack] z-0 hidden h-[3.35rem] w-[3.35rem] rounded-[calc(1rem-2px)] p-[3px] transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem] " +
-      (cor_acento.present? ? "bg-stone-100 shadow-inner ring-1 ring-black/[0.08]" : "bg-teal-100 shadow-md shadow-teal-900/15 ring-1 ring-teal-300/40")
+      "[grid-area:stack] z-0 hidden h-14 w-14 rounded-[11px] p-0.5 transition duration-200 group-hover/card:scale-[1.02] sm:h-16 sm:w-16 " +
+      (cor_acento.present? ? "bg-stone-100 shadow-inner ring-1 ring-black/[0.06]" : "bg-teal-50 shadow-inner ring-1 ring-teal-200/50")
 
     grid_shell =
-      "grid [grid-template-areas:'stack'] place-items-start rounded-2xl bg-stone-100 p-[3px] shadow-md shadow-stone-900/12 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg group-hover/card:shadow-teal-900/10"
+      "grid [grid-template-areas:'stack'] place-items-start rounded-xl bg-stone-100 p-0.5 shadow-sm ring-2 ring-white/90 transition duration-200 group-hover/card:shadow-md group-hover/card:ring-teal-100/60"
 
     js = '(function(el){var r=el.closest("[data-thumb=\'cenaculo\']");var fb=r&&r.querySelector("[data-thumb-fb]");if(fb){fb.classList.remove("hidden");fb.classList.remove("z-0");fb.classList.add("z-10")}el.remove()})(this)'
 
@@ -94,11 +95,11 @@ module CenaculosHelper
   end
 
   def cenaculo_index_thumb_fallback_inner(cenaculo, cor_acento:)
-    inner = "h-full w-full rounded-[calc(1rem-2px)]"
+    inner = "h-full w-full rounded-[10px]"
     if cor_acento.present?
       tag.div(class: inner, style: "background-color: #{cor_acento}", aria: { hidden: true })
     else
-      tag.div(class: "#{inner} flex items-center justify-center bg-white/95 text-lg font-display font-semibold tracking-tight text-teal-800/55 shadow-inner", aria: { hidden: true }) do
+      tag.div(class: "#{inner} flex items-center justify-center bg-white text-base font-display font-semibold tracking-tight text-teal-800/55 shadow-inner", aria: { hidden: true }) do
         (cenaculo.nome.to_s.strip[0] || "·").upcase
       end
     end
@@ -106,14 +107,14 @@ module CenaculosHelper
 
   def cenaculo_index_card_miniatura_sem_imagem(cenaculo, cor_acento:)
     inner_sz =
-      "h-[3.35rem] w-[3.35rem] rounded-[calc(1rem-2px)] transition duration-300 group-hover/card:scale-[1.04] sm:h-[3.65rem] sm:w-[3.65rem]"
+      "h-14 w-14 rounded-[11px] transition duration-200 group-hover/card:scale-[1.02] sm:h-16 sm:w-16"
     if cor_acento.present?
-      content_tag(:div, class: "rounded-2xl bg-stone-100 p-[3px] shadow-md shadow-stone-900/12 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg") do
-        tag.span(class: "#{inner_sz} block shadow-inner ring-1 ring-black/[0.08]", style: "background-color: #{cor_acento}", aria: { hidden: true })
+      content_tag(:div, class: "rounded-xl bg-stone-100 p-0.5 shadow-sm ring-2 ring-white/90 transition duration-200 group-hover/card:shadow-md") do
+        tag.span(class: "#{inner_sz} block shadow-inner ring-1 ring-black/[0.06]", style: "background-color: #{cor_acento}", aria: { hidden: true })
       end
     else
-      content_tag(:div, class: "rounded-2xl bg-teal-100 p-[3px] shadow-md shadow-teal-900/15 ring-[3px] ring-white transition duration-300 group-hover/card:shadow-lg") do
-        tag.span(class: "#{inner_sz} flex items-center justify-center bg-white/95 text-lg font-display font-semibold tracking-tight text-teal-800/55 shadow-inner", aria: { hidden: true }) do
+      content_tag(:div, class: "rounded-xl bg-teal-100/80 p-0.5 shadow-sm ring-2 ring-white/90 transition duration-200 group-hover/card:shadow-md") do
+        tag.span(class: "#{inner_sz} flex items-center justify-center bg-white text-base font-display font-semibold tracking-tight text-teal-800/60 shadow-inner", aria: { hidden: true }) do
           (cenaculo.nome.to_s.strip[0] || "·").upcase
         end
       end

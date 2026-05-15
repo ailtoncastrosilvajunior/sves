@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Momento de «reunião de cenáculo» ao longo da edição (partilhas por género, etc.).
+# Momento de «reunião de cenáculo» ao longo da edição (partilhas por gênero, etc.).
 class EdicaoReuniaoCenaculo < ApplicationRecord
   belongs_to :edicao
   has_many :cenaculo_presenca_reunioes, dependent: :destroy

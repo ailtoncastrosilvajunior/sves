@@ -40,7 +40,7 @@ module Cenaculos
         default:
           '<p><strong>Unidade pastoral</strong>: agrupamentos com <strong>casais ínteiros</strong> («uma só carne»).</p>' \
           '<p><strong>Heterogeneidade</strong>: marcas apenas dos campos existentes nas fichas (idades agregadas, casamento anterior, filhos ABC, endereco, movimentos e excerto sobre a união).</p>' \
-          '<p><strong>Encontros por género</strong>: quando homens e mulheres reunem separadamente, <strong>cada lado continua a pertencer aos mesmos casais participantes e ao mesmo cenáculo</strong>; o casal pastor escolhido manualmente deve ser sempre o mesmo para esses membros.</p>',
+          '<p><strong>Encontros por gênero</strong>: quando homens e mulheres reunem separadamente, <strong>cada lado continua a pertencer aos mesmos casais participantes e ao mesmo cenáculo</strong>; o casal pastor escolhido manualmente deve ser sempre o mesmo para esses membros.</p>',
       )
     end
 

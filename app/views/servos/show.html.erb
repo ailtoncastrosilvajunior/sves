@@ -70,6 +70,10 @@
       </dl>
     </div>
     <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+      <% unless pode_gerir_painel? %>
+        <%= link_to t("servos.show_editar_nome"), edit_servo_path(@servo),
+                    class: "inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-stone-800 bg-stone-900 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-stone-800 sm:w-auto sm:min-h-0" %>
+      <% end %>
       <% if pode_gerir_painel? %>
         <% if @servo.user.present? && @servo.participante? && !@servo.user.admin? && ENV["SVES_SEED_SERVO_PASSWORD"].present? %>
           <%= button_to t("servos.redefinir_senha_submit"), redefinir_senha_participante_servo_path(@servo), method: :post,

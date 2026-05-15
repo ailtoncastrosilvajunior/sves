@@ -1,0 +1,11 @@
+<%# locals: casal, edicao %>
+<% cen = casal.cenaculo_grupo %>
+<p class="mt-2 text-sm leading-snug">
+  <% if cen %>
+    <span class="text-stone-500">Cenáculo ·</span>
+    <%= link_to cen.nome, edicao_cenaculo_path(edicao, cen),
+                class: "font-medium text-teal-900 underline-offset-2 hover:text-teal-950 hover:underline" %>
+  <% else %>
+    <span class="text-stone-500">Sem cenáculo nesta edição</span>
+  <% end %>
+</p>
