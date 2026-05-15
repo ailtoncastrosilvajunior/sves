@@ -14,6 +14,7 @@
     .caixa{background:#fff;border:1px solid #e7e5e4;border-radius:14px;padding:18px 20px;margin:16px 0}
     ul{margin:8px 0 0 20px}
     .colunas{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .apelido-display{text-transform:uppercase;letter-spacing:0.04em;font-weight:700}
     @media print{body{background:#fff;margin:12px}.caixa{box-shadow:none}}
     @media(max-width:720px){.colunas{grid-template-columns:1fr}}
   </style>
@@ -68,9 +69,14 @@
         <h3><%= t("cenaculos.distribuicao_sugestao.doc_casais_heading") %></h3>
         <ol class="muted">
           <% grupo.membros.each do |casamento| %>
-            <li><strong><%= casamento.nome_completo_ele.presence || casamento.apelido_ele.presence || "Esposo" %></strong>
+            <% ele_txt = casamento.nome_completo_ele.presence || casamento.apelido_ele.presence || "Esposo" %>
+            <% ela_txt = casamento.nome_completo_ela.presence || casamento.apelido_ela.presence || "Esposa" %>
+            <% ele_apelido_so = casamento.nome_completo_ele.blank? && casamento.apelido_ele.present? %>
+            <% ela_apelido_so = casamento.nome_completo_ela.blank? && casamento.apelido_ela.present? %>
+            <li>
+              <strong class="<%= "apelido-display" if ele_apelido_so %>"><%= ele_txt %></strong>
               &
-              <strong><%= casamento.nome_completo_ela.presence || casamento.apelido_ela.presence || "Esposa" %></strong>
+              <strong class="<%= "apelido-display" if ela_apelido_so %>"><%= ela_txt %></strong>
             </li>
           <% end %>
         </ol>
@@ -79,7 +85,9 @@
             <h3><%= t("cenaculos.distribuicao_sugestao.doc_homens_heading") %></h3>
             <ul class="muted">
               <% grupo.membros.each do |c| %>
-                <li><%= c.nome_completo_ele.presence || c.apelido_ele.presence || "(homem não identificado pela ficha)" %></li>
+                <% txt = c.nome_completo_ele.presence || c.apelido_ele.presence || "(homem não identificado pela ficha)" %>
+                <% apelido_so = c.nome_completo_ele.blank? && c.apelido_ele.present? %>
+                <li><span class="<%= "apelido-display" if apelido_so %>"><%= txt %></span></li>
               <% end %>
             </ul>
           </div>
@@ -87,7 +95,9 @@
             <h3><%= t("cenaculos.distribuicao_sugestao.doc_mulheres_heading") %></h3>
             <ul class="muted">
               <% grupo.membros.each do |c| %>
-                <li><%= c.nome_completo_ela.presence || c.apelido_ela.presence || "(mulher não identificada pela ficha)" %></li>
+                <% txt = c.nome_completo_ela.presence || c.apelido_ela.presence || "(mulher não identificada pela ficha)" %>
+                <% apelido_so = c.nome_completo_ela.blank? && c.apelido_ela.present? %>
+                <li><span class="<%= "apelido-display" if apelido_so %>"><%= txt %></span></li>
               <% end %>
             </ul>
           </div>

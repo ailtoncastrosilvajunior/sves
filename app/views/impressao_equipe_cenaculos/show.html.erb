@@ -1,7 +1,14 @@
 <% content_for :title, t("impressao_equipe_cenaculos.page_title", edicao: @edicao.rotulo) %>
 
 <div class="no-print toolbar-impressao">
-  <%= link_to t("impressao_equipe_cenaculos.toolbar_voltar"), edicao_path(@edicao), data: { turbo: false } %>
+  <div class="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+    <%= link_to t("impressao_equipe_cenaculos.toolbar_voltar"), edicao_path(@edicao), data: { turbo: false } %>
+    <% modo_rotulo = t("impressao_equipe_cenaculos.toolbar_modo_rotulo.#{@casais_nomes_modo}") %>
+    <span class="text-xs leading-snug text-stone-600">
+      <%= t("impressao_equipe_cenaculos.toolbar_modo_intro", rotulo: modo_rotulo) %>
+      <%= link_to t("impressao_equipe_cenaculos.toolbar_trocar"), edicao_cenaculos_path(@edicao, anchor: "impressao-pdf-equipe"), class: "font-semibold text-teal-800 underline-offset-2 hover:text-teal-950 hover:underline", data: { turbo: false } %>
+    </span>
+  </div>
   <button type="button" onclick="window.print()"><%= t("impressao_equipe_cenaculos.toolbar_imprimir") %></button>
 </div>
 
@@ -17,6 +24,7 @@
     <h1><%= t("impressao_equipe_cenaculos.titulo_documento") %></h1>
     <p class="sub"><%= t("impressao_equipe_cenaculos.subtitulo") %></p>
     <p class="edicao"><%= @edicao.rotulo %></p>
+    <p class="participantes-modo-doc"><%= t("impressao_equipe_cenaculos.participantes_modo.#{@casais_nomes_modo}") %></p>
   </header>
 
   <div class="coord-box">
@@ -58,7 +66,8 @@
           <% pm = pastores_por_sexo_texto_impressao(cenaculo) %>
           <% hex_cor = cenaculo_cor_hex_para_impressao(cenaculo) %>
           <% nome_cor = cenaculo_cor_rotulo_impressao(cenaculo) %>
-          <% participantes = linhas_casais_participantes_impressao(cenaculo) %>
+          <% participantes = linhas_casais_participantes_impressao(cenaculo, casais_nomes: @casais_nomes_modo) %>
+          <% participantes_lista_class = ["compact", ("participantes-modo-apelido" if @casais_nomes_modo == "apelido")].compact.join(" ") %>
           <tr>
             <td class="num"><%= idx + 1 %>º</td>
             <td class="nome-cen"><%= cenaculo.nome %></td>
@@ -107,7 +116,7 @@
             </td>
             <td>
               <% if participantes.any? %>
-                <ul class="compact">
+                <ul class="<%= participantes_lista_class %>">
                   <% participantes.each do |linha| %>
                     <li><%= linha %></li>
                   <% end %>

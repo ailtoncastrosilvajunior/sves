@@ -8,6 +8,8 @@ class ImpressaoEquipeCenaculosController < ApplicationController
   before_action :negar_se_nao_coordenacao!
 
   def show
+    @casais_nomes_modo = params[:casais_nomes].presence_in(%w[completo apelido ambos]) || "completo"
+
     @cenaculos =
       @edicao.cenaculos
         .includes(cenaculo_casais: :casal, cenaculo_servos: { servo: :conjuge })

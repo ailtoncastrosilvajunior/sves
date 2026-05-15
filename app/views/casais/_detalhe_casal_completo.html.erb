@@ -12,13 +12,13 @@
     <% if casal.apelido_ele.present? || casal.apelido_ela.present? %>
       <p class="text-sm font-medium leading-relaxed text-teal-900">
         <% if casal.apelido_ele.present? %>
-          <span class="text-teal-700/80">Ele prefere</span> <%= casal.apelido_ele.strip %>
+          <span class="text-teal-700/80">Ele prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ele.strip %></span>
         <% end %>
         <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
           <span class="mx-1 text-teal-500/55">·</span>
         <% end %>
         <% if casal.apelido_ela.present? %>
-          <span class="text-teal-700/80">Ela prefere</span> <%= casal.apelido_ela.strip %>
+          <span class="text-teal-700/80">Ela prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ela.strip %></span>
         <% end %>
       </p>
     <% end %>

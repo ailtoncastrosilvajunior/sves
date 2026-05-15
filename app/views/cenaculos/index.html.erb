@@ -27,12 +27,35 @@
       <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao), class: btn_teal %>
       <% end %>
       <%= link_to t("reunioes_cenaculo.link_na_edicao"), edicao_reunioes_cenaculo_index_path(@edicao), class: btn_teal %>
-      <%= link_to t("impressao_equipe_cenaculos.link_lista_cenaculos"), impressao_equipe_cenaculos_edicao_path(@edicao),
-                  data: { turbo: false },
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                  title: t("impressao_equipe_cenaculos.link_lista_cenaculos_title"),
-                  class: btn_white %>
+      <details id="impressao-pdf-equipe" class="col-span-2 w-full max-w-md self-start min-w-0 rounded-2xl border border-stone-200/90 bg-white px-4 py-3 shadow-sm ring-1 ring-stone-900/[0.04]" title="<%= t("impressao_equipe_cenaculos.link_lista_cenaculos_title") %>">
+        <summary class="cursor-pointer list-none text-sm font-semibold text-stone-900 marker:content-none [&::-webkit-details-marker]:hidden">
+          <span class="inline-flex items-center gap-2">
+            <span class="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-stone-600">PDF</span>
+            <%= t("impressao_equipe_cenaculos.escolha_pdf_resumo") %>
+          </span>
+        </summary>
+        <div class="mt-4 border-t border-stone-200/80 pt-4">
+          <%= form_tag impressao_equipe_cenaculos_edicao_path(@edicao), method: :get, data: { turbo: false }, target: "_blank", class: "flex flex-col gap-4" do %>
+            <fieldset class="space-y-2.5 border-0 p-0">
+              <legend class="mb-1 text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("impressao_equipe_cenaculos.escolha_pdf_legend") %></legend>
+              <label class="flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-stone-800">
+                <%= radio_button_tag :casais_nomes, "completo", true, class: "mt-1 size-4 shrink-0 border-stone-300 text-teal-800" %>
+                <span><%= t("impressao_equipe_cenaculos.opcao_nome_completo") %></span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-stone-800">
+                <%= radio_button_tag :casais_nomes, "apelido", false, class: "mt-1 size-4 shrink-0 border-stone-300 text-teal-800" %>
+                <span><%= t("impressao_equipe_cenaculos.opcao_apelido") %></span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-stone-800">
+                <%= radio_button_tag :casais_nomes, "ambos", false, class: "mt-1 size-4 shrink-0 border-stone-300 text-teal-800" %>
+                <span><%= t("impressao_equipe_cenaculos.opcao_ambos") %></span>
+              </label>
+            </fieldset>
+            <%= submit_tag t("impressao_equipe_cenaculos.botao_abrir_impressao"),
+                           class: "#{btn_white} !w-auto max-w-full self-start" %>
+          <% end %>
+        </div>
+      </details>
       <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao), class: btn_dark %>
     </div>
     <% end %>

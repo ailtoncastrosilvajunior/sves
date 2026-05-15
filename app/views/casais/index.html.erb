@@ -58,13 +58,13 @@
                 <% if tem_apelido %>
                   <p class="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5 text-sm">
                     <% if casal.apelido_ele.present? %>
-                      <span><span class="text-teal-600/85">Ele ·</span> <span class="font-medium tracking-tight text-teal-900"><%= casal.apelido_ele.strip %></span></span>
+                      <span><span class="text-teal-600/85">Ele ·</span> <span class="font-medium tracking-tight text-teal-900 uppercase"><%= casal.apelido_ele.strip %></span></span>
                     <% end %>
                     <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
                       <span class="text-teal-500/55" aria-hidden="true">·</span>
                     <% end %>
                     <% if casal.apelido_ela.present? %>
-                      <span><span class="text-teal-600/85">Ela ·</span> <span class="font-medium tracking-tight text-teal-900"><%= casal.apelido_ela.strip %></span></span>
+                      <span><span class="text-teal-600/85">Ela ·</span> <span class="font-medium tracking-tight text-teal-900 uppercase"><%= casal.apelido_ela.strip %></span></span>
                     <% end %>
                   </p>
                 <% end %>
@@ -104,7 +104,7 @@
                   <% apelido_ele = (casal.apelido_ele&.strip).presence %>
                   <% nome_ele = casal.nome_completo_ele.presence || "—" %>
                   <% if apelido_ele %>
-                    <p class="text-lg font-semibold leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ele %></p>
+                    <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ele %></p>
                     <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ele %></p>
                   <% else %>
                     <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ele %></p>
@@ -115,7 +115,7 @@
                   <% apelido_ela = (casal.apelido_ela&.strip).presence %>
                   <% nome_ela = casal.nome_completo_ela.presence || "—" %>
                   <% if apelido_ela %>
-                    <p class="text-lg font-semibold leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ela %></p>
+                    <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ela %></p>
                     <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ela %></p>
                   <% else %>
                     <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ela %></p>

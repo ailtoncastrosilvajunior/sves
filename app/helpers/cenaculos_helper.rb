@@ -189,9 +189,38 @@ module CenaculosHelper
     Cenaculo.rotulo_cor_na_paleta(hex)
   end
 
-  def linhas_casais_participantes_impressao(cenaculo)
+  def linhas_casais_participantes_impressao(cenaculo, casais_nomes: "completo")
+    modo = casais_nomes.to_s
     cenaculo.casais.order(:nome_completo_ele).map do |c|
-      "#{c.nome_completo_ele.presence || '—'} · #{c.nome_completo_ela.presence || '—'}"
+      case modo
+      when "apelido"
+        e = (c.apelido_ele&.strip).presence || c.nome_completo_ele.presence || "—"
+        a = (c.apelido_ela&.strip).presence || c.nome_completo_ela.presence || "—"
+        "#{e} · #{a}"
+      when "ambos"
+        e = linha_casal_impressao_nome_mais_apelido(c.nome_completo_ele, c.apelido_ele)
+        a = linha_casal_impressao_nome_mais_apelido(c.nome_completo_ela, c.apelido_ela)
+        "#{e} · #{a}".html_safe
+      else
+        "#{c.nome_completo_ele.presence || '—'} · #{c.nome_completo_ela.presence || '—'}"
+      end
+    end
+  end
+
+  private
+
+  # Nome completo (escapado) e o tratamento em negrito; sem apelido, só o nome.
+  # Importante: não usar SafeBuffer#+ com trechos HTML crus — o Rails escapa o segundo operando
+  # e o utilizador veria literalmente «<strong>». Monta-se um único String e chama-se .html_safe no fim.
+  def linha_casal_impressao_nome_mais_apelido(nome, apelido)
+    n = nome.presence || "—"
+    ap = apelido&.strip.presence
+    n_esc = ERB::Util.html_escape(n)
+    if ap.present?
+      ap_esc = ERB::Util.html_escape(ap.upcase)
+      "#{n_esc} (<strong>#{ap_esc}</strong>)".html_safe
+    else
+      "#{n_esc}".html_safe
     end
   end
 end
