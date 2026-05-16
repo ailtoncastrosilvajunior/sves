@@ -46,9 +46,8 @@
               <th rowspan="2" scope="col" class="col-cenaculo-merge"><%= t("impressao_presencas_cenaculos.col_cenaculo") %></th>
               <th rowspan="2" scope="col" class="col-pastores-merge"><%= t("impressao_presencas_cenaculos.col_pastores") %></th>
               <th rowspan="2" scope="col" class="col-casal-par"><%= t("impressao_presencas_cenaculos.col_casal") %></th>
-              <% @reunioes.each_with_index do |reuniao, idx| %>
+              <% @reunioes.each do |reuniao| %>
                 <th scope="colgroup" class="col-reu">
-                  <span class="reu-n"><%= idx + 1 %></span>
                   <%= reuniao.titulo %>
                 </th>
               <% end %>
