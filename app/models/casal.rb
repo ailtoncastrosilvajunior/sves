@@ -16,6 +16,7 @@ class Casal < ApplicationRecord
   before_validation :normalizar_nomes_completos_ele_ela
   before_validation :garantir_inscrito_em_em_casais_novos, on: :create
   before_validation :atribuir_assinatura_linha_ao_criar, on: :create
+  before_validation :recalcular_assinatura_linha_em_actualizacao, on: :update
 
   before_save lambda {
     self.email_contato = email_contato&.strip&.downcase.presence
@@ -54,6 +55,13 @@ class Casal < ApplicationRecord
 
   def atribuir_assinatura_linha_ao_criar
     return if nome_completo_ele.blank? || nome_completo_ela.blank?
+
+    recalcular_assinatura_linha!
+  end
+
+  def recalcular_assinatura_linha_em_actualizacao
+    return if nome_completo_ele.blank? || nome_completo_ela.blank?
+    return unless nome_completo_ele_changed? || nome_completo_ela_changed? || inscrito_em_changed?
 
     recalcular_assinatura_linha!
   end

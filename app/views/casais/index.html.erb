@@ -43,11 +43,46 @@
       </div>
     </div>
 
+    <div data-controller="distribuicao-casais">
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div class="min-w-0 flex-1">
+          <%= label_tag dom_id(@edicao, :busca_casais_lista),
+                        t("casais_views.index.busca.label"),
+                        class: "sr-only" %>
+          <%= text_field_tag :busca_casais_lista,
+                             "",
+                             id: dom_id(@edicao, :busca_casais_lista),
+                             autocomplete: "off",
+                             placeholder: t("casais_views.index.busca.placeholder"),
+                             data: {
+                               distribuicao_casais_target: "campoBusca",
+                               action: "input->distribuicao-casais#atualizarFiltragem",
+                             },
+                             class: "min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 shadow-inner outline-none ring-stone-400/30 placeholder:text-stone-400 focus:border-teal-600/60 focus:ring-2 focus:ring-teal-500/20 sm:min-h-10" %>
+        </div>
+        <%= button_tag t("casais_views.index.busca.limpar"),
+                       type: "button",
+                       data: { action: "click->distribuicao-casais#limparCampoBusca" },
+                       class: "inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2 text-sm font-medium text-stone-800 shadow-sm transition hover:bg-stone-50 sm:min-h-10" %>
+      </div>
+
+      <p data-distribuicao-casais-target="semResultados"
+         class="mt-4 hidden rounded-xl border border-amber-200/90 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950"
+         role="status">
+        <%= t("casais_views.index.busca.sem_resultados") %>
+      </p>
+
+      <p role="status" aria-live="polite"
+         data-distribuicao-casais-target="resultadoFiltragem"
+         class="mt-3 hidden rounded-lg bg-teal-100/70 px-3 py-2 text-sm font-medium text-teal-950"></p>
+
     <% if resumida %>
       <div class="mt-8 overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
         <div class="divide-y divide-stone-200/80">
           <% @casais.each do |casal| %>
-            <div class="flex flex-col gap-2 border-l-[3px] border-transparent px-5 py-4 transition-colors duration-200 ease-out hover:border-teal-700/45 hover:bg-teal-50/35 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+            <div class="flex flex-col gap-2 border-l-[3px] border-transparent px-5 py-4 transition-colors duration-200 ease-out hover:border-teal-700/45 hover:bg-teal-50/35 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4"
+                 data-distribuicao-casais-target="cartao"
+                 data-busca="<%= texto_busca_distribuicao_casal(casal) %>">
               <div class="min-w-0">
                 <p class="font-medium text-stone-900">
                   <span><%= casal.nome_completo_ele.presence || "—" %></span>
@@ -80,7 +115,9 @@
                 </p>
                 <%= render "casais/cenaculo_linha_casal", casal: casal, edicao: @edicao %>
               </div>
-              <div class="shrink-0 text-right">
+              <div class="shrink-0 flex flex-col items-end gap-3 text-right">
+                <%= link_to t("casais_views.alterar_casal.botao_lista"), edit_edicao_casal_path(@edicao, casal),
+                            class: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:min-h-0" %>
                 <% if casal.inscrito_em.present? %>
                   <p class="text-xs font-medium uppercase tracking-wide text-stone-500">Inscrito em</p>
                   <time class="mt-0.5 block text-sm text-stone-800" datetime="<%= casal.inscrito_em&.iso8601 %>">
@@ -97,30 +134,36 @@
       <div class="mt-6 overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
         <div class="divide-y divide-stone-200/80">
           <% @casais.each do |casal| %>
-            <div class="border-l-[3px] border-transparent px-5 py-4 transition-colors duration-200 ease-out hover:border-teal-700/45 hover:bg-teal-50/35">
-              <div class="grid gap-4 sm:grid-cols-2 sm:gap-8">
-                <div class="min-w-0 space-y-1">
-                  <p class="text-[0.65rem] font-semibold uppercase tracking-wide text-stone-500"><%= t("casais_views.index.rotulo_esposo") %></p>
-                  <% apelido_ele = (casal.apelido_ele&.strip).presence %>
-                  <% nome_ele = casal.nome_completo_ele.presence || "—" %>
-                  <% if apelido_ele %>
-                    <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ele %></p>
-                    <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ele %></p>
-                  <% else %>
-                    <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ele %></p>
-                  <% end %>
+            <div class="border-l-[3px] border-transparent px-5 py-4 transition-colors duration-200 ease-out hover:border-teal-700/45 hover:bg-teal-50/35"
+                 data-distribuicao-casais-target="cartao"
+                 data-busca="<%= texto_busca_distribuicao_casal(casal) %>">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                <div class="grid min-w-0 flex-1 gap-4 sm:grid-cols-2 sm:gap-8">
+                  <div class="min-w-0 space-y-1">
+                    <p class="text-[0.65rem] font-semibold uppercase tracking-wide text-stone-500"><%= t("casais_views.index.rotulo_esposo") %></p>
+                    <% apelido_ele = (casal.apelido_ele&.strip).presence %>
+                    <% nome_ele = casal.nome_completo_ele.presence || "—" %>
+                    <% if apelido_ele %>
+                      <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ele %></p>
+                      <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ele %></p>
+                    <% else %>
+                      <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ele %></p>
+                    <% end %>
+                  </div>
+                  <div class="min-w-0 space-y-1">
+                    <p class="text-[0.65rem] font-semibold uppercase tracking-wide text-stone-500"><%= t("casais_views.index.rotulo_esposa") %></p>
+                    <% apelido_ela = (casal.apelido_ela&.strip).presence %>
+                    <% nome_ela = casal.nome_completo_ela.presence || "—" %>
+                    <% if apelido_ela %>
+                      <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ela %></p>
+                      <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ela %></p>
+                    <% else %>
+                      <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ela %></p>
+                    <% end %>
+                  </div>
                 </div>
-                <div class="min-w-0 space-y-1">
-                  <p class="text-[0.65rem] font-semibold uppercase tracking-wide text-stone-500"><%= t("casais_views.index.rotulo_esposa") %></p>
-                  <% apelido_ela = (casal.apelido_ela&.strip).presence %>
-                  <% nome_ela = casal.nome_completo_ela.presence || "—" %>
-                  <% if apelido_ela %>
-                    <p class="text-lg font-semibold uppercase leading-snug tracking-tight text-teal-950 sm:text-xl"><%= apelido_ela %></p>
-                    <p class="mt-0.5 text-sm leading-snug text-stone-500"><%= nome_ela %></p>
-                  <% else %>
-                    <p class="text-lg font-semibold leading-snug tracking-tight text-stone-900 sm:text-xl"><%= nome_ela %></p>
-                  <% end %>
-                </div>
+                <%= link_to t("casais_views.alterar_casal.botao_lista"), edit_edicao_casal_path(@edicao, casal),
+                            class: "inline-flex min-h-[44px] shrink-0 items-center justify-center self-start rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50 sm:self-auto" %>
               </div>
               <%= render "casais/cenaculo_linha_casal", casal: casal, edicao: @edicao %>
             </div>
@@ -128,43 +171,10 @@
         </div>
       </div>
     <% else %>
-      <div data-controller="distribuicao-casais"
-           class="mt-8 rounded-2xl border border-stone-200/80 bg-gradient-to-b from-stone-50/80 to-white px-4 py-5 shadow-sm ring-1 ring-stone-200/60 sm:px-6">
+      <div class="mt-8 rounded-2xl border border-stone-200/80 bg-gradient-to-b from-stone-50/80 to-white px-4 py-5 shadow-sm ring-1 ring-stone-200/60 sm:px-6">
         <div class="min-w-0">
           <p class="text-sm font-semibold text-stone-900">Ficha completa · todos os dados da inscrição</p>
         </div>
-
-        <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <div class="min-w-0 flex-1">
-            <%= label_tag dom_id(@edicao, :filtro_casais_lista_completa),
-                          "Filtrar casais",
-                          class: "sr-only" %>
-            <%= text_field_tag :filtro_distribuicao,
-                               "",
-                               id: dom_id(@edicao, :filtro_casais_lista_completa),
-                               autocomplete: "off",
-                               placeholder: "Ex.: zona sul · primeira vez · música · com filhos abc…",
-                               data: {
-                                 distribuicao_casais_target: "campoBusca",
-                                 action: "input->distribuicao-casais#atualizarFiltragem",
-                               },
-                               class: "min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 shadow-inner outline-none ring-stone-400/30 placeholder:text-stone-400 focus:border-teal-600/60 focus:ring-2 focus:ring-teal-500/20 sm:min-h-10" %>
-          </div>
-          <%= button_tag "Limpar filtro",
-                         type: "button",
-                         data: { action: "click->distribuicao-casais#limparCampoBusca" },
-                         class: "inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-full border border-stone-300 bg-white px-5 py-2 text-sm font-medium text-stone-800 shadow-sm transition hover:bg-stone-50 sm:min-h-10" %>
-        </div>
-
-        <p data-distribuicao-casais-target="semResultados"
-           class="mt-4 hidden rounded-xl border border-amber-200/90 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950"
-           role="status">
-          Nenhum casal coincide com estas palavras — alargue ou limpe o filtro.
-        </p>
-
-        <p role="status" aria-live="polite"
-           data-distribuicao-casais-target="resultadoFiltragem"
-           class="mt-3 hidden rounded-lg bg-teal-100/70 px-3 py-2 text-sm font-medium text-teal-950"></p>
 
         <div class="mt-5 max-h-[min(70vh,44rem)] min-w-0 w-full overflow-y-auto overflow-x-hidden rounded-2xl border border-stone-200/70 bg-white/90 pr-2 shadow-inner">
           <ul class="space-y-5 p-4 sm:p-5">
@@ -174,13 +184,14 @@
                              distribuicao_casais_target: "cartao",
                              busca: texto_busca_distribuicao_casal(casal),
                            } do %>
-                <%= render "casais/detalhe_casal_completo", casal: casal, edicao: @edicao %>
+                <%= render "casais/detalhe_casal_completo", casal: casal, edicao: @edicao, mostrar_alterar_casal: true %>
               <% end %>
             <% end %>
           </ul>
         </div>
       </div>
     <% end %>
+    </div>
   <% else %>
     <p class="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50/50 px-5 py-8 text-center text-sm text-stone-600">
       Ainda não há casais nesta edição — importe o CSV na edição, aguarde a planilha ou

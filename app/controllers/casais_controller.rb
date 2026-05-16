@@ -3,6 +3,7 @@
 class CasaisController < ApplicationController
   before_action :set_edicao
   before_action :negar_se_nao_coordenacao!
+  before_action :set_casal, only: %i[edit update]
 
   def index
     @casais = Casal
@@ -36,10 +37,30 @@ class CasaisController < ApplicationController
     end
   end
 
+  def edit
+  end
+
+  def update
+    begin
+      if @casal.update(casal_params)
+        redirect_to edicao_casais_path(@edicao), notice: t("casais_views.alterar_casal.sucesso")
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotUnique
+      flash.now[:alert] = t("casais_views.cadastro_secretaria.duplicado")
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_edicao
     @edicao = Edicao.find(params[:edicao_id])
+  end
+
+  def set_casal
+    @casal = @edicao.casais.find(params[:id])
   end
 
   def casal_params

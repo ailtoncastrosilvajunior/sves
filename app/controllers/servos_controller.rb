@@ -9,6 +9,12 @@ class ServosController < ApplicationController
   end
 
   def show
+    @cenaculos_como_pastor =
+      @servo.cenaculos
+            .with_attached_imagem
+            .joins(:edicao)
+            .includes(:edicao)
+            .order(Arel.sql("edicoes.ano DESC, edicoes.numero_edicao DESC, cenaculos.nome ASC"))
   end
 
   def new

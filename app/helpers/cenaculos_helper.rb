@@ -19,6 +19,7 @@ module CenaculosHelper
       casal.filhos_abc_jesus,
       casal.horarios_abc_jesus,
       casal.como_conheceu_seminario,
+      casal.observacoes,
       casal.fonte_importacao,
       (l(casal.inscrito_em, format: :short) if casal.inscrito_em),
       casal.cenaculo_grupo&.nome,
@@ -116,6 +117,32 @@ module CenaculosHelper
       content_tag(:div, class: "rounded-xl bg-teal-100/80 p-0.5 shadow-sm ring-2 ring-white/90 transition duration-200 group-hover/card:shadow-md") do
         tag.span(class: "#{inner_sz} flex items-center justify-center bg-white text-base font-display font-semibold tracking-tight text-teal-800/60 shadow-inner", aria: { hidden: true }) do
           (cenaculo.nome.to_s.strip[0] || "·").upcase
+        end
+      end
+    end
+  end
+
+  # Miniatura muito pequena junto de texto (ex.: perfil do servo — pastoria).
+  def cenaculo_thumb_pequeno(cenaculo)
+    box = "flex h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-1 ring-stone-200/80"
+    if cenaculo.imagem.attached?
+      content_tag(:div, class: box) do
+        cenaculo_imagem_tag(
+          cenaculo,
+          resize_to_limit: [80, 80],
+          class: "h-9 w-9 object-cover",
+          alt: cenaculo.nome.to_s.truncate(80),
+        )
+      end
+    else
+      nh = Cenaculo.normalizar_hex_cor(cenaculo.cor)
+      content_tag(:div, class: "#{box} items-center justify-center bg-stone-100") do
+        if nh.present?
+          tag.div(class: "h-full w-full flex-none", style: "background-color: #{nh}", aria: { hidden: true })
+        else
+          tag.span(class: "text-xs font-display font-semibold text-teal-800/75", aria: { hidden: true }) do
+            (cenaculo.nome.to_s.strip[0] || "·").upcase
+          end
         end
       end
     end

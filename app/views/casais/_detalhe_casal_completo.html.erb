@@ -1,27 +1,35 @@
-<%# locals: casal, edicao (opcional — cenáculo do grupo nesta edição) %>
+<%# locals: casal; edicao (opcional — cenáculo na edição); mostrar_alterar_casal (opcional — botão editar na lista de casais) %>
 <article class="min-w-0 w-full flex-1 space-y-4">
   <header class="space-y-1">
-    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <h3 class="text-base font-semibold leading-snug text-stone-900">
-        <%= casal.nome_completo_ele.presence || "—" %>
-        <span class="font-normal text-stone-400"> e </span>
-        <%= casal.nome_completo_ela.presence || "—" %>
-      </h3>
-    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+      <div class="min-w-0 flex-1 space-y-1">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h3 class="text-base font-semibold leading-snug text-stone-900">
+            <%= casal.nome_completo_ele.presence || "—" %>
+            <span class="font-normal text-stone-400"> e </span>
+            <%= casal.nome_completo_ela.presence || "—" %>
+          </h3>
+        </div>
 
-    <% if casal.apelido_ele.present? || casal.apelido_ela.present? %>
-      <p class="text-sm font-medium leading-relaxed text-teal-900">
-        <% if casal.apelido_ele.present? %>
-          <span class="text-teal-700/80">Ele prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ele.strip %></span>
+        <% if casal.apelido_ele.present? || casal.apelido_ela.present? %>
+          <p class="text-sm font-medium leading-relaxed text-teal-900">
+            <% if casal.apelido_ele.present? %>
+              <span class="text-teal-700/80">Ele prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ele.strip %></span>
+            <% end %>
+            <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
+              <span class="mx-1 text-teal-500/55">·</span>
+            <% end %>
+            <% if casal.apelido_ela.present? %>
+              <span class="text-teal-700/80">Ela prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ela.strip %></span>
+            <% end %>
+          </p>
         <% end %>
-        <% if casal.apelido_ele.present? && casal.apelido_ela.present? %>
-          <span class="mx-1 text-teal-500/55">·</span>
-        <% end %>
-        <% if casal.apelido_ela.present? %>
-          <span class="text-teal-700/80">Ela prefere</span> <span class="font-semibold uppercase tracking-wide"><%= casal.apelido_ela.strip %></span>
-        <% end %>
-      </p>
-    <% end %>
+      </div>
+      <% if local_assigns[:edicao].present? && local_assigns[:mostrar_alterar_casal] %>
+        <%= link_to t("casais_views.alterar_casal.botao_lista"), edit_edicao_casal_path(edicao, casal),
+                    class: "inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50" %>
+      <% end %>
+    </div>
 
     <div class="flex flex-wrap gap-2 pt-2">
       <% if casal.inscrito_em.present? %>

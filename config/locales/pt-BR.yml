@@ -186,6 +186,8 @@ pt-BR:
     index_badge_publico: "formulário público"
     show_origem_label: "Origem do cadastro"
     show_papel_label: "Classificação"
+    show_cenaculos_pastor_titulo: "Pastor de cenáculo"
+    show_cenaculos_pastor_edicao: "Edição %{rotulo}"
     show_editar_nome: "Alterar nome"
     nome_atualizado: "Nome atualizado."
     edit_titulo_nome: "Alterar nome"
@@ -225,6 +227,11 @@ pt-BR:
     index:
       resumo_um: "%{count} casal registado nesta edição."
       resumo_varios: "%{count} casais registados nesta edição."
+      busca:
+        label: "Buscar casais"
+        placeholder: "Nome, apelido, telefone, e-mail, endereço, observações…"
+        limpar: "Limpar busca"
+        sem_resultados: "Nenhum casal coincide com estes termos — alargue ou limpe a busca."
       tipo_lista_nomes_chamados: "Nomes e como chamar"
       nomes_chamados_intro: "Somente o nome civil e a forma de tratamento indicada na inscrição, para leitura rápida (reuniões, listas de presença, etc.)."
       rotulo_esposo: "Esposo"
@@ -251,6 +258,12 @@ pt-BR:
       dica_observacoes: "Visível só no painel — pagamento em dinheiro, observações da secretaria, etc."
       submit: "Registar casal"
       cancelar: "Cancelar"
+    alterar_casal:
+      titulo: "Alterar dados do casal"
+      subtitulo: "Os mesmos campos do cadastro pela secretaria; as alterações valem só para esta edição."
+      sucesso: "Dados do casal actualizados."
+      submit: "Atualizar"
+      botao_lista: "Alterar"
   cenaculos:
     imagem_upload:
       generico: "Não foi possível aceitar esta imagem. Prefira JPG, PNG ou WebP (tamanho moderado)."
@@ -508,7 +521,7 @@ pt-BR:
     lote_linha_label: "Linha %{n}"
     criar_lote_submit: "Criar reuniões"
     dica_descricao: "Opcional: texto para pastores ao lançar presenças."
-    dica_estado: "Liberada: pastores do grupo podem marcar; Encerrada: pastores só consultam — só servos da coordenação (ou admin da plataforma) alteram presenças."
+    dica_estado: ""
     estados:
       em_preparacao: "Em preparação"
       liberada: "Liberada"
