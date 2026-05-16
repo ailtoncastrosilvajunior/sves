@@ -3,7 +3,7 @@ module ApplicationHelper
     return unless user_signed_in?
 
     s = current_user.servo
-    primeiro = s&.nome&.strip&.split(/\s+/)&.first
+    primeiro = s&.nome_para_listagem&.strip&.split(/\s+/)&.first
     primeiro.presence || current_user.email.to_s.split("@").first.presence || current_user.email
   end
 
@@ -20,7 +20,7 @@ module ApplicationHelper
   def sves_conjuge_linha_secundaria(parceiro)
     return unless parceiro
 
-    "#{sves_conjuge_preposicao(parceiro)} #{parceiro.nome}".squeeze(" ").strip
+    "#{sves_conjuge_preposicao(parceiro)} #{parceiro.nome_para_listagem}".squeeze(" ").strip
   end
 
   # Frase completa (ex.: aria-label ou leitores de voz): «Eu sou Ailton da Liliane».
@@ -28,7 +28,7 @@ module ApplicationHelper
     parceiro = servo.conjuge || servo.parceiro_conjuge
     return unless parceiro
 
-    "Eu sou #{servo.nome} #{sves_conjuge_preposicao(parceiro)} #{parceiro.nome}".squeeze(" ").strip
+    "Eu sou #{servo.nome_para_listagem} #{sves_conjuge_preposicao(parceiro)} #{parceiro.nome_para_listagem}".squeeze(" ").strip
   end
 
   # Identifica qual separador está ativo na navegação móvel (barra inferior).

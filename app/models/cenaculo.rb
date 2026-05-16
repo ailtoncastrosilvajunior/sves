@@ -54,4 +54,7 @@ class Cenaculo < ApplicationRecord
   validates :nome, presence: true
   validates :nome, uniqueness: { scope: :edicao_id }
   validates :cor, format: { with: HEX_COR, message: "deve ser #RGB ou #RRGGBB" }, allow_blank: true
+  validates :pastores_texto_livre, length: { maximum: 50 }, allow_blank: true
+
+  normalizes :pastores_texto_livre, with: ->(raw) { raw.to_s.strip.presence }
 end

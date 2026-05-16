@@ -1,10 +1,17 @@
-<% content_for :title, t("impressao_presencas_cenaculos.page_title", edicao: @edicao.rotulo) %>
+<% content_for :title,
+               (@cenaculo_filtro ? t("impressao_presencas_cenaculos.page_title_cenaculo", cenaculo: @cenaculo_filtro.nome, edicao: @edicao.rotulo) : t("impressao_presencas_cenaculos.page_title", edicao: @edicao.rotulo)) %>
 
 <div class="no-print toolbar-impressao">
   <div>
-    <%= link_to t("impressao_presencas_cenaculos.toolbar_voltar"), edicao_cenaculos_path(@edicao), data: { turbo: false } %>
-    <span class="mx-2 text-stone-300">|</span>
-    <%= link_to t("impressao_presencas_cenaculos.toolbar_trocar"), edicao_cenaculos_path(@edicao, anchor: "impressao-pdf-presencas"), class: "font-semibold", data: { turbo: false } %>
+    <% if @cenaculo_filtro %>
+      <%= link_to t("impressao_presencas_cenaculos.toolbar_voltar_cenaculo"), edicao_cenaculo_path(@edicao, @cenaculo_filtro), data: { turbo: false } %>
+    <% else %>
+      <%= link_to t("impressao_presencas_cenaculos.toolbar_voltar"), edicao_cenaculos_path(@edicao), data: { turbo: false } %>
+    <% end %>
+    <% if pode_gerir_painel? %>
+      <span class="mx-2 text-stone-300">|</span>
+      <%= link_to t("impressao_presencas_cenaculos.toolbar_trocar"), edicao_cenaculos_path(@edicao, anchor: "impressao-pdf-presencas"), class: "font-semibold", data: { turbo: false } %>
+    <% end %>
   </div>
   <button type="button" onclick="window.print()"><%= t("impressao_presencas_cenaculos.toolbar_imprimir") %></button>
 </div>
@@ -14,6 +21,9 @@
     <h1><%= t("impressao_presencas_cenaculos.titulo_documento") %></h1>
     <p class="sub"><%= t("impressao_presencas_cenaculos.subtitulo") %></p>
     <p class="edicao"><%= @edicao.rotulo %></p>
+    <% if @cenaculo_filtro %>
+      <p class="edicao" style="margin-top:0.35rem;font-weight:600;"><%= t("impressao_presencas_cenaculos.doc_somente_cenaculo", nome: @cenaculo_filtro.nome) %></p>
+    <% end %>
   </header>
 
   <% if @cenaculos.empty? %>

@@ -25,6 +25,14 @@
                      autofocus: true %>
   </div>
 
+  <div>
+    <%= f.label :como_chamar, t("activerecord.attributes.servo.como_chamar"), class: "block text-sm font-medium text-stone-700" %>
+    <%= f.text_field :como_chamar,
+                     class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                     autocomplete: "nickname" %>
+    <p class="mt-1 text-xs text-stone-500"><%= t("servos.form_como_chamar_dica") %></p>
+  </div>
+
   <% if pode_gerir_painel? %>
   <div>
     <%= f.label :papel, t("activerecord.attributes.servo.papel"), class: "block text-sm font-medium text-stone-700" %>

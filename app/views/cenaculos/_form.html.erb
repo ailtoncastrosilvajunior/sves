@@ -22,6 +22,16 @@
     <p class="mt-1 text-xs text-stone-500">O mesmo nome pode repetir‑se entre edições, mas dentro desta edição tem de ser único.</p>
   </div>
 
+  <div>
+    <%= f.label :pastores_texto_livre, class: "block text-sm font-medium text-stone-700" %>
+    <%= f.text_field :pastores_texto_livre,
+                     maxlength: 50,
+                     class: "mt-2 min-h-[44px] w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 shadow-sm outline-none ring-stone-400/40 focus:border-stone-500 focus:ring-2 focus:ring-stone-500/20 sm:min-h-0 sm:text-sm",
+                     autocomplete: "off",
+                     placeholder: t("cenaculos.form.placeholder_pastores_texto_livre") %>
+    <p class="mt-1 text-xs text-stone-500"><%= t("cenaculos.form.dica_pastores_texto_livre") %></p>
+  </div>
+
   <div class="space-y-5 rounded-2xl border border-stone-200/80 bg-white px-4 py-5 shadow-sm sm:px-5">
     <p class="text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("cenaculos.form.secao_locais") %></p>
     <div>

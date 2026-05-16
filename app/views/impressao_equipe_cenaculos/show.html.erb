@@ -89,12 +89,14 @@
               <% else %>
                 <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
               <% end %>
-              <% if pm[:sem_sexo].present? %>
+              <% if !pm.fetch(:texto_livre, false) && pm[:sem_sexo].present? %>
                 <div class="pastor-sem-sexo"><%= t("impressao_equipe_cenaculos.pastores_sem_sexo", nomes: pm[:sem_sexo]) %></div>
               <% end %>
             </td>
             <td>
-              <% if pm[:mulheres].present? %>
+              <% if pm.fetch(:texto_livre, false) %>
+                <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>
+              <% elsif pm[:mulheres].present? %>
                 <%= pm[:mulheres] %>
               <% else %>
                 <span class="muted"><%= t("impressao_equipe_cenaculos.em") %></span>

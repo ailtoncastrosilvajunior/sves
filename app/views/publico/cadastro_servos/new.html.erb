@@ -42,6 +42,11 @@
               <%= p.text_field :nome, required: true, autocomplete: "name", class: input_class %>
             </div>
             <div>
+              <%= p.label :como_chamar, t("cadastro_servos.como_chamar_label"), class: label_class %>
+              <%= p.text_field :como_chamar, autocomplete: "nickname", class: input_class %>
+              <p class="mt-2 text-xs text-stone-500"><%= t("cadastro_servos.como_chamar_hint") %></p>
+            </div>
+            <div>
               <%= p.label :email, t("cadastro_servos.email_label"), class: label_class %>
               <%= p.email_field :email, required: true, autocomplete: "email", class: input_class %>
             </div>
@@ -73,6 +78,11 @@
             <div>
               <%= p.label :nome, t("cadastro_servos.nome_label"), class: label_class %>
               <%= p.text_field :nome, required: true, autocomplete: "name", class: input_class %>
+            </div>
+            <div>
+              <%= p.label :como_chamar, t("cadastro_servos.como_chamar_label"), class: label_class %>
+              <%= p.text_field :como_chamar, autocomplete: "nickname", class: input_class %>
+              <p class="mt-2 text-xs text-stone-500"><%= t("cadastro_servos.como_chamar_hint") %></p>
             </div>
             <div>
               <%= p.label :email, t("cadastro_servos.email_label"), class: label_class %>

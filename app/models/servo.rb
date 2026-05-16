@@ -46,6 +46,11 @@ class Servo < ApplicationRecord
     papel == PAPEL_PARTICIPANTE
   end
 
+  # Listagens, equipes, pastores em impressão: apelido opcional; senão o nome completo.
+  def nome_para_listagem
+    (como_chamar&.strip).presence || nome
+  end
+
   def self.find_by_normalized_email(raw)
     e = User.normalize_email(raw)
     return nil if e.blank?
@@ -58,6 +63,7 @@ class Servo < ApplicationRecord
   end
 
   validates :nome, presence: true
+  validates :como_chamar, length: { maximum: 255 }, allow_blank: true
   validates :sexo, inclusion: { in: SEXOS, allow_blank: true }
   validates :user_id, uniqueness: { allow_nil: true }
   validates :origem_cadastro, inclusion: { in: ORIGENS }
@@ -66,6 +72,8 @@ class Servo < ApplicationRecord
 
   before_validation :normalizar_sexo
   before_validation :definir_papel_padrao
+
+  normalizes :como_chamar, with: ->(raw) { raw.to_s.strip.presence }
 
   before_save lambda {
     self.email = email&.strip&.presence

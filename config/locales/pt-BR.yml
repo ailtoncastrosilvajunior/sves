@@ -44,12 +44,14 @@ pt-BR:
         current_password: "Senha actual"
       servo:
         papel: "Classificação no painel"
+        como_chamar: "Como quer ser chamado(a)"
       cenaculo:
         nome: "Nome do cenáculo"
         cor: "Cor de referência"
         imagem: "Imagem opcional"
         local_homens: "Local dos homens"
         local_mulheres: "Local das mulheres"
+        pastores_texto_livre: "Pastores (texto livre)"
       edicao_reuniao_cenaculo:
         titulo: "Título"
         descricao: "Descrição"
@@ -145,6 +147,8 @@ pt-BR:
     grupo_oracao_label: "Grupo de oração"
     grupo_oracao_hint: "Nome do grupo de oração a que o casal pertence (texto livre)."
     nome_label: "Nome completo"
+    como_chamar_label: "Como quer ser chamado(a) (opcional)"
+    como_chamar_hint: "Nome curto para listas e pastas — como no cadastro dos casais."
     email_label: "E-mail"
     senha_label: "Senha (mínimo 8 caracteres)"
     senha_confirmar_label: "Confirmar senha"
@@ -181,6 +185,7 @@ pt-BR:
     form_instruction_password_existing_user: "Para alterar a senha use os campos abaixo (mínimo 8 caracteres). Deixe em branco para manter."
     form_placeholder_senha: "Mínimo 8 caracteres"
     form_papel_dica: "Participantes acedem só à edição em curso e ao(s) cenáculo(s) onde são pastores."
+    form_como_chamar_dica: "Opcional. Usado em listagens, equipes e impressões, como nos casais «como chamar»; se vazio, mostra-se o nome completo."
     index_badge_acesso: "com acesso SVES"
     index_badge_sem_acesso: "sem acesso"
     index_badge_publico: "formulário público"
@@ -292,6 +297,8 @@ pt-BR:
       placeholder_local_homens: "Ex.: Sala São José · Face de Cristo"
       placeholder_local_mulheres: "Ex.: Sala Santa Clara · Face de Cristo"
       dica_imagem_opcional: "JPG, PNG ou WebP; em iPhone também HEIC quando o servidor está actualizado — se falhar, copie/exporte JPEG a partir das Fotografias antes de enviar."
+      placeholder_pastores_texto_livre: "Ex.: João e Maria Silva"
+      dica_pastores_texto_livre: "Opcional. Usado em listagens e impressões enquanto não designar pastores cadastrados na base. Com pelo menos um pastor associado, passa a usar só os nomes cadastrados."
     index:
       secao_coordenacao: "Coordenação pastoral"
       secao_coordenacao_abrev: "Pastores"
@@ -311,6 +318,8 @@ pt-BR:
       stats_pastores:
         one: "%{count} pastor"
         other: "%{count} pastores"
+    show:
+      pastores_somente_texto_livre_hint: "Texto provisório (sem pastores cadastrados); designe servos abaixo quando quiser substituir por nomes da base."
     distribuicao_sugestao:
       titulo_html: "Sugestão de cenários de cenáculo · %{edicao} · SVES"
       voltar_edicao: "Edição"
@@ -415,8 +424,14 @@ pt-BR:
     rodape_nota: "Gerado no SVES · opcionalmente pode acrescentar-se controle de pastas."
   impressao_presencas_cenaculos:
     page_title: "Presenças nos encontros de cenáculo · %{edicao} · SVES"
+    page_title_cenaculo: "Presenças · %{cenaculo} · %{edicao} · SVES"
     page_title_fallback: "Presenças nos encontros de cenáculo · SVES"
     toolbar_voltar: "Voltar aos cenáculos"
+    toolbar_voltar_cenaculo: "Voltar ao cenáculo"
+    doc_somente_cenaculo: "Folha apenas deste cenáculo: %{nome}"
+    cenaculo_filtro_invalido: "Cenáculo não encontrado nesta edição."
+    participante_precisa_cenaculo: "A folha de presenças desta edição só pode ser aberta por cenáculo. Use o link na página do seu grupo."
+    link_no_show_cenaculo: "Folha de presenças (PDF)"
     toolbar_imprimir: "Imprimir ou PDF"
     toolbar_trocar: "Voltar ao painel de impressão"
     titulo_documento: "Presenças nos encontros de cenáculo"
@@ -568,7 +583,7 @@ pt-BR:
         one: "%{count} reunião criada."
         other: "%{count} reuniões criadas."
     link_na_edicao: "Reuniões"
-    link_no_cenaculo: "Presenças nas reuniões"
+    link_no_cenaculo: "Registro de Presença"
     presencas:
       page_title_index: "Reuniões · %{cenaculo} · %{edicao}"
       page_title_edit: "Presenças · %{titulo} · %{cenaculo}"

@@ -158,10 +158,16 @@ module CenaculosHelper
     image_tag cenaculo.imagem, html_options
   end
 
-  # Pastores ligados ao cenáculo, agrupados por casal quando cônjuge também está no mesmo grupo.
-  # @return [Array<String>] linhas como «Nome A · Nome B» ou nome único.
+  # Pastores: com pelo menos um servo cadastrado usa os nomes da base; senão, texto livre (até haver pastores).
+  # @return [Array<String>] linhas como «Nome A · Nome B» ou nome único, ou uma linha de texto livre.
   def linhas_coordenacao_pastoral_cenaculo(cenaculo)
-    linhas_servos_agrupados_casal(cenaculo.servos)
+    if cenaculo.cenaculo_servos.any?
+      linhas_servos_agrupados_casal(cenaculo.servos)
+    elsif (t = cenaculo.pastores_texto_livre.to_s.presence)
+      [t]
+    else
+      []
+    end
   end
 
   # Agrupa servos por duplas de cônjuges quando ambos estão na mesma lista (ex.: coordenação geral).
@@ -180,10 +186,10 @@ module CenaculosHelper
         consumidos.add(s.id)
         consumidos.add(parceiro_id)
         ord = [s, parceiro].compact.sort_by { |x| x.nome.to_s.downcase }
-        linhas << "#{ord.first.nome} · #{ord.second.nome}"
+        linhas << "#{ord.first.nome_para_listagem} · #{ord.second.nome_para_listagem}"
       else
         consumidos.add(s.id)
-        linhas << s.nome
+        linhas << s.nome_para_listagem
       end
     end
 
@@ -191,18 +197,26 @@ module CenaculosHelper
   end
 
   # Para colunas homens/mulheres na impressão (sexo M / F registado no servo).
-  # @return [Hash] :homens, :mulheres, :sem_sexo — strings já com « · » ou nil
+  # Se não há servos mas há texto livre, devolve o texto em :homens e texto_livre: true.
+  # @return [Hash] :homens, :mulheres, :sem_sexo, :texto_livre
   def pastores_por_sexo_texto_impressao(cenaculo)
-    servos = cenaculo.servos.sort_by { |s| s.nome.to_s.downcase }
-    com_m = servos.select { |s| s.sexo.to_s == "M" }
-    com_f = servos.select { |s| s.sexo.to_s == "F" }
-    sem = servos.reject { |s| %w[M F].include?(s.sexo.to_s) }
+    if cenaculo.cenaculo_servos.any?
+      servos = cenaculo.servos.sort_by { |s| s.nome.to_s.downcase }
+      com_m = servos.select { |s| s.sexo.to_s == "M" }
+      com_f = servos.select { |s| s.sexo.to_s == "F" }
+      sem = servos.reject { |s| %w[M F].include?(s.sexo.to_s) }
 
-    {
-      homens: com_m.map(&:nome).join(" · ").presence,
-      mulheres: com_f.map(&:nome).join(" · ").presence,
-      sem_sexo: sem.map(&:nome).join(" · ").presence,
-    }
+      {
+        homens: com_m.map(&:nome_para_listagem).join(" · ").presence,
+        mulheres: com_f.map(&:nome_para_listagem).join(" · ").presence,
+        sem_sexo: sem.map(&:nome_para_listagem).join(" · ").presence,
+        texto_livre: false,
+      }
+    elsif (t = cenaculo.pastores_texto_livre.to_s.presence)
+      { homens: t, mulheres: nil, sem_sexo: nil, texto_livre: true }
+    else
+      { homens: nil, mulheres: nil, sem_sexo: nil, texto_livre: false }
+    end
   end
 
   # Nome «como quer ser chamado» para folha de presenças; sem apelido usa nome completo.
@@ -231,8 +245,13 @@ module CenaculosHelper
     %(<span class="cel-dupla-presenca"><span class="pres-marca pres-marca-ele" title="Esposo">#{ele}</span><span class="pres-marca-sep" aria-hidden="true">·</span><span class="pres-marca pres-marca-ela" title="Esposa">#{ela}</span></span>).html_safe
   end
 
-  # Célula compacta (impressão presenças): pastores H / M / sem sexo.
+  # Célula compacta (impressão presenças): pastores H / M / sem sexo, ou uma linha de texto livre.
   def celula_pastores_presenca_impressao_html(pm)
+    if pm.fetch(:texto_livre, false) && pm[:homens].present?
+      t = ERB::Util.html_escape(pm[:homens])
+      return %(<div class="pastores-celula-impressao pastores-texto-livre"><p class="past-line">#{t}</p></div>).html_safe
+    end
+
     homens = pm[:homens].presence || I18n.t("impressao_presencas_cenaculos.pastores_em_vazio")
     mulheres = pm[:mulheres].presence || I18n.t("impressao_presencas_cenaculos.pastores_em_vazio")
     lh = ERB::Util.html_escape(homens)

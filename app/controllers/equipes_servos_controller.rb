@@ -81,7 +81,7 @@ class EquipesServosController < ApplicationController
     ActiveRecord::Base.transaction do
       servidor_ids_ordem_para_criar.each do |sid|
         es = @equipe.equipe_servos.create!(servo_id: sid, forma: forma_raw, edicao: @edicao)
-        nomes << es.servo.nome
+        nomes << es.servo.nome_para_listagem
       end
     end
 
@@ -119,7 +119,7 @@ class EquipesServosController < ApplicationController
       return
     end
 
-    nomes = registos.sort_by { |es| es.servo.nome.to_s.downcase }.map { |es| es.servo.nome }
+    nomes = registos.sort_by { |es| es.servo.nome.to_s.downcase }.map { |es| es.servo.nome_para_listagem }
     ActiveRecord::Base.transaction do
       registos.each(&:destroy!)
     end

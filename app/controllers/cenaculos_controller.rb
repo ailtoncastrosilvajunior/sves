@@ -96,7 +96,7 @@ class CenaculosController < ApplicationController
   end
 
   def cenaculo_params
-    params.require(:cenaculo).permit(:nome, :cor, :local_homens, :local_mulheres, :imagem)
+    params.require(:cenaculo).permit(:nome, :cor, :local_homens, :local_mulheres, :pastores_texto_livre, :imagem)
   end
 
   def erro_upload_imagem_ou_remote_storage?(error)

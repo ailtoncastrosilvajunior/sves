@@ -17,7 +17,7 @@ class CadastroCasalServosForm
   class Participante
     include ActiveModel::Model
 
-    ATTRIBUTES = %i[nome email telefone password password_confirmation].freeze
+    ATTRIBUTES = %i[nome como_chamar email telefone password password_confirmation].freeze
 
     attr_accessor(*ATTRIBUTES)
 
@@ -135,6 +135,7 @@ class CadastroCasalServosForm
 
     servo.assign_attributes(
       nome: participante.nome.to_s.strip,
+      como_chamar: participante.como_chamar.to_s.strip.presence,
       sexo: sexo,
       telefone: participante.telefone.to_s.strip.presence,
       email: email_norm,

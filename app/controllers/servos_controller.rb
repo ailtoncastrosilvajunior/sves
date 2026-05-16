@@ -13,7 +13,7 @@ class ServosController < ApplicationController
       @servo.cenaculos
             .with_attached_imagem
             .joins(:edicao)
-            .includes(:edicao)
+            .includes(:edicao, cenaculo_servos: { servo: :conjuge })
             .order(Arel.sql("edicoes.ano DESC, edicoes.numero_edicao DESC, cenaculos.nome ASC"))
   end
 
@@ -137,11 +137,11 @@ class ServosController < ApplicationController
   end
 
   def servo_campos_basicos
-    servo_raiz_params.permit(:nome, :email, :telefone, :sexo, :conjuge_id, :papel)
+    servo_raiz_params.permit(:nome, :como_chamar, :email, :telefone, :sexo, :conjuge_id, :papel)
   end
 
   def servo_campos_somente_nome
-    servo_raiz_params.permit(:nome)
+    servo_raiz_params.permit(:nome, :como_chamar)
   end
 
   def dar_login_solicitado?

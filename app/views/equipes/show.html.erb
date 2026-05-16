@@ -40,11 +40,11 @@
                       <% if i.positive? %>
                         <span class="text-stone-400"> · </span>
                       <% end %>
-                      <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+                      <%= link_to vinculo.servo.nome_para_listagem, servo_path(vinculo.servo),
                                   class: "font-medium underline-offset-4 hover:underline" %>
                     <% end %>
                   </div>
-                  <% nomes_retirada = grupo.map { |v| v.servo.nome } %>
+                  <% nomes_retirada = grupo.map { |v| v.servo.nome_para_listagem } %>
                   <% msg_retirada = nomes_retirada.length == 1 ? "Retirar #{nomes_retirada.first} desta equipe?" : "Retirar #{nomes_retirada.join(' e ')} desta equipe?" %>
                   <div class="flex w-full shrink-0 justify-end sm:w-auto">
                     <%= button_to "Retirar", destroy_lote_edicao_equipe_vinculos_path(@edicao, @equipe),
@@ -70,11 +70,11 @@
                       <% if i.positive? %>
                         <span class="text-stone-400"> · </span>
                       <% end %>
-                      <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+                      <%= link_to vinculo.servo.nome_para_listagem, servo_path(vinculo.servo),
                                   class: "font-medium underline-offset-4 hover:underline" %>
                     <% end %>
                   </div>
-                  <% nomes_retirada = grupo.map { |v| v.servo.nome } %>
+                  <% nomes_retirada = grupo.map { |v| v.servo.nome_para_listagem } %>
                   <% msg_retirada = nomes_retirada.length == 1 ? "Retirar #{nomes_retirada.first} desta equipe?" : "Retirar #{nomes_retirada.join(' e ')} desta equipe?" %>
                   <div class="flex w-full shrink-0 justify-end sm:w-auto">
                     <%= button_to "Retirar", destroy_lote_edicao_equipe_vinculos_path(@edicao, @equipe),
@@ -148,8 +148,8 @@
                       data-servo-id="<%= s.id %>"
                       data-action="dragstart->equipe-vinculos-drag#dragstart dragend->equipe-vinculos-drag#dragend click->equipe-vinculos-drag#pick"
                       class="cursor-grab select-none rounded-xl border border-stone-200/80 bg-white px-4 py-3 shadow-sm active:cursor-grabbing"
-                      aria-label="<%= apresentacao_sves_com_conjuge(s).presence || s.nome %>">
-                    <span class="block text-base font-semibold leading-snug text-stone-900"><%= s.nome %></span>
+                      aria-label="<%= apresentacao_sves_com_conjuge(s).presence || s.nome_para_listagem %>">
+                    <span class="block text-base font-semibold leading-snug text-stone-900"><%= s.nome_para_listagem %></span>
                     <% if parceiro %>
                       <span class="mt-1 block text-xs font-medium leading-snug text-red-950/95"><%= sves_conjuge_linha_secundaria(parceiro) %></span>
                     <% end %>

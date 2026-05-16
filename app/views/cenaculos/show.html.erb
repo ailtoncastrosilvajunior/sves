@@ -60,6 +60,13 @@
                         class: remove_btn %>
         <% end %>
         <%= link_to t("reunioes_cenaculo.link_no_cenaculo"), reunioes_cenaculo_edicao_cenaculo_path(@edicao, @cenaculo), class: reunio_btn %>
+        <%= link_to t("impressao_presencas_cenaculos.link_no_show_cenaculo"),
+                    impressao_presencas_cenaculos_edicao_path(@edicao, cenaculo_id: @cenaculo.id),
+                    class: reunio_btn,
+                    target: "_blank",
+                    rel: "noopener",
+                    title: t("impressao_presencas_cenaculos.link_title"),
+                    data: { turbo: false } %>
       </nav>
     </div>
     <% if @cenaculo.imagem.attached? %>
@@ -149,10 +156,10 @@
             <div class="min-w-0">
               <% permitidos = current_user.servo ? Servo.ids_do_casal_incluindo(current_user.servo) : [] %>
               <% if permitidos.include?(vinculo.servo_id) %>
-              <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+              <%= link_to vinculo.servo.nome_para_listagem, servo_path(vinculo.servo),
                           class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
               <% else %>
-              <span class="font-medium text-stone-900"><%= vinculo.servo.nome %></span>
+              <span class="font-medium text-stone-900"><%= vinculo.servo.nome_para_listagem %></span>
               <% end %>
             </div>
             <%= button_to "Retirar",
@@ -160,13 +167,18 @@
                           method: :delete,
                           form: {
                             data: {
-                              turbo_confirm: "Retirar #{vinculo.servo.nome} como pastor deste cenáculo?",
+                              turbo_confirm: "Retirar #{vinculo.servo.nome_para_listagem} como pastor deste cenáculo?",
                             },
                           },
                           class: "w-full shrink-0 cursor-pointer rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 sm:w-auto" %>
           </li>
         <% end %>
       </ul>
+    <% elsif @cenaculo.pastores_texto_livre.present? %>
+      <div class="mt-6 rounded-2xl border border-stone-200/80 bg-stone-50/70 px-5 py-5 text-sm text-stone-800">
+        <p class="font-medium text-stone-900"><%= @cenaculo.pastores_texto_livre %></p>
+        <p class="mt-2 text-xs text-stone-600"><%= t("cenaculos.show.pastores_somente_texto_livre_hint") %></p>
+      </div>
     <% else %>
       <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
         Ainda não há pastores atribuídos.
@@ -213,13 +225,13 @@
                 <%= tag.li class: "px-3 py-2 sm:px-4 sm:py-2.5",
                            data: {
                              distribuicao_casais_target: "cartao",
-                             busca: [s.nome, s.email].compact.join(" "),
+                             busca: [s.nome, s.como_chamar, s.email].compact.join(" "),
                            } do %>
                   <label class="flex cursor-pointer items-start gap-3 rounded-lg py-1.5 pl-1 transition hover:bg-white/80">
                     <%= check_box_tag "servo_ids[]", s.id, false,
                                       id: dom_id(s, :pastor_cenaculo),
                                       class: "mt-1 size-4 shrink-0 rounded border-stone-300 text-stone-900 focus:ring-stone-500/35" %>
-                    <span class="min-w-0 text-sm font-medium leading-snug text-stone-900"><%= s.nome %></span>
+                    <span class="min-w-0 text-sm font-medium leading-snug text-stone-900"><%= s.nome_para_listagem %></span>
                   </label>
                 <% end %>
               <% end %>
@@ -257,14 +269,19 @@
           <li class="px-5 py-4">
             <% permitidos = current_user.servo ? Servo.ids_do_casal_incluindo(current_user.servo) : [] %>
             <% if permitidos.include?(vinculo.servo_id) %>
-              <%= link_to vinculo.servo.nome, servo_path(vinculo.servo),
+              <%= link_to vinculo.servo.nome_para_listagem, servo_path(vinculo.servo),
                           class: "font-medium text-stone-900 underline-offset-4 hover:underline" %>
             <% else %>
-              <span class="font-medium text-stone-900"><%= vinculo.servo.nome %></span>
+              <span class="font-medium text-stone-900"><%= vinculo.servo.nome_para_listagem %></span>
             <% end %>
           </li>
         <% end %>
       </ul>
+    <% elsif @cenaculo.pastores_texto_livre.present? %>
+      <div class="mt-6 rounded-2xl border border-stone-200/80 bg-stone-50/70 px-5 py-5 text-sm text-stone-800">
+        <p class="font-medium text-stone-900"><%= @cenaculo.pastores_texto_livre %></p>
+        <p class="mt-2 text-xs text-stone-600"><%= t("cenaculos.show.pastores_somente_texto_livre_hint") %></p>
+      </div>
     <% else %>
       <p class="mt-6 rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 px-5 py-6 text-sm text-stone-600">
         Ainda não há pastores atribuídos.

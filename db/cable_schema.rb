@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_15_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -118,6 +118,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
     t.string "local_homens"
     t.string "local_mulheres"
     t.string "nome", null: false
+    t.string "pastores_texto_livre", limit: 50
     t.datetime "updated_at", null: false
     t.index ["edicao_id", "nome"], name: "index_cenaculos_on_edicao_id_and_nome", unique: true
     t.index ["edicao_id"], name: "index_cenaculos_on_edicao_id"
@@ -179,6 +180,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_212702) do
   end
 
   create_table "servos", force: :cascade do |t|
+    t.string "como_chamar"
     t.bigint "conjuge_id"
     t.datetime "created_at", null: false
     t.string "email"
