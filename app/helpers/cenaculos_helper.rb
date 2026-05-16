@@ -205,6 +205,52 @@ module CenaculosHelper
     }
   end
 
+  # Nome «como quer ser chamado» para folha de presenças; sem apelido usa nome completo.
+  def nome_chamado_presenca_impressao(casal, genero)
+    case genero.to_sym
+    when :ele
+      (casal.apelido_ele&.strip).presence || casal.nome_completo_ele.presence || "—"
+    when :ela
+      (casal.apelido_ela&.strip).presence || casal.nome_completo_ela.presence || "—"
+    else
+      "—"
+    end
+  end
+
+  # ✓ presente, ✗ ausente ou não presente, — sem registo de linha de presença.
+  def simbolo_presenca_impressao(presenca, campo)
+    return "—" if presenca.blank?
+
+    presenca.public_send(campo) ? "✓" : "✗"
+  end
+
+  # Célula com dois ícones: esposo · esposa (ordem fixa).
+  def par_presenca_casal_impressao_html(presenca)
+    ele = ERB::Util.html_escape(simbolo_presenca_impressao(presenca, :presente_ele))
+    ela = ERB::Util.html_escape(simbolo_presenca_impressao(presenca, :presente_ela))
+    %(<span class="cel-dupla-presenca"><span class="pres-marca pres-marca-ele" title="Esposo">#{ele}</span><span class="pres-marca-sep" aria-hidden="true">·</span><span class="pres-marca pres-marca-ela" title="Esposa">#{ela}</span></span>).html_safe
+  end
+
+  # Célula compacta (impressão presenças): pastores H / M / sem sexo.
+  def celula_pastores_presenca_impressao_html(pm)
+    homens = pm[:homens].presence || I18n.t("impressao_presencas_cenaculos.pastores_em_vazio")
+    mulheres = pm[:mulheres].presence || I18n.t("impressao_presencas_cenaculos.pastores_em_vazio")
+    lh = ERB::Util.html_escape(homens)
+    lm = ERB::Util.html_escape(mulheres)
+    kh = ERB::Util.html_escape(I18n.t("impressao_presencas_cenaculos.pastores_abbr_homens"))
+    km = ERB::Util.html_escape(I18n.t("impressao_presencas_cenaculos.pastores_abbr_mulheres"))
+    parts = [
+      %(<p class="past-line"><span class="past-k">#{kh}</span> #{lh}</p>),
+      %(<p class="past-line"><span class="past-k">#{km}</span> #{lm}</p>),
+    ]
+    if pm[:sem_sexo].present?
+      ks = ERB::Util.html_escape(I18n.t("impressao_presencas_cenaculos.pastores_abbr_sem_sexo"))
+      ss = ERB::Util.html_escape(pm[:sem_sexo])
+      parts << %(<p class="past-line"><span class="past-k">#{ks}</span> #{ss}</p>)
+    end
+    %(<div class="pastores-celula-impressao">#{parts.join}</div>).html_safe
+  end
+
   # Cor na impressão: HEX normalizado (#RRGGBB minúsculo) ou nil.
   def cenaculo_cor_hex_para_impressao(cenaculo)
     Cenaculo.normalizar_hex_cor(cenaculo.cor)

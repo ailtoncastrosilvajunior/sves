@@ -1,4 +1,34 @@
 <% content_for :title, "Cenáculos · #{@edicao.rotulo} · SVES" %>
+<% if pode_gerir_painel? %>
+<% content_for :head do %>
+<script>
+(function () {
+  function bindBackdropClose() {
+    const d = document.getElementById("cenaculos-impressoes-dialog");
+    if (!d || d.dataset.backdropBound === "1") return;
+    d.dataset.backdropBound = "1";
+    d.addEventListener("click", function (e) {
+      if (e.target === d) d.close();
+    });
+  }
+  function openFromHash() {
+    const h = window.location.hash.slice(1);
+    if (h !== "impressao-pdf-equipe" && h !== "impressao-pdf-presencas") return;
+    const d = document.getElementById("cenaculos-impressoes-dialog");
+    if (d && typeof d.showModal === "function" && !d.open) d.showModal();
+    requestAnimationFrame(function () {
+      const el = document.getElementById(h);
+      if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  }
+  document.addEventListener("turbo:load", function () {
+    bindBackdropClose();
+    openFromHash();
+  });
+})();
+</script>
+<% end %>
+<% end %>
 
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
   <% index_volta_href = pode_gerir_painel? ? edicao_path(@edicao) : root_path %>
@@ -27,15 +57,35 @@
       <%= link_to t("cenaculos.distribuicao_sugestao.link_menu_cenarios"), edicao_distribuicao_cenaculos_sugestao_path(@edicao), class: btn_teal %>
       <% end %>
       <%= link_to t("reunioes_cenaculo.link_na_edicao"), edicao_reunioes_cenaculo_index_path(@edicao), class: btn_teal %>
-      <details id="impressao-pdf-equipe" class="col-span-2 w-full max-w-md self-start min-w-0 rounded-2xl border border-stone-200/90 bg-white px-4 py-3 shadow-sm ring-1 ring-stone-900/[0.04]" title="<%= t("impressao_equipe_cenaculos.link_lista_cenaculos_title") %>">
-        <summary class="cursor-pointer list-none text-sm font-semibold text-stone-900 marker:content-none [&::-webkit-details-marker]:hidden">
-          <span class="inline-flex items-center gap-2">
-            <span class="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-stone-600">PDF</span>
-            <%= t("impressao_equipe_cenaculos.escolha_pdf_resumo") %>
-          </span>
-        </summary>
-        <div class="mt-4 border-t border-stone-200/80 pt-4">
-          <%= form_tag impressao_equipe_cenaculos_edicao_path(@edicao), method: :get, data: { turbo: false }, target: "_blank", class: "flex flex-col gap-4" do %>
+      <button type="button"
+              class="<%= btn_teal %>"
+              aria-haspopup="dialog"
+              aria-controls="cenaculos-impressoes-dialog"
+              onclick="document.getElementById('cenaculos-impressoes-dialog').showModal()">
+        <%= t("cenaculos.index.abrir_impressoes_dialog") %>
+      </button>
+      <% novo_cenaculo_btn_class = administrador? ? btn_dark : "#{btn_dark} col-span-2 sm:col-span-1" %>
+      <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao), class: novo_cenaculo_btn_class %>
+    </div>
+
+    <dialog id="cenaculos-impressoes-dialog"
+            aria-labelledby="cenaculos-impressoes-dialog-titulo"
+            class="w-[min(100%,26rem)] max-h-[min(90vh,36rem)] overflow-y-auto rounded-2xl border border-stone-200 bg-white p-0 text-stone-900 shadow-2xl ring-1 ring-stone-900/5 backdrop:bg-stone-900/40 backdrop:backdrop-blur-[1px]">
+      <div class="sticky top-0 z-[1] flex items-start justify-between gap-3 border-b border-stone-200/90 bg-white px-4 py-3 sm:px-5">
+        <h2 id="cenaculos-impressoes-dialog-titulo" class="font-display text-base font-semibold tracking-tight text-stone-900">
+          <%= t("cenaculos.index.impressoes_dialog_titulo") %>
+        </h2>
+        <button type="button"
+                class="shrink-0 rounded-full px-2 py-1 text-sm font-medium text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
+                onclick="document.getElementById('cenaculos-impressoes-dialog').close()"
+                aria-label="<%= t("cenaculos.index.impressoes_dialog_fechar") %>">
+          <%= t("cenaculos.index.impressoes_dialog_fechar") %>
+        </button>
+      </div>
+      <div class="px-4 pb-5 pt-4 sm:px-5">
+        <div id="impressao-pdf-equipe" class="scroll-mt-16">
+          <p class="text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("impressao_equipe_cenaculos.escolha_pdf_resumo") %></p>
+          <%= form_tag impressao_equipe_cenaculos_edicao_path(@edicao), method: :get, data: { turbo: false }, target: "_blank", class: "mt-3 flex flex-col gap-4" do %>
             <fieldset class="space-y-2.5 border-0 p-0">
               <legend class="mb-1 text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("impressao_equipe_cenaculos.escolha_pdf_legend") %></legend>
               <label class="flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-stone-800">
@@ -52,12 +102,22 @@
               </label>
             </fieldset>
             <%= submit_tag t("impressao_equipe_cenaculos.botao_abrir_impressao"),
-                           class: "#{btn_white} !w-auto max-w-full self-start" %>
+                           class: "#{btn_white} !w-full sm:!w-auto sm:self-start" %>
           <% end %>
         </div>
-      </details>
-      <%= link_to "Novo cenáculo", new_edicao_cenaculo_path(@edicao), class: btn_dark %>
-    </div>
+        <div id="impressao-pdf-presencas" class="mt-6 border-t border-stone-200/80 pt-6 scroll-mt-16">
+          <p class="text-xs font-semibold uppercase tracking-wide text-stone-500"><%= t("impressao_presencas_cenaculos.link_resumo") %></p>
+          <p class="mt-2 text-xs leading-relaxed text-stone-600"><%= t("impressao_presencas_cenaculos.dica_painel") %></p>
+          <%= link_to t("impressao_presencas_cenaculos.botao_abrir"),
+                      impressao_presencas_cenaculos_edicao_path(@edicao),
+                      class: "#{btn_white} mt-3 !w-full sm:!w-auto",
+                      target: "_blank",
+                      rel: "noopener",
+                      title: t("impressao_presencas_cenaculos.link_title"),
+                      data: { turbo: false } %>
+        </div>
+      </div>
+    </dialog>
     <% end %>
   </div>
 

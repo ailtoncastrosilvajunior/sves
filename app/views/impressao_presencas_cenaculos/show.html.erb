@@ -1,0 +1,79 @@
+<% content_for :title, t("impressao_presencas_cenaculos.page_title", edicao: @edicao.rotulo) %>
+
+<div class="no-print toolbar-impressao">
+  <div>
+    <%= link_to t("impressao_presencas_cenaculos.toolbar_voltar"), edicao_cenaculos_path(@edicao), data: { turbo: false } %>
+    <span class="mx-2 text-stone-300">|</span>
+    <%= link_to t("impressao_presencas_cenaculos.toolbar_trocar"), edicao_cenaculos_path(@edicao, anchor: "impressao-pdf-presencas"), class: "font-semibold", data: { turbo: false } %>
+  </div>
+  <button type="button" onclick="window.print()"><%= t("impressao_presencas_cenaculos.toolbar_imprimir") %></button>
+</div>
+
+<div class="sheet">
+  <header class="doc-head">
+    <h1><%= t("impressao_presencas_cenaculos.titulo_documento") %></h1>
+    <p class="sub"><%= t("impressao_presencas_cenaculos.subtitulo") %></p>
+    <p class="edicao"><%= @edicao.rotulo %></p>
+  </header>
+
+  <% if @cenaculos.empty? %>
+    <p class="vazio"><%= t("impressao_presencas_cenaculos.sem_cenaculos_edicao") %></p>
+  <% elsif @reunioes.empty? %>
+    <p class="vazio"><%= t("impressao_presencas_cenaculos.sem_reunioes") %></p>
+  <% end %>
+
+  <% @cenaculos.each do |cenaculo| %>
+    <% casais_ord = cenaculo.casais.order(:nome_completo_ele).to_a %>
+    <% pm = pastores_por_sexo_texto_impressao(cenaculo) %>
+    <% n_casais = casais_ord.size %>
+    <section class="bloco-cenaculo">
+      <% if casais_ord.empty? %>
+        <p class="vazio"><%= t("impressao_presencas_cenaculos.sem_casais_cenaculo") %><span class="vazio-cenaculo-nome"> — <%= cenaculo.nome %></span></p>
+      <% elsif @reunioes.any? %>
+        <table class="grid-presenca grid-presenca-unificada" aria-label="<%= t("impressao_presencas_cenaculos.tabela_aria_casal", cenaculo: cenaculo.nome) %>">
+          <thead>
+            <tr>
+              <th rowspan="2" scope="col" class="col-cenaculo-merge"><%= t("impressao_presencas_cenaculos.col_cenaculo") %></th>
+              <th rowspan="2" scope="col" class="col-pastores-merge"><%= t("impressao_presencas_cenaculos.col_pastores") %></th>
+              <th rowspan="2" scope="col" class="col-casal-par"><%= t("impressao_presencas_cenaculos.col_casal") %></th>
+              <% @reunioes.each_with_index do |reuniao, idx| %>
+                <th scope="colgroup" class="col-reu">
+                  <span class="reu-n"><%= idx + 1 %></span>
+                  <%= reuniao.titulo %>
+                </th>
+              <% end %>
+            </tr>
+            <tr>
+              <% @reunioes.each do %>
+                <th scope="col" class="col-reu-sub"><%= t("impressao_presencas_cenaculos.col_sub_reuniao") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% casais_ord.each_with_index do |casal, i| %>
+              <tr>
+                <% if i.zero? %>
+                  <td rowspan="<%= n_casais %>" class="cel-cenaculo-merge"><%= cenaculo.nome %></td>
+                  <td rowspan="<%= n_casais %>" class="cel-pastores-merge"><%= celula_pastores_presenca_impressao_html(pm) %></td>
+                <% end %>
+                <td class="col-casal-par">
+                  <span class="nome-chamado-par">
+                    <span class="nome-chamado-ele"><%= nome_chamado_presenca_impressao(casal, :ele) %></span>
+                    <span class="nome-chamado-sep" aria-hidden="true"><%= t("impressao_presencas_cenaculos.sep_casal") %></span>
+                    <span class="nome-chamado-ela"><%= nome_chamado_presenca_impressao(casal, :ela) %></span>
+                  </span>
+                </td>
+                <% @reunioes.each do |reuniao| %>
+                  <% pres = @presencas_por_chave[[cenaculo.id, casal.id, reuniao.id]] %>
+                  <td class="cel-pres cel-pres-dupla"><%= par_presenca_casal_impressao_html(pres) %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </section>
+  <% end %>
+
+  <p class="legenda-simbolos" style="margin-top:12px;text-align:center;"><%= t("impressao_presencas_cenaculos.rodape") %></p>
+</div>

@@ -1,0 +1,38 @@
+# frozen_string_literal: true
+
+# Folha para impressão / PDF (navegador): presenças por reunião, homens e mulheres em tabelas separadas.
+class ImpressaoPresencasCenaculosController < ApplicationController
+  helper CenaculosHelper
+
+  before_action :set_edicao
+  before_action :negar_se_nao_coordenacao!
+
+  def show
+    @reunioes = @edicao.edicao_reuniao_cenaculos.ordenadas.to_a
+    @cenaculos =
+      @edicao.cenaculos
+             .includes(cenaculo_casais: :casal, cenaculo_servos: { servo: :conjuge })
+             .order(:nome)
+
+    reuniao_ids = @reunioes.map(&:id)
+    cenaculo_ids = @cenaculos.map(&:id)
+
+    @presencas_por_chave = {}
+    if reuniao_ids.any? && cenaculo_ids.any?
+      CenaculoPresencaReuniao.where(
+        edicao_reuniao_cenaculo_id: reuniao_ids,
+        cenaculo_id: cenaculo_ids,
+      ).find_each do |p|
+        @presencas_por_chave[[p.cenaculo_id, p.casal_id, p.edicao_reuniao_cenaculo_id]] = p
+      end
+    end
+
+    render layout: "impressao_presencas_cenaculos"
+  end
+
+  private
+
+  def set_edicao
+    @edicao = Edicao.find(params[:id])
+  end
+end

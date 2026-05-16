@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       patch :marcar_em_curso
       post :importar_casais_csv
       get :impressao_equipe_cenaculos, to: "impressao_equipe_cenaculos#show"
+      get :impressao_presencas_cenaculos, to: "impressao_presencas_cenaculos#show"
     end
     resources :equipes do
       resources :vinculos, controller: :equipes_servos, only: %i[create destroy] do
